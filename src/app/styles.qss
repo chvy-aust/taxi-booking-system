@@ -1,0 +1,90 @@
+/* Application Window */
+QMainWindow {
+    background-color:#466060;
+    border-radius: 0px;
+}
+
+/* SPLASH SCREEN CUSTOMIZATION */
+#splash QPushButton {
+    font: 20px 'Arial';
+    padding: 10 30 10 30;
+    background-color: #1B2626;
+    border-radius: 0px;
+}
+
+#splash QPushButton:hover {
+    background-color: #101717;
+    padding: 8 28 8 28;
+    border: 2px solid #1B2626;
+}
+
+
+#splash QLabel {
+    qproperty-alignment: AlignCenter;
+    background-color: #293737;
+    color: white;
+    border: 5px solid #1B2626;
+    font: bold 41px 'Arial';
+    padding: 15;
+    margin: 30 30 10 30;
+}
+
+/* REGISTER SCREEEN CUSTOMIZATION */
+#register QLabel#HEADER {
+    qproperty-alignment: AlignCenter;
+    background-color: #1B2626;
+    color: white;
+    font: bold 41px 'Arial';
+    padding: 15;
+
+}
+
+#DIVIDER {
+    background-color: #1B2626;
+}
+
+#register_form {
+    border: 3px solid #1B2626;
+    background-color: #8EA09F;
+}
+
+#register QLabel  {
+    font: bold 15px 'Arial';
+    color: #293737;
+}
+
+#register QLineEdit {
+    background-color: white;
+    color: black;
+    border-radius: 0px;
+    border: 3px solid #293737;
+    padding: 5px;
+}
+
+#register QDateEdit {
+    background-color: white;
+    color: black;
+    border-radius: 0px;
+    border: 3px solid #293737;
+    padding: 5px;
+}
+
+#register QPushButton {
+    margin-top: 25px;
+    font: 15px 'Arial';
+    background-color: #1B2626;
+    padding: 10 30 10 30;
+    border-radius: 0px;
+}
+
+#register QPushButton:hover {
+    padding: 8 28 8 28;
+    border: 2px solid #1B2626;
+    background-color: #101717;
+}
+
+#register QPushButton#LOGIN {
+    background: transparent;
+    color: #101717;
+
+}
