@@ -1,53 +1,51 @@
-from typing import Union
-
-from PyQt6.QtWidgets import QLineEdit, QLabel, QVBoxLayout, QWidget, QDateEdit
+from PyQt6.QtWidgets import QLineEdit, QLabel, QVBoxLayout, QWidget, QDateEdit, \
+    QHBoxLayout
 
 
 class InputEdit(QWidget):
-    """Custom QLineEdit class."""
     def __init__(self,
                  label: str,
-                 input_field: Union[QLineEdit, QDateEdit] = QLineEdit,
-                 object_name: str = None):
-        """
-        Initialize the input edit.
-
-        Args:
-            label: Field prompt
-            input_field: QLineEdit or QDateEdit instance (defaults to QLineEdit)
-            object_name: Optional object name for styling.
-        """
+                 input_type: type[QDateEdit | QLineEdit] = QLineEdit,
+                 object_name: str = None,
+                 tooltip: str = None):
         super().__init__()
-        # Set field label.
         self.label = QLabel(label)
-        # Set object name, if provided.
         self.setObjectName(object_name)
-
-        # Define input field.
-        if isinstance(input_field, QDateEdit):
-            self.input_field = QDateEdit()
-            self.input_field.setDisplayFormat("yyyy-MM-dd")
+        self.input_field = input_type()
+        self.tooltip = QLabel("( i )")
+        if tooltip:
+            self.tooltip.setToolTip(tooltip)
         else:
-            self.input_field = QLineEdit()
+            self.tooltip.setHidden(True)
+
+        if isinstance(self.input_field, QDateEdit):
+            self.input_field.setDisplayFormat("yyyy-MM-dd")
 
         # Add elements to layout.
         layout = QVBoxLayout()
-        layout.addWidget(self.label)
+        lbl_tltp = QHBoxLayout()
+        lbl_tltp.addWidget(self.label)
+        lbl_tltp.addWidget(self.tooltip)
+        layout.addLayout(lbl_tltp)
         layout.addWidget(self.input_field)
-        # Set layout to widget.
         self.setLayout(layout)
 
     def value(self):
-        """Return str text from field."""
-        return self.input_field.text().strip()
+        """Return value from field."""
+        if isinstance(self.input_field, QDateEdit):
+            return self.input_field.date()
+        else:
+            return self.input_field.text().strip()
 
     def show_error(self):
         """Hint at errors with red highlighting."""
+        self.tooltip.setStyleSheet("color: #521A1A;")
         self.label.setStyleSheet("color: #521A1A;")
         self.input_field.setStyleSheet("color: #521A1A; border: 3px solid #521A1A")
 
     def clear_error(self):
         """Remove error hint."""
+        self.tooltip.setStyleSheet(None)
         self.label.setStyleSheet(None)
         self.input_field.setStyleSheet(None)
 

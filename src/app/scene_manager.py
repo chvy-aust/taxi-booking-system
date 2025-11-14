@@ -25,6 +25,7 @@ class SceneManager(QStackedWidget):
             self.addWidget(self.scenes[scene])
         # Listen for signals.
         self._handle_signals()
+        self.current_widget = self.currentWidget()
 
     def _handle_signals(self):
         """
