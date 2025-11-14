@@ -1,30 +1,17 @@
 import re
 from typing import override
 
-from PyQt6.QtCore import QDate
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QDateEdit, QLabel, QHBoxLayout
-
-from datetime import date
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QDateEdit
 
 from src.app.scenes.base import BaseScene
 from src.app.widgets.button import Button
 from src.app.widgets.form_layout import FormLayout
-from src.app.widgets.input_edit import InputEdit
+from src.app.widgets.input_edit import InputEdit, ToolTip
+from src.utils.validation import validate_age, validate_null
 
 PHONENUM = re.compile(r"(^\+?\d{1,3}[-\s]?)?(\(\d{1,3}\)|\d{1,3})[-\s]?\d{1,3}[-\s]?\d{1,4}$")
 EMAIL = re.compile(r"^[\w\-.]+@([\w-]+\.)+[\w-]{2,4}$")
 PASSWORD = re.compile(r"^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}")
-
-AGE_REQUIREMENT_HINT = "You must be 18+ to use this service."
-PHONENUM_FORMAT_HINT = ("May contain optional country code. Must have area and local code.\n"
-                        "Examples of valid formats:\n"
-                        "- +1 (123) 456 7890 | +1-(123)-456-7890\n"
-                        "- 1 123 456 7890 | 1-123-456-7890\n"
-                        "- 123 456 7890 | 123-456-7890\n")
-
-EMAIL_FORMAT_HINT = "Must contain '@' and '.'"
-PASSWORD_FORMAT_HINT = "Password must contain 1 Uppercase letter, 1 lowercase letter and 1 number."
-MATCHING_PASSWORD_HINT = "These passwords do not match!"
 
 class RegisterScene(BaseScene):
     """Register scene class for the application."""
@@ -48,17 +35,23 @@ class RegisterScene(BaseScene):
         divider.setObjectName("DIVIDER")
         divider.setFixedHeight(3)
 
-        # Make credential fields.
+        # Name fields.
         self.firstname = InputEdit("Enter first name:")
         self.lastname = InputEdit("Enter last name:")
-        self.dob = InputEdit("Enter date of birth:", QDateEdit, tooltip=AGE_REQUIREMENT_HINT)
-        self.phonenum = InputEdit("Enter phone number:", tooltip=PHONENUM_FORMAT_HINT)
-        self.email = InputEdit("Enter email address:", tooltip=EMAIL_FORMAT_HINT)
-        self.create_pass = InputEdit("Create new password:", tooltip=PASSWORD_FORMAT_HINT)
-        self.confirm_pass = InputEdit("Confirm new password:", tooltip=MATCHING_PASSWORD_HINT)
-
-        self.fields = [self.firstname, self.lastname, self.dob, self.phonenum,
-                            self.email, self.create_pass, self.confirm_pass]
+        # Date of birth field + tooltip.
+        self.dob = InputEdit("Enter date of birth:", QDateEdit)
+        self.dob.setToolTip(ToolTip.AGE_REQUIREMENT)
+        # Phone number field + tooltip.
+        self.phonenum = InputEdit("Enter phone number:")
+        self.phonenum.setToolTip(ToolTip.PHONENUM_FORMAT)
+        # Email field + tooltip.
+        self.email = InputEdit("Enter email address:")
+        self.email.setToolTip(ToolTip.EMAIL_FORMAT)
+        # Password fields + tooltips.
+        self.create_pass = InputEdit("Create new password:")
+        self.create_pass.setToolTip(ToolTip.PASSWORD_FORMAT)
+        self.confirm_pass = InputEdit("Confirm new password:")
+        self.confirm_pass.setToolTip(ToolTip.MATCHING_PASSWORD)
 
         # Add fields to form layout.
         form_layout = FormLayout()
@@ -95,7 +88,7 @@ class RegisterScene(BaseScene):
     def _start_registration(self):
         """Start the registration process."""
         credentials = self._get_credentials()
-        if self._check_validation():
+        if self._check_validation(credentials):
             return
         print("VALID!")
 
@@ -110,35 +103,38 @@ class RegisterScene(BaseScene):
         }
         return credentials
 
-    def display(self, e):
-        print(e)
-
-    def _check_validation(self):
-        for field in self.fields:
+    def _check_validation(self, credentials):
+        """Validate credentials and return errors, if applicable."""
+        # Reset validation hinting.
+        for field in credentials.keys():
             field.clear_error()
-
         invalid_fields = []
-        for field in self.fields:
-            if field.value() == "":
-                field.show_error()
-                invalid_fields.append(field)
 
-        if not self.validate_age(self.dob.value()):
+        # Check for null fields.
+        if not validate_null(credentials):
+            invalid_fields.append("Null fields caught.")
+
+        # Check if user meets age requirement.
+        if not validate_age(credentials[self.dob]):
             self.dob.show_error()
             invalid_fields.append(self.dob)
 
-        if not re.match(PHONENUM, self.phonenum.value()):
+        # Check phone format.
+        if not re.match(PHONENUM, credentials[self.phonenum]):
             self.phonenum.show_error()
             invalid_fields.append(self.phonenum)
 
-        if not re.match(EMAIL, self.email.value()):
+        # Check email format.
+        if not re.match(EMAIL, credentials[self.email]):
             self.email.show_error()
             invalid_fields.append(self.email)
 
-        if not re.match(PASSWORD, self.create_pass.value()):
+        # Check password format.
+        if not re.match(PASSWORD, credentials[self.create_pass]):
             self.create_pass.show_error()
             invalid_fields.append(self.create_pass)
 
+        # Check if passwords match.
         if self.create_pass.value() != self.confirm_pass.value():
             self.confirm_pass.show_error()
             invalid_fields.append(self.confirm_pass)
@@ -146,12 +142,7 @@ class RegisterScene(BaseScene):
         return invalid_fields
 
 
-    def validate_age(self, dob):
-        today = date.today()
-        age = today.year - dob.year()
-        if [today.month, today.day] > [dob.month(), dob.year()]:
-            age -= 1
-        return age >= 18
+
 
 
 
