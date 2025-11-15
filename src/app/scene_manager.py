@@ -30,15 +30,6 @@ class SceneManager(QStackedWidget):
     def _handle_signals(self):
         """
         Respond to signals emitted from scenes.
-
-        Note:
-            A shared SignalController is passed to all scenes.
-            Scenes call these signals (ie, request_splash), and the
-            scene manager listens and responds via .connect()
-
-            Since .connect() cannot pass args to functions, a lambda is used
-            to create an anonymous function to call the specific function with
-            the needed arg(s).
         """
         self.signals.request_splash.connect(
             lambda: self._switch_to('splash')
@@ -52,6 +43,8 @@ class SceneManager(QStackedWidget):
 
     def _switch_to(self, scene: str, data: Optional[User] = None):
         """Navigate to requested scene."""
+        if data:
+            self.scenes[scene].user = data
         self.setCurrentWidget(self.scenes[scene])
 
 

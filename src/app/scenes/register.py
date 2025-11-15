@@ -48,7 +48,7 @@ class RegisterScene(BaseScene):
         self.email.set_tooltip(FieldHints.EMAIL_FORMAT)
         # Password fields + tooltips.
         self.create_pass = InputEdit("Create new password:")
-        self.email.set_tooltip(FieldHints.PASSWORD_FORMAT)
+        self.create_pass.set_tooltip(FieldHints.PASSWORD_FORMAT)
         self.confirm_pass = InputEdit("Confirm new password:")
         self.confirm_pass.set_tooltip(FieldHints.MATCHING_PASSWORD)
 

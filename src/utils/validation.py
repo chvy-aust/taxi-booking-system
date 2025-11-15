@@ -16,8 +16,11 @@ def validate_password(password: str) -> bool:
 
 def validate_dob(dob: QDate) -> bool:
     """Indicate whether date of birth meets the age requirement."""
+    # Get current date
     today = QDate.currentDate()
+    # Calculate user age, not considering if their birthday passed.
     age = today.year() - dob.year()
+    # If user's birthday has not passed, subtract a year.
     if [today.month(), today.day()] > [dob.month(), dob.day()]:
         age -= 1
     return bool(age >= AGE_REQUIREMENT)

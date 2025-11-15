@@ -11,8 +11,8 @@ class InputEdit(QWidget):
                  input_type: type[QLineEdit | QDateEdit] = QLineEdit,
                  object_name: str = None):
         super().__init__()
-        self.prompt = QLabel(prompt)
         self.setObjectName(object_name)
+        self.prompt = QLabel(prompt)
         self.input_field = input_type()
         self.tooltip = QLabel("( i )")
         self.setLayout(self._load_layout())
@@ -44,15 +44,15 @@ class InputEdit(QWidget):
 
     def show_error(self):
         """Hint at errors with red highlighting."""
-        self.tooltip.setStyleSheet("color: #521A1A;")
-        self.prompt.setStyleSheet("color: #521A1A;")
-        self.input_field.setStyleSheet("border: 3px solid #521A1A")
+        self.prompt.setStyleSheet("color: #5B0D0D")
+        self.tooltip.setStyleSheet("color: #5B0D0D")
+        self.input_field.setStyleSheet("border: 3px solid #5B0D0D;")
 
     def clear_error(self):
         """Remove error hint."""
-        self.tooltip.setStyleSheet("color: #293737;")
-        self.prompt.setStyleSheet("color: #293737;")
-        self.input_field.setStyleSheet("border: 3px solid #293737;")
+        self.prompt.setStyleSheet("")
+        self.tooltip.setStyleSheet("")
+        self.input_field.setStyleSheet("")
 
 class DateEdit(InputEdit):
     def __init__(self, prompt: str, object_name: str = None):
