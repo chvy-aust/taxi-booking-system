@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import Literal
 
 from PyQt6.QtCore import QDate, QCalendar
 from PyQt6.QtWidgets import QLineEdit, QLabel, QVBoxLayout, QWidget, QDateEdit, QHBoxLayout
@@ -51,9 +52,9 @@ class InputEdit(QWidget):
         self.input_field.setCalendar(QCalendar())
         self.input_field.setDate(QDate.currentDate())
 
-    def setToolTip(self, info: ToolTip):
+    def setToolTip(self, info):
         """Enable tooltip and set information."""
-        self.tooltip.setToolTip(info.value)
+        self.tooltip.setToolTip(info)
         self.tooltip.setHidden(False)
 
     def value(self):
@@ -64,6 +65,7 @@ class InputEdit(QWidget):
             return self.input_field.text().strip()
 
     def clear_value(self):
+        self.clear_error()
         if isinstance(self.input_field, QDateEdit):
             self.input_field.setDate(QDate.currentDate())
         else:

@@ -1,13 +1,16 @@
-import re
-from typing import override
+import sqlite3
+from typing import override, Dict
 
+from PyQt6.QtCore import QDate
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QDateEdit
 
+from database.db import DatabaseConnection
 from src.app.scenes.base import BaseScene
 from src.app.widgets.button import Button
 from src.app.widgets.form_layout import FormLayout
 from src.app.widgets.input_edit import InputEdit, ToolTip
-from src.utils.validation import validate_age, validate_null, PHONENUM_PATTERN, EMAIL_PATTERN, PASSWORD_PATTERN
+from src.utils.validation import Validator
+
 
 class RegisterScene(BaseScene):
     """Register scene class for the application."""
@@ -82,6 +85,85 @@ class RegisterScene(BaseScene):
         self.setLayout(container)
 
     def _return_to_menu(self):
+        self._reset_fields()
+        self.signals.request_splash.emit()
+
+    def _start_registration(self):
+        """Start the registration process."""
+        credentials = self._get_credentials()
+        if not self._check_validation(credentials):
+            return
+
+        try:
+            with DatabaseConnection as db:
+                db.execute("""""") # Make database operation
+        except sqlite3.Error as e:
+            print(f"Handled database exception: {e}")
+        except Exception as e:
+            print(f"Handled unexpected exception: {e}")
+
+        print("Successfully registered!")
+        self._return_to_menu()
+
+    def _get_credentials(self):
+        """Return dict of field values."""
+        credentials = {
+            "firstname": self.firstname.value().title(),
+            "lastname":  self.lastname.value().title(),
+            "dob": self.dob.value(),
+            "phonenum": self.phonenum.value(),
+            "email": self.email.value().lower(),
+            "created_pass": self.create_pass.value(),
+            "confirmed_pass": self.confirm_pass.value()
+        }
+        return credentials
+
+    def _check_validation(self, credentials: Dict[str, str | QDate]) -> bool:
+        """Validate credentials and return errors, if applicable."""
+        self._reset_validation_hints()
+        flag = True
+        # Validate name fields.
+        if not Validator.firstname_check(credentials["firstname"]):
+            self.firstname.show_error()
+            flag = False
+        if not Validator.lastname_check(credentials["lastname"]):
+            self.lastname.show_error()
+            flag = False
+        # Validate date of birth.
+        if not Validator.dob_check(credentials["dob"]):
+            self.dob.show_error()
+            flag = False
+        # Validate phone number.
+        if not Validator.phonenum_check(credentials["phonenum"]):
+            self.phonenum.show_error()
+            flag = False
+        # Validate email address.
+        if not Validator.email_check(credentials["email"]):
+            self.email.show_error()
+            flag = False
+        # Validate password.
+        if not Validator.password_check(credentials["created_pass"]):
+            self.create_pass.show_error()
+            flag = False
+        # Validate matching passwords.
+        if not Validator.match_passwords(
+                credentials["created_pass"], credentials["confirmed_pass"]):
+            self.confirm_pass.show_error()
+            flag = False
+        return flag
+
+    def _reset_validation_hints(self):
+        """Remove error hinting."""
+        self.firstname.clear_error()
+        self.lastname.clear_error()
+        self.dob.clear_error()
+        self.phonenum.clear_error()
+        self.email.clear_error()
+        self.create_pass.clear_error()
+        self.confirm_pass.clear_error()
+
+    def _reset_fields(self):
+        """Remove error hinting and clear fields."""
         self.firstname.clear_value()
         self.lastname.clear_value()
         self.dob.clear_value()
@@ -89,64 +171,6 @@ class RegisterScene(BaseScene):
         self.email.clear_value()
         self.create_pass.clear_value()
         self.confirm_pass.clear_value()
-        self.signals.request_splash.emit()
-
-    def _start_registration(self):
-        """Start the registration process."""
-        credentials = self._get_credentials()
-        if self._check_validation(credentials):
-            return
-        # Placeholder for future registration logic.
-        print("VALID!")
-
-    def _get_credentials(self):
-        credentials = {
-            self.firstname: self.firstname.value().title(),
-            self.lastname:  self.lastname.value().title(),
-            self.dob: self.dob.value(),
-            self.phonenum: self.phonenum.value(),
-            self.email: self.email.value(),
-            self.create_pass: self.create_pass.value()
-        }
-        return credentials
-
-    def _check_validation(self, credentials):
-        """Validate credentials and return errors, if applicable."""
-        # Reset validation hinting.
-        for field, value in credentials.items():
-            field.clear_error()
-        invalid_fields = []
-
-        # Check for null fields.
-        if not validate_null(credentials):
-            invalid_fields.append("Null fields caught.")
-
-        # Check if user meets age requirement.
-        if not validate_age(credentials[self.dob]):
-            self.dob.show_error()
-            invalid_fields.append(self.dob)
-
-        # Check phone format.
-        if not re.match(PHONENUM_PATTERN, credentials[self.phonenum]):
-            self.phonenum.show_error()
-            invalid_fields.append(self.phonenum)
-
-        # Check email format.
-        if not re.match(EMAIL_PATTERN, credentials[self.email]):
-            self.email.show_error()
-            invalid_fields.append(self.email)
-
-        # Check password format.
-        if not re.match(PASSWORD_PATTERN, credentials[self.create_pass]):
-            self.create_pass.show_error()
-            invalid_fields.append(self.create_pass)
-
-        # Check if passwords match.
-        if self.create_pass.value() != self.confirm_pass.value():
-            self.confirm_pass.show_error()
-            invalid_fields.append(self.confirm_pass)
-
-        return invalid_fields
 
 
 
