@@ -1,6 +1,6 @@
 from enum import Enum
 
-from PyQt6.QtCore import QDate
+from PyQt6.QtCore import QDate, QCalendar
 from PyQt6.QtWidgets import QLineEdit, QLabel, QVBoxLayout, QWidget, QDateEdit, QHBoxLayout
 
 
@@ -28,9 +28,7 @@ class InputEdit(QWidget):
         self.tooltip = QLabel("( i )")
         self.tooltip.setHidden(True)
         if isinstance(self.input_field, QDateEdit):
-            self.input_field.setDisplayFormat("yyyy-MM-dd")
-            self.input_field.setCalendarPopup(True)
-            self.input_field.setDate(QDate.currentDate())
+            self._format_date_input()
         self._load_layout()
 
 
@@ -47,6 +45,12 @@ class InputEdit(QWidget):
         layout.addWidget(self.input_field)
         self.setLayout(layout)
 
+    def _format_date_input(self):
+        self.input_field.setDisplayFormat("yyyy-MM-dd")
+        self.input_field.setCalendarPopup(True)
+        self.input_field.setCalendar(QCalendar())
+        self.input_field.setDate(QDate.currentDate())
+
     def setToolTip(self, info: ToolTip):
         """Enable tooltip and set information."""
         self.tooltip.setToolTip(info.value)
@@ -59,16 +63,22 @@ class InputEdit(QWidget):
         else:
             return self.input_field.text().strip()
 
+    def clear_value(self):
+        if isinstance(self.input_field, QDateEdit):
+            self.input_field.setDate(QDate.currentDate())
+        else:
+            self.input_field.clear()
+
     def show_error(self):
         """Hint at errors with red highlighting."""
         self.tooltip.setStyleSheet("color: #521A1A;")
         self.label.setStyleSheet("color: #521A1A;")
-        self.input_field.setStyleSheet("color: #521A1A; border: 3px solid #521A1A")
+        self.input_field.setStyleSheet("border: 3px solid #521A1A")
 
     def clear_error(self):
         """Remove error hint."""
-        self.tooltip.setStyleSheet(None)
-        self.label.setStyleSheet(None)
-        self.input_field.setStyleSheet(None)
+        self.tooltip.setStyleSheet("color: #293737;")
+        self.label.setStyleSheet("color: #293737;")
+        self.input_field.setStyleSheet("border: 3px solid #293737;")
 
 

@@ -1,11 +1,3 @@
-"""
-A helper package for field validation.
-
-Provides:
-    - Null field check.
-    - Age requirement check.
-    - Match check between created and confirmed passwords.
-"""
 import re
 from datetime import date
 
@@ -16,6 +8,7 @@ from src.app.widgets.input_edit import InputEdit
 PHONENUM_PATTERN = re.compile(r"(^\+?\d{1,3}[-\s]?)?(\(\d{1,3}\)|\d{1,3})[-\s]?\d{1,3}[-\s]?\d{1,4}$")
 EMAIL_PATTERN = re.compile(r"^[\w\-.]+@([\w-]+\.)+[\w-]{2,4}$")
 PASSWORD_PATTERN = re.compile(r"^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}")
+AGE_REQUIREMENT = 18
 
 def validate_null(credentials: dict[InputEdit, str]) -> bool:
     """
@@ -26,19 +19,16 @@ def validate_null(credentials: dict[InputEdit, str]) -> bool:
     # Check for null fields.
     for field, value in credentials.items():
         if value == "":
+            print("null:", field, value)
             field.show_error()
             flag = False
     return flag
 
-def validate_age(dob: QDate):
+def validate_age(dob: QDate) -> bool:
+    """Return whether the user meets the age requirement."""
     today = date.today()
     age = today.year - dob.year()
     if [today.month, today.day] > [dob.month(), dob.year()]:
         age -= 1
-    return age >= 18
+    return age >= AGE_REQUIREMENT
 
-def validate_phonenum(phonenum):
-    return re.match(PHONENUM_PATTERN, phonenum)
-
-def validate_email(email):
-    return re.match(EMAIL_PATTERN, email)

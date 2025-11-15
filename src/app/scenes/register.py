@@ -7,11 +7,7 @@ from src.app.scenes.base import BaseScene
 from src.app.widgets.button import Button
 from src.app.widgets.form_layout import FormLayout
 from src.app.widgets.input_edit import InputEdit, ToolTip
-from src.utils.validation import validate_age, validate_null
-
-PHONENUM = re.compile(r"(^\+?\d{1,3}[-\s]?)?(\(\d{1,3}\)|\d{1,3})[-\s]?\d{1,3}[-\s]?\d{1,4}$")
-EMAIL = re.compile(r"^[\w\-.]+@([\w-]+\.)+[\w-]{2,4}$")
-PASSWORD = re.compile(r"^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}")
+from src.utils.validation import validate_age, validate_null, PHONENUM_PATTERN, EMAIL_PATTERN, PASSWORD_PATTERN
 
 class RegisterScene(BaseScene):
     """Register scene class for the application."""
@@ -66,7 +62,7 @@ class RegisterScene(BaseScene):
         form.setLayout(form_layout)
 
         # Make buttons.
-        back_btn = Button("Return to Main Menu", self.signals.request_splash)
+        back_btn = Button("Return to Main Menu", self._return_to_menu)
         self.register_btn = Button("Register", self._start_registration)
 
         # Add buttons to container.
@@ -85,11 +81,22 @@ class RegisterScene(BaseScene):
         # Set layout to scene.
         self.setLayout(container)
 
+    def _return_to_menu(self):
+        self.firstname.clear_value()
+        self.lastname.clear_value()
+        self.dob.clear_value()
+        self.phonenum.clear_value()
+        self.email.clear_value()
+        self.create_pass.clear_value()
+        self.confirm_pass.clear_value()
+        self.signals.request_splash.emit()
+
     def _start_registration(self):
         """Start the registration process."""
         credentials = self._get_credentials()
         if self._check_validation(credentials):
             return
+        # Placeholder for future registration logic.
         print("VALID!")
 
     def _get_credentials(self):
@@ -106,7 +113,7 @@ class RegisterScene(BaseScene):
     def _check_validation(self, credentials):
         """Validate credentials and return errors, if applicable."""
         # Reset validation hinting.
-        for field in credentials.keys():
+        for field, value in credentials.items():
             field.clear_error()
         invalid_fields = []
 
@@ -120,17 +127,17 @@ class RegisterScene(BaseScene):
             invalid_fields.append(self.dob)
 
         # Check phone format.
-        if not re.match(PHONENUM, credentials[self.phonenum]):
+        if not re.match(PHONENUM_PATTERN, credentials[self.phonenum]):
             self.phonenum.show_error()
             invalid_fields.append(self.phonenum)
 
         # Check email format.
-        if not re.match(EMAIL, credentials[self.email]):
+        if not re.match(EMAIL_PATTERN, credentials[self.email]):
             self.email.show_error()
             invalid_fields.append(self.email)
 
         # Check password format.
-        if not re.match(PASSWORD, credentials[self.create_pass]):
+        if not re.match(PASSWORD_PATTERN, credentials[self.create_pass]):
             self.create_pass.show_error()
             invalid_fields.append(self.create_pass)
 

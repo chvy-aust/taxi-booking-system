@@ -69,6 +69,10 @@ QMainWindow {
     padding: 5px;
 }
 
+#register QCalendar {
+    background-color: white;
+}
+
 #register QPushButton {
     margin-top: 25px;
     font: 15px 'Arial';
