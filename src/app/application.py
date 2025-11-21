@@ -3,11 +3,11 @@ from pathlib import Path
 
 from PyQt6.QtWidgets import QApplication
 
+from database import db
 from src.app.main_window import MainWindow
 
-ROOT_DIR = Path(__file__).parent.parent.parent
-DB_DIR = ROOT_DIR / 'database'
-DB_FILE = DB_DIR / 'data.db'
+
+DB_FILE = Path(__file__).parent.parent.parent / 'taxibooking.db'
 
 class TaxiBookingSystem(QApplication):
     """
@@ -34,7 +34,8 @@ class TaxiBookingSystem(QApplication):
     def _check_for_database(self):
         """Initialize database if missing."""
         if not DB_FILE.exists():
-            print("Database missing!")
+            print("Initializing database..")
+            db.init_db()
 
     def _center_window(self):
         """Center main window on screen."""

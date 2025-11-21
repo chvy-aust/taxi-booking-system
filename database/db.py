@@ -45,7 +45,7 @@ def create_user():
     return """
     CREATE TABLE IF NOT EXISTS user (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        role TEXT DEFAULT NOT NULL,
+        role TEXT NOT NULL,
         firstname TEXT NOT NULL,
         lastname TEXT NOT NULL,
         dob TEXT NOT NULL,
@@ -56,7 +56,7 @@ def create_user():
     )
     """
 
-def main():
+def init_db():
     try:
         with DatabaseConnection() as cursor:
             cursor.execute(create_user())
@@ -64,4 +64,4 @@ def main():
         print(f"Error initializing database: {e}")
 
 if __name__ == '__main__':
-    main()
+    init_db()

@@ -34,9 +34,12 @@ class LoginScene(BaseScene):
         self.signals.request_splash.emit()
 
     def _start_login(self):
+        # Get user input from fields.
         user_input = self._get_input()
+
+        # Select user from database using email value.
         try:
-            with DatabaseConnection() as connection:
+            with DatabaseConnection() as cursor:
                 pass
         except Exception as e:
             print(e)
@@ -46,3 +49,4 @@ class LoginScene(BaseScene):
             self.email: self.email.text().lower(),
             self.password: self.password.text()
         }
+        return values
