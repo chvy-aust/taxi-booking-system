@@ -39,8 +39,18 @@ class LoginScene(BaseScene):
 
         # Select user from database using email value.
         try:
-            with DatabaseConnection() as cursor:
-                pass
+            with DatabaseConnection() as conn:
+                cursor = conn.cursor()
+
+                cursor.execute("SELECT * FROM users WHERE email = ?", (user_input['email'],))
+
+                result = cursor.fetchone()
+
+                if result and result[0] == user_input['password']:
+                    print("Login successful")
+                else:
+                    print("Invalid email or password.")
+
         except Exception as e:
             print(e)
 
