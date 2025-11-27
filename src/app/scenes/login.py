@@ -1,5 +1,3 @@
-import sqlite3
-
 from PyQt6.QtWidgets import QVBoxLayout, QHBoxLayout
 
 from database.db import DatabaseConnection
