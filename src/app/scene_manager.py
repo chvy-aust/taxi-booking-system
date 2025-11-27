@@ -1,11 +1,11 @@
-from typing import Optional
 from PyQt6.QtWidgets import QStackedWidget, QWidget
 
-from src.app.scenes.login import LoginScene
-from src.app.scenes.register import RegisterScene
-from src.app.scenes.splash import SplashScreen
-from src.app.signals import SignalBus
-from src.models.user import User
+from src.app import SignalBus
+from src.models import User
+from .scenes import SplashScreen, RegisterScene, LoginScene, DashboardScene, \
+    BaseScene
+from .scenes.customer_dash import CustomerDashboardScene
+
 
 class SceneManager(QStackedWidget):
     """Handles navigation and passing data between scenes."""
@@ -17,7 +17,11 @@ class SceneManager(QStackedWidget):
         self.scenes = {
             "splash" : SplashScreen(self.signals),
             "register" : RegisterScene(self.signals),
-            "login" : LoginScene(self.signals)
+            "login" : LoginScene(self.signals),
+            "customer_dash": CustomerDashboardScene(self.signals),
+            # Placeholder widgets
+            "driver_dash": QWidget(),
+            "admin_dash": QWidget()
         }
 
         # Add initialized scenes to manager.
@@ -25,7 +29,8 @@ class SceneManager(QStackedWidget):
             self.addWidget(self.scenes[scene])
         # Listen for signals.
         self._handle_signals()
-        self.current_widget = self.currentWidget()
+        # TODO: REMOVE QWIDGET HINT WHEN PLACEHOLDER WIDGETS ARE REMOVED.
+        self.current_widget: BaseScene | QWidget = self.currentWidget()
 
     def _handle_signals(self):
         """
@@ -41,9 +46,26 @@ class SceneManager(QStackedWidget):
             lambda: self._switch_to('login')
         )
 
-    def _switch_to(self, scene: str, data: Optional[User] = None):
+        self.signals.request_customer_dash.connect(
+            lambda user: self._switch_to('customer_dash', user)
+        )
+
+        self.signals.request_driver_dash.connect(
+            lambda user: self._switch_to('driver_dash', user)
+        )
+
+        self.signals.request_admin_dash.connect(
+            lambda user: self._switch_to('admin_dash', user)
+        )
+
+        self.signals.trigger_refresh.connect(self.current_widget.refresh_scene)
+
+    def _switch_to(self, scene_name: str, data: User | None = None):
         """Navigate to requested scene."""
-        self.setCurrentWidget(self.scenes[scene])
+        scene = self.scenes[scene_name]
+        scene.user = data
+        scene.populate_data()
+        self.setCurrentWidget(scene)
 
 
 

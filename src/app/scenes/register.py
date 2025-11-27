@@ -1,13 +1,11 @@
+import sqlite3
 from typing import override
 
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout
 
 from database.db import DatabaseConnection
-from src.app.scenes.base import BaseScene
-from src.app.widgets.button import Button
-from src.app.widgets.dialogs import InfoDialog
-from src.app.widgets.form_layout import FormLayout
-from src.app.widgets.input_edit import InputEdit, DateEdit
+from src.app.scenes import BaseScene
+from src.app.widgets import Button, FormLayout, InputEdit, DateEdit
 from src.utils.constants import FieldHints
 from src.utils.validation import validate_phonenum, validate_dob, \
     validate_email, validate_password
@@ -97,7 +95,7 @@ class RegisterScene(BaseScene):
         self.setLayout(container)
 
     def _return_to_menu(self):
-        self._reset_fields()
+        self.signals.trigger_refresh.emit()
         self.signals.request_splash.emit()
 
     def _start_registration(self):
@@ -107,24 +105,24 @@ class RegisterScene(BaseScene):
             return
 
         try:
-            with DatabaseConnection() as cursor:
-                cursor.execute("""
-                    INSERT INTO user (role, firstname, lastname, dob, phonenum, email, address, password)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-                """, ("customer", values["firstname"], values["lastname"],
-                     values["dob"].toString(), values["phonenum"],
-                      values["email"], values["address"], values["create_pass"],))
-        except Exception as e:
-            message = "An error occurred! Please Try Again or contact support.\n"
-            err_dialog = InfoDialog(f"{message}\nError: {e}", self)
-            err_dialog.show()
-        else:
-            message = "Your account has been registered!"
-            success_dialog = InfoDialog(message, self)
-            success_dialog.show()
+            with DatabaseConnection() as conn:
+                conn.insert("user",
+                              {"role": "customer",
+                                    "firstname": values["firstname"],
+                                    "lastname": values["lastname"],
+                                    "dob": values["dob"].toString("yyyy-MM-dd"),
+                                    "phonenum": values["phonenum"],
+                                    "email": values["email"],
+                                    "address": values["address"],
+                                    "password": values["create_pass"]})
+        except sqlite3.Error:
+            self.critical_popup(
+                "Database Error",
+                f"A database exception occurred during this process. Data was not stored.")
+            return
 
-
-
+        self.info_popup("Successfully registered!",
+                        "Redirecting back to landing screen...")
         self._return_to_menu()
 
     def _get_credentials(self):
@@ -169,7 +167,8 @@ class RegisterScene(BaseScene):
         for field in self.fields:
             field.clear_error()
 
-    def _reset_fields(self):
+    @override
+    def refresh_scene(self):
         """Remove error hinting and clear fields."""
         for field in self.fields:
             field.reset()

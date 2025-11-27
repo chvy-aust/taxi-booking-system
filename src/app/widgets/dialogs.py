@@ -3,13 +3,15 @@ from time import sleep
 from typing import override
 
 from PyQt6.QtCore import Qt, QTimer
-from PyQt6.QtWidgets import QDialog, QDialogButtonBox, QLabel, QVBoxLayout
+from PyQt6.QtWidgets import QDialog, QDialogButtonBox, QLabel, QVBoxLayout, \
+    QWidget
 
 
 class InfoDialog(QDialog):
     def __init__(self,
-                 text: str,
-                 parent=None,
+                 message: str,
+                 exc: Exception = None,
+                 parent: QWidget | None = None,
                  w: int = 200,
                  h: int = 100,
                  window_flag: Qt.WindowType = Qt.WindowType.FramelessWindowHint):
@@ -19,15 +21,17 @@ class InfoDialog(QDialog):
         self.resize(w, h)
         btns = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok)
         btns.accepted.connect(self.accept)
-        self.timer = QTimer()
-        self.timer.setInterval(1500)
 
-        self.text = QLabel(text)
+        self.message = QLabel(f"{message}{exc}")
         layout = QVBoxLayout()
-        layout.addWidget(self.text)
+        layout.addWidget(self.message)
         layout.addWidget(btns)
         self.setLayout(layout)
 
     @override
     def show(self):
         self.exec()
+
+    def __enter__(self):
+        self.show()
+

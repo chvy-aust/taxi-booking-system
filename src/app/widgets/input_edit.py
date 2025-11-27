@@ -38,6 +38,9 @@ class InputEdit(QWidget):
         """Return value from field."""
         return self.input_field.text().strip()
 
+    def set_text(self, text):
+        self.input_field.setText(text)
+
     def reset(self):
         self.clear_error()
         self.input_field.clear()
@@ -65,6 +68,12 @@ class DateEdit(InputEdit):
 
     def date(self) -> QDate:
         return self.input_field.date()
+
+    @override
+    def set_text(self, text: str):
+        year, month, date = int(text[:4]), int(text[5:7]), int(text[8:])
+        date = QDate(year, month, date)
+        self.input_field.setDate(date)
 
     @override
     def reset(self):

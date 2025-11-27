@@ -14,14 +14,14 @@ PASSWORD_PATTERN = re.compile(r"^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}")
 AGE_REQUIREMENT = 18
 
 def validate_password(password: str) -> bool:
-    """Return if password matches required format."""
+    """Check if password matches required format."""
     if password == "":
         return False
     return bool(re.match(PASSWORD_PATTERN, password))
 
 
 def validate_dob(dob: QDate) -> bool:
-    """Indicate whether date of birth meets the age requirement."""
+    """Check whether date of birth meets the age requirement."""
     # Get current date
     today = QDate.currentDate()
     # Calculate user age, not considering if their birthday passed.
@@ -29,20 +29,24 @@ def validate_dob(dob: QDate) -> bool:
     # If user's birthday has not passed, subtract a year.
     if [today.month(), today.day()] > [dob.month(), dob.day()]:
         age -= 1
-    return bool(age >= AGE_REQUIREMENT)
+    return age >= AGE_REQUIREMENT
 
 
 def validate_phonenum(phonenum: str) -> bool:
-    """Return if password matches required format."""
+    """Check if password matches required format."""
     if phonenum == "":
         return False
     return bool(re.match(PHONENUM_PATTERN, phonenum))
 
 
 def validate_email(email: str) -> bool:
-    """Return if email matches required format."""
+    """Check if email matches required format."""
     if email == "":
         return False
     return bool(re.match(EMAIL_PATTERN, email))
+
+def validate_user(firstname, lastname, dob, phonenum, email, address, password, confirm_password) -> bool:
+    """Check if set user attributes meet validation requirements."""
+    #TODO: MOVE REGISTRATION VALIDATION CHECK TO validation.py TO BE USED IN DASHS.
 
 

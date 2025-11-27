@@ -1,7 +1,7 @@
 from pathlib import Path
 from PyQt6.QtWidgets import QMainWindow
 
-from src.app.scene_manager import SceneManager
+from .scene_manager import SceneManager
 
 STYLE_FILE = Path(__file__).parent / 'styles.qss'
 

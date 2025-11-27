@@ -1,10 +1,12 @@
-from PyQt6.QtWidgets import QLineEdit, QVBoxLayout, QHBoxLayout
+import sqlite3
+
+from PyQt6.QtWidgets import QVBoxLayout, QHBoxLayout
 
 from database.db import DatabaseConnection
 from src.app.scenes.base import BaseScene
 from src.app.widgets.button import Button
 from src.app.widgets.input_edit import InputEdit
-
+from src.models import User
 
 class LoginScene(BaseScene):
     def __init__(self, signals):
@@ -20,6 +22,7 @@ class LoginScene(BaseScene):
         self.login_btn = Button("Login", self._start_login)
         btn_continer = QHBoxLayout()
         btn_continer.addWidget(self.back_btn)
+        btn_continer.addWidget(self.login_btn)
 
         # Set layout to scene.
         container = QVBoxLayout()
@@ -31,32 +34,52 @@ class LoginScene(BaseScene):
         self.setLayout(container)
 
     def _return_to_menu(self):
+        self._reset_fields()
         self.signals.request_splash.emit()
 
     def _start_login(self):
-        # Get user input from fields.
+        self._clear_fields()
         user_input = self._get_input()
 
-        # Select user from database using email value.
+        # Lookup user from provided email and validate password.
         try:
             with DatabaseConnection() as conn:
-                cursor = conn.cursor()
-
-                cursor.execute("SELECT * FROM users WHERE email = ?", (user_input['email'],))
-
-                result = cursor.fetchone()
-
-                if result and result[0] == user_input['password']:
-                    print("Login successful")
+                result = conn.get_user(user_input['email'])
+                if result and result['password'] == user_input['password']:
+                    self.info_popup("Login successful")
+                    self._switch_to_dashboard(result)
                 else:
-                    print("Invalid email or password.")
-
+                    self.email.show_error()
+                    self.password.show_error()
+                    self.info_popup("Invalid email or password.")
         except Exception as e:
             print(e)
+            self.critical_popup()
+
 
     def _get_input(self):
         values = {
-            self.email: self.email.text().lower(),
-            self.password: self.password.text()
+            "email": self.email.text().lower(),
+            "password": self.password.text()
         }
         return values
+
+    def _clear_fields(self):
+        self.email.clear_error()
+        self.password.clear_error()
+
+    def _reset_fields(self):
+        self.email.reset()
+        self.password.reset()
+
+    def _switch_to_dashboard(self, data):
+        self._reset_fields()
+        user = User(data)
+        if user.role == "admin":
+            self.signals.request_admin_dash.emit(user)
+        elif user.role == "driver":
+            self.signals.request_driver_dash.emit(user)
+        elif user.role == "customer":
+            self.signals.request_customer_dash.emit(user)
+        else:
+            self.critical_popup("Could not navigate to dashboard.")
