@@ -1,8 +1,7 @@
 import sqlite3
-from pydoc import replace
-from typing import Any
 
 from database.db import DatabaseConnection
+
 
 class Booking:
 

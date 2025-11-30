@@ -1,6 +1,6 @@
 import datetime
 
-from PyQt6.QtCore import QDate, QSize
+from PyQt6.QtCore import QDate
 from PyQt6.QtWidgets import QLineEdit, QLabel, QVBoxLayout, QWidget, QDateEdit, \
     QHBoxLayout, QSizePolicy, QTimeEdit
 

@@ -4,8 +4,8 @@ from pathlib import Path
 
 from PyQt6.QtWidgets import QApplication
 
-from scripts.init_db import initialize_database
-from src.app import MainWindow
+from database.init_db import initialize_database
+from src import MainWindow
 
 DB_FILE = Path(__file__).parent / 'taxibooking.db'
 

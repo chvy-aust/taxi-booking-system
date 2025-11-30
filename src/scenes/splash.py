@@ -1,8 +1,8 @@
 from typing import override
 from PyQt6.QtWidgets import QVBoxLayout, QLabel, QHBoxLayout
 
-from src.app.scenes.base import BaseScene
-from src.app.widgets.button import Button
+from src.scenes.base import BaseScene
+from src.widgets.button import Button
 
 
 class SplashScreen(BaseScene):

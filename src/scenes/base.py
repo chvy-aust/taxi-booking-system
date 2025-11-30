@@ -1,7 +1,7 @@
 from PyQt6.QtWidgets import QWidget, QMessageBox, QDialog
 
-from src.app.dialogs import InfoDialog, ConfirmationDialog
-from src.app.signals import SignalBus
+from src.dialogs import InfoDialog, ConfirmationDialog
+from src.signals import SignalBus
 from src.models.user import User
 from src.utils.constants import ErrorMessage
 

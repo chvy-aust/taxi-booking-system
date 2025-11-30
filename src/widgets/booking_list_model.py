@@ -1,4 +1,3 @@
-from PyQt6 import QtCore
 from PyQt6.QtCore import Qt, QAbstractListModel
 
 

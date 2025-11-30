@@ -5,10 +5,8 @@ from PyQt6.QtWidgets import QVBoxLayout, QLabel, QListView, \
     QHBoxLayout, QWidget, QStackedWidget
 
 from database.db import DatabaseConnection
-from src.app.dialogs import BookingForm
-from src.app.scenes import BaseScene
-from src.app.widgets import Button
-from src.app.widgets.booking_list_model import BookingListModel
+from src.widgets import BookingForm, BookingListModel, Button
+from src.scenes import BaseScene
 from src.models.booking import Booking
 from src.utils.constants import ErrorMessage
 

@@ -2,10 +2,12 @@ from pathlib import Path
 
 from PyQt6.QtWidgets import QMainWindow, QApplication, QStackedWidget
 
-from . import SignalBus
-from .scenes import RegisterScene, LoginScene, CustomerDashboardScene, \
-    SplashScreen, BaseScene
-from ..models import User
+from .signals import SignalBus
+from .scenes import (
+            RegisterScene, LoginScene,
+            CustomerDashboardScene,
+            SplashScreen, BaseScene)
+from .models import User
 
 STYLE_FILE = Path(__file__).parent / 'styles.qss'
 

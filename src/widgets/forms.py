@@ -1,68 +1,25 @@
 import datetime
 
-from PyQt6.QtCore import Qt, pyqtSignal
-from PyQt6.QtWidgets import QHBoxLayout, QVBoxLayout, QLabel, QDialog, QWidget, \
+from PyQt6.QtCore import pyqtSignal, Qt
+from PyQt6.QtWidgets import QVBoxLayout, QHBoxLayout, QWidget, QLabel, \
     QComboBox, QTimeEdit
 
-from src.app.widgets import InputEdit, Button, DateEdit
+from .input_edit import InputEdit, DateEdit
+from .button import Button
 
 
-class InfoDialog(QDialog):
-    def __init__(self, text, title: bool = False, parent=None):
-        super().__init__(parent)
-        self.setWindowFlag(Qt.WindowType.FramelessWindowHint)
-        self.setObjectName("popup")
+class FormLayout(QVBoxLayout):
+    """Custom form layout class."""
+    def __init__(self):
+        super().__init__()
 
-        # Create dialog elements.
-        text = QLabel(text)
-        text.setMinimumHeight(80)
-        ok_btn = Button("OK", self._on_ok_click)
-
-        # Add elements to layout.
-        container = QVBoxLayout()
-        if title:
-            title = QLabel("( ℹ ) Information ")
-            title.setObjectName("header")
-            container.addWidget(title)
-        container.addWidget(text)
-        container.addWidget(ok_btn)
-        self.setLayout(container)
-
-    def _on_ok_click(self):
-        self.accept()
-
-
-class ConfirmationDialog(QDialog):
-    def __init__(self, text = "", title: str = "Are you sure?", parent=None):
-        super().__init__(parent)
-        self.setWindowFlag(Qt.WindowType.FramelessWindowHint)
-        self.setObjectName("popup")
-
-        # Create dialog elements.
-        title = QLabel(title)
-        title.setObjectName("header")
-        text = QLabel(text)
-        text.setMinimumHeight(80)
-        confirm_btn = Button("Yes!", self._on_confirm_click)
-        cancel_btn = Button("Cancel", self._on_cancel_click)
-
-        btns = QHBoxLayout()
-        btns.addWidget(confirm_btn)
-        btns.addWidget(cancel_btn)
-
-        # Add elements to layout.
-        container = QVBoxLayout()
-        container.addWidget(title)
-        container.addWidget(text)
-        container.addWidget(btns)
-        self.setLayout(container)
-
-    def _on_confirm_click(self):
-        self.accept()
-
-    def _on_cancel_click(self):
-        self.reject()
-
+    def add_row(self, *fields):
+        """Add arbitrary amount of fields to row."""
+        row = QHBoxLayout()
+        for field in fields:
+            row.addWidget(field)
+        # Add row to layout.
+        self.addLayout(row)
 
 class BookingForm(QWidget):
     start_booking = pyqtSignal(object)
@@ -176,5 +133,3 @@ class BookingForm(QWidget):
     def _clear_errors(self):
         for field in self.fields:
             field.clear_error()
-
-

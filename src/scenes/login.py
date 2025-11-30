@@ -3,8 +3,8 @@ import sqlite3
 from PyQt6.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QLabel, QWidget
 
 from database.db import DatabaseConnection
-from src.app.scenes import BaseScene
-from src.app.widgets import Button, InputEdit
+from src.scenes import BaseScene
+from src.widgets import Button, InputEdit
 from src.models import User
 from src.utils.constants import ErrorMessage
 

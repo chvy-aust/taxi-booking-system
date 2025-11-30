@@ -2,12 +2,10 @@ import sqlite3
 from typing import override
 
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout,  QLineEdit
-from PyQt6 import uic
-
 
 from database.db import DatabaseConnection
-from src.app.scenes import BaseScene
-from src.app.widgets import Button, FormLayout, InputEdit, DateEdit
+from src.scenes import BaseScene
+from src.widgets import Button, FormLayout, InputEdit, DateEdit
 from src.utils.constants import FieldHint, ErrorMessage
 from src.utils.validation import validate_phonenum, validate_dob, \
     validate_email, validate_password, is_email_unique
