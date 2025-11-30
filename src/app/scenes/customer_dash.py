@@ -86,7 +86,6 @@ class CustomerDashboardScene(BaseScene):
         Return and set user with updated attributes.
         Accepts a dictionary of str attributes to their new values.
         """
-        # TODO: ADD METHOD TO GET + VALIDATE NEW_ATTR
         try:
             self.user.update(new_attr)
         except sqlite3.Error:
