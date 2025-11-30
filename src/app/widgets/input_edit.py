@@ -1,19 +1,23 @@
-from typing import override
+import datetime
 
-from PyQt6.QtCore import QDate
+from PyQt6.QtCore import QDate, QSize
 from PyQt6.QtWidgets import QLineEdit, QLabel, QVBoxLayout, QWidget, QDateEdit, \
-    QHBoxLayout
+    QHBoxLayout, QSizePolicy, QTimeEdit
 
-
+MIN_WIDTH = QSizePolicy.Policy.Minimum
+MIN_HEIGHT = QSizePolicy.Policy.Minimum
 class InputEdit(QWidget):
     def __init__(self,
                  prompt: str,
-                 input_type: type[QLineEdit | QDateEdit] = QLineEdit,
+                 input_type: type[QLineEdit | QDateEdit | QTimeEdit] = QLineEdit,
                  object_name: str = None):
         super().__init__()
         self.setObjectName(object_name)
+        self.setSizePolicy(MIN_WIDTH, MIN_HEIGHT)
         self.prompt = QLabel(prompt)
+        self.prompt.setFixedHeight(25)
         self.input_field = input_type()
+        self.input_field.setFixedHeight(40)
         self.tooltip = QLabel("( i )")
         self.setLayout(self._load_layout())
 
@@ -33,6 +37,12 @@ class InputEdit(QWidget):
         # Add tooltip to container next to prompt.
         self.lbl_tltp.addStretch()
         self.lbl_tltp.addWidget(self.tooltip)
+
+    def set_prompt(self, text):
+        self.prompt.setText(text)
+
+    def set_echo_mode(self, mode: QLineEdit.EchoMode):
+        self.input_field.setEchoMode(mode)
 
     def text(self):
         """Return value from field."""
@@ -57,6 +67,11 @@ class InputEdit(QWidget):
         self.tooltip.setStyleSheet("color: #293737;")
         self.input_field.setStyleSheet("border: 3px solid #293737;")
 
+    @property
+    def text_changed(self):
+        return self.input_field.textChanged
+
+
 class DateEdit(InputEdit):
     def __init__(self, prompt: str, object_name: str = None):
         super().__init__(prompt,
@@ -69,14 +84,21 @@ class DateEdit(InputEdit):
     def date(self) -> QDate:
         return self.input_field.date()
 
-    @override
-    def set_text(self, text: str):
-        year, month, date = int(text[:4]), int(text[5:7]), int(text[8:])
-        date = QDate(year, month, date)
+    def maximum_date(self, date: QDate | datetime.date):
+        self.input_field.setMaximumDate(date)
+
+    def minimum_date(self, date: QDate | datetime.date):
+        self.input_field.setMinimumDate(date)
+
+    def set_text(self, date):
         self.input_field.setDate(date)
 
-    @override
     def reset(self):
         self.clear_error()
         self.input_field.setDate(QDate.currentDate())
+
+    @property
+    def text_changed(self):
+        return self.input_field.dateChanged
+
 

@@ -1,3 +1,4 @@
+import datetime
 import sqlite3
 from pathlib import Path
 from typing import Any
@@ -8,105 +9,78 @@ class DatabaseConnection:
     """Database class to handle transactions."""
     def __init__(self):
         self.db_path = DB_FILE
-        self.connection: sqlite3.Connection | None = None
-
-    def execute(self,
-                sql: str,
-                parameters: tuple | None = None
-        ) -> sqlite3.Cursor:
-        try:
-            if parameters is not None:
-                return self.connection.execute(sql, parameters)
-            return self.connection.execute(sql)
-        except sqlite3.Error as e:
-            print(f"CRITICAL: {e}")
-            raise
-
-    def executemany(self,
-                    sql: str,
-                    parameters: tuple
-        ) -> sqlite3.Cursor:
-        try:
-            return self.connection.executemany(sql, parameters)
-        except sqlite3.Error as e:
-            print(f"CRITICAL: {e}")
-            raise
-
-    def insert(self,
-               table_name: str,
-               record: dict[str, Any]
-        ):
-        values = tuple(record.values())
-        fields = ','.join(record.keys())
-        placeholders = ','.join("?" * len(record))
-        self.execute(f"INSERT INTO {table_name} ({fields}) VALUES ({placeholders})", values)
-
-    def fetch(self,
-                  table_name: str,
-                  conditions: str | tuple[str] | None = None,
-                  params = None,
-                  limit: int | None = None,
-                  order_by: str | tuple[str] | None = None
-                  ):
-        sql = f"SELECT * FROM {table_name}"
-
-        if conditions is not None:
-            if isinstance(conditions, tuple):
-                conditions = ' AND '.join(condition for condition in conditions)
-            sql += f" WHERE {conditions}"
-
-        if order_by is not None:
-            if isinstance(conditions, tuple):
-                order_by = ', '.join(_ for _ in order_by)
-            sql += f" ORDER BY {order_by}"
-
-        if limit is None:
-            return self.execute(sql, params).fetchall()
-        elif limit == 1:
-            return self.execute(sql, params).fetchone()
-        else:
-            return self.execute(sql, params).fetchmany(limit)
-
-    def get_user(self, email):
-        return self.fetch(table_name="user", conditions="email = ?", params=(email,), limit=1)
+        self.conn: sqlite3.Connection | None = None
 
     def __enter__(self):
         """Establish connection and return cursor."""
-        self.connection = sqlite3.connect(self.db_path)
-        self.connection.execute("PRAGMA foreign_keys = ON")
-        self.connection.row_factory = sqlite3.Row
+        self.conn = sqlite3.connect(self.db_path)
+        self.conn.execute("PRAGMA foreign_keys = ON")
+        self.conn.row_factory = sqlite3.Row
+        self.cursor = self.conn.cursor()
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         """Clean up transactions and close database."""
         if exc_type:
-            self.connection.rollback()
+            self.conn.rollback()
+            print(f"( WARNING ⚠ ) Transaction rolled back due to caught exception.\n"
+                  f"( ⚠ ) {exc_type}: {exc_val}")
         else:
-            self.connection.commit()
-        if self.connection:
-            self.connection.close()
+            self.conn.commit()
 
-def create_user():
-    return """
-    CREATE TABLE IF NOT EXISTS user (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        role TEXT NOT NULL,
-        firstname TEXT NOT NULL,
-        lastname TEXT NOT NULL,
-        dob TEXT NOT NULL,
-        phonenum TEXT NOT NULL,
-        email TEXT NOT NULL UNIQUE,
-        address TEXT NOT NULL,
-        password TEXT NOT NULL
-    )
-    """
+        if self.conn:
+            self.conn.close()
 
-def init_db():
-    try:
-        with DatabaseConnection() as conn:
-            conn.execute(create_user())
-    except sqlite3.Error as e:
-        print(f"Error initializing database: {e}")
+    def execute(self, sql: str, params=()) -> sqlite3.Cursor:
+        """Return easily accessible cursor.execute() method."""
+        return self.conn.execute(sql, params)
 
-if __name__ == '__main__':
-    init_db()
+    def lookup_user(self, email):
+        cursor = self.execute("SELECT * FROM user WHERE email = ?", (email,))
+        return cursor.fetchone()
+
+    def create_user(self, firstname, lastname, dob, phonenum,
+                    email, address, password, role="customer"):
+        try:
+            print(f"( ℹ ) Adding new user ({firstname} {lastname}) to database …")
+            self.execute("""
+                     INSERT INTO user (
+                                role, firstname, lastname, dob,
+                                phonenum, email, address, password)
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                                """, (
+                                role, firstname, lastname, dob,
+                                phonenum, email, address, password,)
+            )
+        except sqlite3.Error as e:
+            print(f"( WARNING ⚠ ) Failed to add user to database! ERROR: {e}")
+            raise
+        else:
+            print(f"( ℹ ) Successfully added user to database!")
+
+    def create_booking(self, customer_id: int, info: dict[str, Any]):
+
+        # Append default data if booking is confirmed.
+        driver_id = info.get("driver_id", None)
+        status = info.get("status", "waiting_for_assignment")
+
+        try:
+            self.execute("""
+                    INSERT INTO booking (
+                                customer_id, driver_id, dropoff, 
+                                pickup, date, time, status)
+                    VALUES (?, ?, ?, ?, ?, ?, ?) 
+                                """, (
+                                customer_id,
+                                driver_id,
+                                info["dropoff"],
+                                info["pickup"],
+                                info["date"],
+                                info["time"],
+                                status,)
+            )
+        except sqlite3.Error as e:
+            print(f"( WARNING ⚠ ) Failed to make booking! ERROR: {e}")
+            raise
+        else:
+            print(f"( ℹ ) Successfully created new booking!")

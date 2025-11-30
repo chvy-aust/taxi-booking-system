@@ -1,10 +1,13 @@
-from PyQt6.QtWidgets import QVBoxLayout, QHBoxLayout
+import sqlite3
+
+from PyQt6.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QLabel, QWidget
 
 from database.db import DatabaseConnection
-from src.app.scenes.base import BaseScene
-from src.app.widgets.button import Button
-from src.app.widgets.input_edit import InputEdit
+from src.app.scenes import BaseScene
+from src.app.widgets import Button, InputEdit
 from src.models import User
+from src.utils.constants import ErrorMessage
+
 
 class LoginScene(BaseScene):
     def __init__(self, signals):
@@ -12,8 +15,19 @@ class LoginScene(BaseScene):
         self._load_ui()
 
     def _load_ui(self):
+
+        header = QLabel("LOG IN")
+        header.setObjectName("HEADER")
+        header.setFixedHeight(80)
+
+        # Custom divider.
+        divider = QWidget()
+        divider.setObjectName("DIVIDER")
+        divider.setFixedHeight(3)
+
         self.email = InputEdit("Enter email address:")
         self.password = InputEdit("Enter password:")
+        self.password.set_echo_mode(QLineEdit.EchoMode.Password)
 
         # Add buttons to container.
         self.back_btn =  Button("Return to Main Menu", self._return_to_menu)
@@ -24,10 +38,10 @@ class LoginScene(BaseScene):
 
         # Set layout to scene.
         container = QVBoxLayout()
+        container.addWidget(header)
+        container.addWidget(divider)
         container.addWidget(self.email)
         container.addWidget(self.password)
-
-
         container.addLayout(btn_continer)
         self.setLayout(container)
 
@@ -36,23 +50,22 @@ class LoginScene(BaseScene):
         self.signals.request_splash.emit()
 
     def _start_login(self):
-        self._clear_fields()
+        # Get user input from fields.
         user_input = self._get_input()
 
-        # Lookup user from provided email and validate password.
         try:
             with DatabaseConnection() as conn:
-                result = conn.get_user(user_input['email'])
+                conn.cursor.execute("SELECT * FROM user WHERE email = ?", (user_input['email'],))
+                result = conn.cursor.fetchone()
+                print(f"user input: {user_input}")
+                print(f"results: {result}")
                 if result and result['password'] == user_input['password']:
                     self.info_popup("Login successful")
                     self._switch_to_dashboard(result)
                 else:
-                    self.email.show_error()
-                    self.password.show_error()
-                    self.info_popup("Invalid email or password.")
-        except Exception as e:
-            print(e)
-            self.critical_popup()
+                    self.info_popup("Invalid email or password.", title=False)
+        except sqlite3.Error:
+            self.critical_popup(ErrorMessage.DATABASE_ERROR)
 
 
     def _get_input(self):
@@ -61,10 +74,6 @@ class LoginScene(BaseScene):
             "password": self.password.text()
         }
         return values
-
-    def _clear_fields(self):
-        self.email.clear_error()
-        self.password.clear_error()
 
     def _reset_fields(self):
         self.email.reset()

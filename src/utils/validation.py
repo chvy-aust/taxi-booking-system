@@ -2,6 +2,7 @@ import re
 
 from PyQt6.QtCore import QDate
 
+from database.db import DatabaseConnection
 
 COUNTRY_CODE = r"(?:\+?\d{1,3}[-\s]?)?"
 AREA_CODE = r"(?:\(\d{1,3}\)|\d{1,3})[-\s]?"
@@ -40,13 +41,18 @@ def validate_phonenum(phonenum: str) -> bool:
 
 
 def validate_email(email: str) -> bool:
-    """Check if email matches required format."""
+    """Return True if email matches format and is not null, else False."""
     if email == "":
         return False
     return bool(re.match(EMAIL_PATTERN, email))
 
-def validate_user(firstname, lastname, dob, phonenum, email, address, password, confirm_password) -> bool:
-    """Check if set user attributes meet validation requirements."""
-    #TODO: MOVE REGISTRATION VALIDATION CHECK TO validation.py TO BE USED IN DASHS.
+def is_email_unique(email: str) -> bool:
+    """Return True if email is unique, else False."""
+    with DatabaseConnection() as conn:
+            user = conn.lookup_user(email)
+            return user is None
+
+
+
 
 

@@ -2,9 +2,8 @@ from PyQt6.QtWidgets import QStackedWidget, QWidget
 
 from src.app import SignalBus
 from src.models import User
-from .scenes import SplashScreen, RegisterScene, LoginScene, DashboardScene, \
+from .scenes import SplashScreen, RegisterScene, LoginScene, CustomerDashboardScene, \
     BaseScene
-from .scenes.customer_dash import CustomerDashboardScene
 
 
 class SceneManager(QStackedWidget):
@@ -19,9 +18,6 @@ class SceneManager(QStackedWidget):
             "register" : RegisterScene(self.signals),
             "login" : LoginScene(self.signals),
             "customer_dash": CustomerDashboardScene(self.signals),
-            # Placeholder widgets
-            "driver_dash": QWidget(),
-            "admin_dash": QWidget()
         }
 
         # Add initialized scenes to manager.
@@ -29,12 +25,14 @@ class SceneManager(QStackedWidget):
             self.addWidget(self.scenes[scene])
         # Listen for signals.
         self._handle_signals()
-        # TODO: REMOVE QWIDGET HINT WHEN PLACEHOLDER WIDGETS ARE REMOVED.
-        self.current_widget: BaseScene | QWidget = self.currentWidget()
 
     def _handle_signals(self):
         """
         Respond to signals emitted from scenes.
+
+        Handles:
+            - Switching between different scenes. (ie, login -> customer dash)
+            - Refreshing scenes
         """
         self.signals.request_splash.connect(
             lambda: self._switch_to('splash')
@@ -51,21 +49,29 @@ class SceneManager(QStackedWidget):
         )
 
         self.signals.request_driver_dash.connect(
-            lambda user: self._switch_to('driver_dash', user)
+            lambda: print("This screen has not been added yet!")
         )
 
         self.signals.request_admin_dash.connect(
-            lambda user: self._switch_to('admin_dash', user)
+            lambda: print("This screen has not been added yet!")
         )
 
-        self.signals.trigger_refresh.connect(self.current_widget.refresh_scene)
+        self.signals.trigger_refresh.connect(self.refresh)
 
     def _switch_to(self, scene_name: str, data: User | None = None):
-        """Navigate to requested scene."""
+        """Navigate to requested scene and populates data, if provided."""
         scene = self.scenes[scene_name]
         scene.user = data
         scene.populate_data()
         self.setCurrentWidget(scene)
+
+    def refresh(self):
+        """Reloads the current scene."""
+        current_widget: BaseScene | None = self.currentWidget()
+        if current_widget is not None:
+            current_widget.refresh_scene()
+        else:
+            print("( WARNING ⚠ ) Could not reload application.")
 
 
 

@@ -1,1 +1,5 @@
-from .app import application, main_window
+from .app import MainWindow
+
+__all__ = [
+    'MainWindow'
+]

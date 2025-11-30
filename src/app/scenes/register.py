@@ -1,14 +1,16 @@
 import sqlite3
 from typing import override
 
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout,  QLineEdit
+from PyQt6 import uic
+
 
 from database.db import DatabaseConnection
 from src.app.scenes import BaseScene
 from src.app.widgets import Button, FormLayout, InputEdit, DateEdit
-from src.utils.constants import FieldHints
+from src.utils.constants import FieldHint, ErrorMessage
 from src.utils.validation import validate_phonenum, validate_dob, \
-    validate_email, validate_password
+    validate_email, validate_password, is_email_unique
 
 
 class RegisterScene(BaseScene):
@@ -39,19 +41,21 @@ class RegisterScene(BaseScene):
         self.lastname = InputEdit("Enter last name:")
         # Date of birth field + tooltip.
         self.dob = DateEdit("Enter date of birth:")
-        self.dob.set_tooltip(FieldHints.AGE_REQUIREMENT)
+        self.dob.set_tooltip(FieldHint.AGE_REQUIREMENT)
         # Phone number field + tooltip.
         self.phonenum = InputEdit("Enter phone number:")
-        self.phonenum.set_tooltip(FieldHints.PHONENUM_FORMAT)
+        self.phonenum.set_tooltip(FieldHint.PHONENUM_FORMAT)
         # Email field + tooltip.
         self.email = InputEdit("Enter email address:")
-        self.email.set_tooltip(FieldHints.EMAIL_FORMAT)
+        self.email.set_tooltip(FieldHint.EMAIL_FORMAT)
         self.address = InputEdit("Enter home address:")
         # Password fields + tooltips.
         self.create_pass = InputEdit("Create new password:")
-        self.create_pass.set_tooltip(FieldHints.PASSWORD_FORMAT)
+        self.create_pass.set_tooltip(FieldHint.PASSWORD_FORMAT)
+        self.create_pass.set_echo_mode(QLineEdit.EchoMode.Password)
         self.confirm_pass = InputEdit("Confirm new password:")
-        self.confirm_pass.set_tooltip(FieldHints.MATCHING_PASSWORD)
+        self.confirm_pass.set_tooltip(FieldHint.MATCHING_PASSWORD)
+        self.confirm_pass.set_echo_mode(QLineEdit.EchoMode.Password)
 
         self.fields = [
             self.firstname, self.lastname,
@@ -100,30 +104,29 @@ class RegisterScene(BaseScene):
 
     def _start_registration(self):
         """Start the registration process."""
+        # Get credentials from fields.
         values = self._get_credentials()
+        # If credentials not valid, terminate process.
         if not self._check_validation(values):
             return
 
         try:
+            # Save user to database.
             with DatabaseConnection() as conn:
-                conn.insert("user",
-                              {"role": "customer",
-                                    "firstname": values["firstname"],
-                                    "lastname": values["lastname"],
-                                    "dob": values["dob"].toString("yyyy-MM-dd"),
-                                    "phonenum": values["phonenum"],
-                                    "email": values["email"],
-                                    "address": values["address"],
-                                    "password": values["create_pass"]})
+                conn.create_user(
+                    values["firstname"],
+                    values["lastname"],
+                    # Convert QDate to str.
+                    values["dob"].toString("yyyy-MM-dd"),
+                    values["phonenum"],
+                    values["email"],
+                    values["address"],
+                    values["create_pass"],)
         except sqlite3.Error:
-            self.critical_popup(
-                "Database Error",
-                f"A database exception occurred during this process. Data was not stored.")
-            return
-
-        self.info_popup("Successfully registered!",
-                        "Redirecting back to landing screen...")
-        self._return_to_menu()
+            self.critical_popup(ErrorMessage.DATABASE_ERROR)
+        else:
+            self.info_popup("Successfully registered! Redirecting back to landing screen…")
+            self._return_to_menu()
 
     def _get_credentials(self):
         """Return dict of field values."""
@@ -142,24 +145,36 @@ class RegisterScene(BaseScene):
     def _check_validation(self, values) -> bool:
         """Validate credentials and show validation hints."""
         self._reset_validation_hints()
-        # Map validation status to instance.
-        validation_checks = {
-            self.firstname: values["firstname"] != "",
-            self.lastname: values["lastname"] != "",
-            self.dob: validate_dob(values["dob"]),
-            self.phonenum: validate_phonenum(values["phonenum"]),
-            self.email: validate_email(values["email"]),
-            self.address: values["address"] != "",
-            self.create_pass: validate_password(values["create_pass"]),
-            self.confirm_pass: values["create_pass"] == values["confirm_pass"]
-        }
+
+        # Return a mapping of field instances to their format validity.
+        validation_checks = [
+            values["firstname"] != "",
+            values["lastname"] != "",
+            validate_dob(values["dob"]),
+            validate_phonenum(values["phonenum"]),
+            validate_email(values["email"]),
+            values["address"] != "",
+            validate_password(values["create_pass"]),
+            values["create_pass"] == values["confirm_pass"]
+        ]
+
 
         flag = True
-        for field, is_valid in validation_checks.items():
+        # Store bool indication of whether all fields have valid formats (True).
+        for field, is_valid in zip(self.fields, validation_checks):
             if not is_valid:
                 field.show_error()
                 flag = False
-        # Indication of whether any fields were invalid.
+
+        try:
+            if not is_email_unique(values["email"]):
+                self.email.show_error()
+                self.info_popup("This email address is already in use!")
+                flag = False
+        except sqlite3.Error:
+            # If email uniqueness cannot be verified, terminate process.
+            self.critical_popup(ErrorMessage.DATABASE_ERROR)
+            flag = False
         return flag
 
     def _reset_validation_hints(self):

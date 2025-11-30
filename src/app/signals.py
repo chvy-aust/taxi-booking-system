@@ -1,7 +1,7 @@
 from PyQt6.QtCore import pyqtSignal, QObject
 
 class SignalBus(QObject):
-    """A signal controller to manage signals shared throughout system."""
+    """A bus of signals shared throughout the system."""
     trigger_refresh = pyqtSignal()
     request_splash = pyqtSignal()
     request_register = pyqtSignal()

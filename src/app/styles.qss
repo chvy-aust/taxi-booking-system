@@ -5,9 +5,28 @@ QMainWindow {
 }
 
 QDialog {
-    background-color: #F4F4F2;
-    border: 3px solid #293737;
+    border: 3px solid #1B2626;
+    background-color: #8EA09F;
+}
+
+#popup QLabel {
+    color: #1B2626;
+    margin-bottom: 10px;
+    padding: 15px;
+}
+
+#popup QLabel#header {
+    qproperty-alignment: AlignCenter;
+    background-color: #8EA09F;
+    color: #1B2626;
+    margin-bottom: 10px;
     padding: 5px;
+}
+
+#popup QPushButton {
+    background-color: #1B2626;
+    padding: 5px;
+    border-radius: 0px;
 }
 
 /* SPLASH SCREEN CUSTOMIZATION */
@@ -93,8 +112,82 @@ QDialog {
     background-color: #101717;
 }
 
-#register QPushButton#LOGIN {
-    background: transparent;
-    color: #101717;
+QDialog#booking-form {
+    border: 3px solid #1B2626;
+    background-color: #8EA09F;
+}
+
+#login QPushButton {
+    margin-top: 25px;
+    font: 15px 'Arial';
+    background-color: #1B2626;
+    padding: 10 30 10 30;
+    border-radius: 0px;
+}
+
+#login QLineEdit {
+    background-color: white;
+    color: black;
+    border-radius: 0px;
+    border: 3px solid #293737;
+    padding: 5px;
+}
+
+#login QLabel#HEADER {
+    qproperty-alignment: AlignCenter;
+    background-color: #1B2626;
+    color: white;
+    font: bold 41px 'Arial';
+    padding: 15;
 
 }
+
+#booking-form QPushButton {
+    margin-top: 25px;
+    font: 15px 'Arial';
+    background-color: #1B2626;
+    padding: 10 30 10 30;
+    border-radius: 0px;
+}
+
+#booking-form QLineEdit {
+    background-color: white;
+    color: black;
+    border-radius: 0px;
+    border: 3px solid #293737;
+    padding: 5px;
+}
+
+#booking-form QDateEdit {
+    background-color: white;
+    color: black;
+    border-radius: 0px;
+    border: 3px solid #293737;
+    padding: 5px;
+}
+
+#booking-form QLabel  {
+    font: bold 15px 'Arial';
+    color: #293737;
+}
+
+#booking-form QLabel#header  {
+    qproperty-alignment: AlignCenter;
+    background-color: #1B2626;
+    color: white;
+    font: bold 41px 'Arial';
+    padding: 15;
+}
+
+QListView {
+    background-color: white;
+    color: #1B2626;
+    border: 3px solid #1B2626;
+    font: bold 15px 'Arial';
+}
+
+QListView::item {
+    border-bottom: 3px solid #1B2626;
+    padding: 10px;
+}
+
