@@ -1,27 +1,14 @@
 import datetime
 
 from PyQt6.QtCore import pyqtSignal, Qt
-from PyQt6.QtWidgets import QVBoxLayout, QHBoxLayout, QWidget, QLabel, \
-    QComboBox, QTimeEdit
+from PyQt6.QtWidgets import QVBoxLayout, QLabel, \
+    QComboBox, QTimeEdit, QFrame
 
-from .input_edit import InputEdit, DateEdit
 from .button import Button
+from .input_edit import InputEdit, DateEdit
 
 
-class FormLayout(QVBoxLayout):
-    """Custom form layout class."""
-    def __init__(self):
-        super().__init__()
-
-    def add_row(self, *fields):
-        """Add arbitrary amount of fields to row."""
-        row = QHBoxLayout()
-        for field in fields:
-            row.addWidget(field)
-        # Add row to layout.
-        self.addLayout(row)
-
-class BookingForm(QWidget):
+class BookingForm(QFrame):
     start_booking = pyqtSignal(object)
 
     def __init__(self):
@@ -29,11 +16,18 @@ class BookingForm(QWidget):
         self.setWindowFlag(Qt.WindowType.FramelessWindowHint)
         self.setObjectName("booking-form")
         self.today = datetime.datetime.today()
+        self._setup_ui()
+        self.fields = [
+            self.dropoff,
+            self.pickup,
+            self.date,
+            self.time
+        ]
 
+    def _setup_ui(self):
         booking_header = QLabel("Make a Booking")
         booking_header.setFixedHeight(80)
         booking_header.setObjectName("header")
-
 
         self.dropoff = InputEdit("Enter drop off location:")
         self.pickup = InputEdit("Enter pickup location:")
@@ -41,25 +35,18 @@ class BookingForm(QWidget):
         self.datetime_option = QComboBox()
         self.datetime_option.addItems(("Book now ⓘ", "Book in advance ⓘ"))
         self.datetime_option.currentIndexChanged.connect(self._index_changed)
-        self.booking_now = True
+        self.pickup_now = True
 
         minimum_date = self.today + datetime.timedelta(days=1)
         self.date = DateEdit("Enter date for pickup:")
         self.date.minimum_date(minimum_date)
         self.date.set_text(minimum_date)
-        self.date.hide()
 
         self.time = InputEdit("Enter time for pickup:", QTimeEdit)
+
+        # Hide date_time options on default.
         self.time.hide()
-
-
-
-        self.fields = [
-            self.dropoff,
-            self.pickup,
-            self.date,
-            self.time
-        ]
+        self.date.hide()
 
         self.book_btn = Button("Confirm", self._on_button_click)
 
@@ -75,20 +62,23 @@ class BookingForm(QWidget):
         self.setLayout(container)
 
     def _index_changed(self, index):
-        BOOK_NOW = 0
+        """Toggle the visibility of date_time fields."""
+        PICKUP_NOW = 0
         ADVANCE_BOOKING = 1
-        if index == BOOK_NOW:
+
+        if index == PICKUP_NOW:
             self.date.hide()
             self.time.hide()
-            self.booking_now = True
+            self.pickup_now = True
 
         if index == ADVANCE_BOOKING:
             self.date.show()
             self.time.show()
-            self.booking_now = False
+            self.pickup_now = False
         self.update()
 
     def _on_button_click(self):
+        """Collect information from fields and ensure validity."""
         self._clear_errors()
         info = {
             "driver_id": None,
@@ -97,10 +87,12 @@ class BookingForm(QWidget):
             "status": "waiting"
         }
 
-        if not self.booking_now:
+        if not self.pickup_now:
+            # Collect dates for a future datetime.
             info["date"] = self.date.date().toString("yyyy-MM-dd")
             info["time"] = self.time.text()
         else:
+            # Collect dates for the current datetime.
             info["date"] = self.today.strftime("%Y-%m-%d")
             info["time"] = self.today.strftime("%I:%M %p")
 
@@ -112,9 +104,9 @@ class BookingForm(QWidget):
 
 
     def _validate_fields(self, info):
-        validation_checks = [
+        validation_checks: list[bool] = [
             info["dropoff"] != "",
-            info ["pickup"] != ""
+            info["pickup"] != ""
         ]
 
         flag = True
@@ -127,9 +119,11 @@ class BookingForm(QWidget):
         return flag
 
     def _reset_fields(self):
+        """Clear text + error hinting from fields."""
         for field in self.fields:
             field.reset()
 
     def _clear_errors(self):
+        """Clear error hinting from fields."""
         for field in self.fields:
             field.clear_error()
