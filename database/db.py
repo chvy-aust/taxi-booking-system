@@ -35,8 +35,21 @@ class DatabaseConnection:
         return self.conn.execute(sql, params)
 
     def lookup_user(self, email):
-        cursor = self.execute("SELECT * FROM user WHERE email = ?", (email,))
+        cursor = self.execute(
+            "SELECT * FROM user WHERE email = ?", (email,))
         return cursor.fetchone()
+
+    def fetch_bookings(self, user_id: int = None, user_role: str = "customer"):
+        """
+        Return all booking records in database.
+        Accepts an optional user id condition.
+        """
+        sql = "SELECT * FROM booking"
+        if user_id:
+            sql += f" WHERE {user_role}_id = ?"
+            return self.execute(sql, (user_id,)).fetchall()
+        else:
+            return self.execute(sql).fetchall()
 
     def create_user(self, firstname, lastname, dob, phonenum,
                     email, address, password, role="customer"):

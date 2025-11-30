@@ -1,9 +1,8 @@
 from PyQt6.QtWidgets import QWidget, QMessageBox, QDialog
 
-from src.dialogs import InfoDialog, ConfirmationDialog
+from src.dialogs import InfoDialog, ConfirmationDialog, SystemFeedback
 from src.signals import SignalBus
 from src.models.user import User
-from src.utils.constants import ErrorMessage
 
 
 class BaseScene(QWidget):
@@ -42,9 +41,9 @@ class BaseScene(QWidget):
         To be overridden by subclassed scenes.
         """
 
-    def info_popup(self, info, title: bool = False):
+    def info_popup(self, info):
         """Display an informative message to the user."""
-        popup = InfoDialog(info, title, self)
+        popup = InfoDialog(info, self)
         popup.exec()
 
     def confirmation_popup(self, question = "", title: str = "Are you sure?") -> bool:
@@ -56,7 +55,7 @@ class BaseScene(QWidget):
         return popup.exec() == QDialog.DialogCode.Accepted
 
     def critical_popup(self,
-                       text: str | ErrorMessage,
+                       text: str | SystemFeedback,
                        title: str = "Error!"):
         """Display a critical error message to the user."""
         QMessageBox.critical(self, title, text)

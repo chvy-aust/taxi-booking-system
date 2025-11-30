@@ -3,9 +3,8 @@ import sqlite3
 from PyQt6.QtWidgets import QLineEdit, QHBoxLayout, QVBoxLayout, QFrame
 
 from src.scenes import BaseScene
-from src.utils import validate_phonenum, validate_dob, \
-    validate_email, validate_password, is_email_unique
-from src.utils.constants import ErrorMessage
+from src.utils import *
+from src.dialogs import SystemFeedback
 from src.widgets import InputEdit, DateEdit
 
 # Str constants for tooltip hinting.
@@ -130,7 +129,7 @@ class UserForm(QFrame):
                 flag = False
         except sqlite3.Error:
             # If email uniqueness cannot be verified, terminate process.
-            self.parent_scene.critical_popup(ErrorMessage.DATABASE_ERROR)
+            self.parent_scene.critical_popup(SystemFeedback.DATABASE_ERROR)
             flag = False
         return flag
 

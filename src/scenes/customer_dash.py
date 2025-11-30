@@ -8,7 +8,7 @@ from database.db import DatabaseConnection
 from src.widgets import BookingForm, BookingListModel, Button
 from src.scenes import BaseScene
 from src.models.booking import Booking
-from src.utils.constants import ErrorMessage
+from src.dialogs import SystemFeedback
 
 
 class CustomerDashboardScene(BaseScene):
@@ -56,7 +56,7 @@ class CustomerDashboardScene(BaseScene):
             with DatabaseConnection() as conn:
                 conn.create_booking(self.user.id, info)
         except sqlite3.Error:
-            self.critical_popup(ErrorMessage.DATABASE_ERROR)
+            self.critical_popup(SystemFeedback.DATABASE_ERROR)
         else:
             self.info_popup(
                     "Successfully booked! " 
@@ -67,11 +67,9 @@ class CustomerDashboardScene(BaseScene):
     def _load_bookings(self):
         try:
             with DatabaseConnection() as conn:
-                cursor = conn.execute(
-                    "SELECT * FROM booking WHERE customer_id = ? ORDER BY date DESC, time DESC", (self.user.id,))
-                results = cursor.fetchall()
+                results = conn.fetch_bookings(self.user.id,)
         except sqlite3.Error:
-            self.critical_popup(ErrorMessage.DATABASE_ERROR)
+            self.critical_popup(SystemFeedback.DATABASE_ERROR)
         else:
             bookings = [Booking(row) for row in results]
             self.booking_list.setModel(BookingListModel(bookings))
@@ -87,7 +85,7 @@ class CustomerDashboardScene(BaseScene):
         try:
             self.user.update(new_attr)
         except sqlite3.Error:
-            self.critical_popup(ErrorMessage.DATABASE_ERROR)
+            self.critical_popup(SystemFeedback.DATABASE_ERROR)
         else:
             self.info_popup("Successfully updated profile!")
             self.signals.trigger_refresh.emit()

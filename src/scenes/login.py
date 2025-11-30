@@ -6,7 +6,7 @@ from database.db import DatabaseConnection
 from src.scenes import BaseScene
 from src.widgets import Button, InputEdit
 from src.models import User
-from src.utils.constants import ErrorMessage
+from src.dialogs import SystemFeedback
 
 
 class LoginScene(BaseScene):
@@ -55,17 +55,14 @@ class LoginScene(BaseScene):
 
         try:
             with DatabaseConnection() as conn:
-                conn.cursor.execute("SELECT * FROM user WHERE email = ?", (user_input['email'],))
-                result = conn.cursor.fetchone()
-                print(f"user input: {user_input}")
-                print(f"results: {result}")
+                result = conn.lookup_user(user_input['email'])
                 if result and result['password'] == user_input['password']:
                     self.info_popup("Login successful")
                     self._switch_to_dashboard(result)
                 else:
-                    self.info_popup("Invalid email or password.", title=False)
+                    self.info_popup("Invalid email or password.")
         except sqlite3.Error:
-            self.critical_popup(ErrorMessage.DATABASE_ERROR)
+            self.critical_popup(SystemFeedback.DATABASE_ERROR)
 
 
     def _get_input(self):

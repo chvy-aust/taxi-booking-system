@@ -5,7 +5,7 @@ from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout
 
 from database.db import DatabaseConnection
 from src.scenes import BaseScene
-from src.utils.constants import ErrorMessage
+from src.dialogs import SystemFeedback
 from src.widgets import Button
 from src.widgets.user_form import UserForm
 
@@ -82,7 +82,7 @@ class RegisterScene(BaseScene):
                     values["address"],
                     values["create_pass"],)
         except sqlite3.Error:
-            self.critical_popup(ErrorMessage.DATABASE_ERROR)
+            self.critical_popup(SystemFeedback.DATABASE_ERROR)
         else:
             self.info_popup("Successfully registered! Redirecting back to landing screen…")
             self._return_to_menu()
