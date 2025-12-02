@@ -1,17 +1,15 @@
 from PyQt6.QtWidgets import QWidget, QMessageBox, QDialog
 
-from src.dialogs import InfoDialog, ConfirmationDialog, SystemFeedback
-from src.signals import SignalBus
-from src.models.user import User
+from src.widgets import InfoDialog, ConfirmationDialog, SystemFeedback
+from src.core.models import User
 
 
 class BaseScene(QWidget):
     """Base scene class for project scenes."""
-    def __init__(self, scene_name: str, signals: SignalBus, user: User | None = None):
+    def __init__(self, scene_name: str, user: User | None = None):
         """Initialize default scene behaviors."""
         super().__init__()
         self.setObjectName(scene_name)
-        self.signals = signals
         self.user = user
 
     def _load_ui(self):

@@ -4,12 +4,11 @@ from PyQt6.QtCore import pyqtSignal, Qt
 from PyQt6.QtWidgets import QVBoxLayout, QLabel, \
     QComboBox, QTimeEdit, QFrame
 
-from .button import Button
-from .input_edit import InputEdit, DateEdit
+from src.widgets import Button, InputEdit, DateEdit
 
 
 class BookingForm(QFrame):
-    start_booking = pyqtSignal(object)
+    make_booking = pyqtSignal(object)
 
     def __init__(self):
         super().__init__()
@@ -48,7 +47,7 @@ class BookingForm(QFrame):
         self.time.hide()
         self.date.hide()
 
-        self.book_btn = Button("Confirm", self._on_button_click)
+        self.book_btn = Button("Confirm", self._on_confirm_click)
 
         container = QVBoxLayout()
         container.addWidget(booking_header)
@@ -77,14 +76,12 @@ class BookingForm(QFrame):
             self.pickup_now = False
         self.update()
 
-    def _on_button_click(self):
-        """Collect information from fields and ensure validity."""
-        self._clear_errors()
+    def _get_info(self):
         info = {
             "driver_id": None,
             "dropoff": self.dropoff.text().title(),
             "pickup": self.pickup.text().title(),
-            "status": "waiting"
+            "status": "waiting_for_assignment"
         }
 
         if not self.pickup_now:
@@ -96,12 +93,18 @@ class BookingForm(QFrame):
             info["date"] = self.today.strftime("%Y-%m-%d")
             info["time"] = self.today.strftime("%I:%M %p")
 
+        return info
+
+    def _on_confirm_click(self):
+        """Collect information from fields and ensure validity."""
+        self._clear_errors()
+
+        info = self._get_info()
         if not self._validate_fields(info):
             return
 
-        self.start_booking.emit(info)
+        self.make_booking.emit(info)
         self._reset_fields()
-
 
     def _validate_fields(self, info):
         validation_checks: list[bool] = [

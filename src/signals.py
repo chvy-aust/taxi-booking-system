@@ -3,7 +3,6 @@ from PyQt6.QtCore import pyqtSignal, QObject
 class SignalBus(QObject):
     """A bus of signals shared throughout the system."""
     trigger_refresh = pyqtSignal()
-    request_splash = pyqtSignal()
     request_register = pyqtSignal()
     request_login = pyqtSignal()
     request_customer_dash = pyqtSignal(object)
@@ -12,3 +11,6 @@ class SignalBus(QObject):
 
     def __init__(self):
         super().__init__()
+
+
+signals = SignalBus() # <- Singleton instance

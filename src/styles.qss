@@ -1,4 +1,6 @@
-/* Application Window */
+/* ---------------------------
+   GENERAL APPLICATION STYLES
+---------------------------- */
 QMainWindow {
     background-color: #466060;
     border-radius: 0px;
@@ -9,174 +11,52 @@ QDialog {
     background-color: #8EA09F;
 }
 
+/* HEADERS  */
+QLabel#header, QLabel#HEADER {
+    qproperty-alignment: AlignCenter;
+    background-color: #1B2626;
+    color: white;
+    font: bold 41px 'Arial';
+    padding: 15px;
+}
+
+/* BUTTONS */
+QPushButton {
+    font: 15px 'Arial';
+    background-color: #1B2626;
+    padding: 10px 30px;
+    border-radius: 0px;
+    margin-top: 25px; /* consistent spacing for form buttons */
+}
+
+QPushButton:hover {
+    background-color: #101717;
+    padding: 8px 28px;
+    border: 2px solid #1B2626;
+}
+
+/* INPUTS FIELDS */
+QLineEdit, QDateEdit {
+    background-color: white;
+    color: black;
+    border-radius: 0px;
+    border: 3px solid #293737;
+    padding: 5px;
+}
+
+QCalendar {
+    background-color: white;
+}
+
+/* DIALOG POPUPS */
 #popup QLabel {
     color: #1B2626;
     margin-bottom: 10px;
     padding: 15px;
 }
 
-#popup QLabel#header {
-    qproperty-alignment: AlignCenter;
-    background-color: #8EA09F;
-    color: #1B2626;
-    margin-bottom: 10px;
-    padding: 5px;
-}
-
 #popup QPushButton {
-    background-color: #1B2626;
     padding: 5px;
-    border-radius: 0px;
-}
-
-/* SPLASH SCREEN CUSTOMIZATION */
-#splash QPushButton {
-    font: 20px 'Arial';
-    padding: 10 30 10 30;
-    background-color: #1B2626;
-    border-radius: 0px;
-}
-
-#splash QPushButton:hover {
-    background-color: #101717;
-    padding: 8 28 8 28;
-    border: 2px solid #1B2626;
-}
-
-
-#splash QLabel {
-    qproperty-alignment: AlignCenter;
-    background-color: #293737;
-    color: white;
-    border: 5px solid #1B2626;
-    font: bold 41px 'Arial';
-    padding: 15;
-    margin: 30 30 10 30;
-}
-
-/* REGISTER SCREEEN CUSTOMIZATION */
-#register QLabel#HEADER {
-    qproperty-alignment: AlignCenter;
-    background-color: #1B2626;
-    color: white;
-    font: bold 41px 'Arial';
-    padding: 15;
-
-}
-
-#DIVIDER {
-    background-color: #1B2626;
-}
-
-#register_form {
-    border: 3px solid #1B2626;
-    background-color: #8EA09F;
-}
-
-#register QLabel  {
-    font: bold 15px 'Arial';
-    color: #293737;
-}
-
-#register QLineEdit {
-    background-color: white;
-    color: black;
-    border-radius: 0px;
-    border: 3px solid #293737;
-    padding: 5px;
-}
-
-#register QDateEdit {
-    background-color: white;
-    color: black;
-    border-radius: 0px;
-    border: 3px solid #293737;
-    padding: 5px;
-}
-
-#register QCalendar {
-    background-color: white;
-}
-
-#register QPushButton {
-    margin-top: 25px;
-    font: 15px 'Arial';
-    background-color: #1B2626;
-    padding: 10 30 10 30;
-    border-radius: 0px;
-}
-
-#register QPushButton:hover {
-    padding: 8 28 8 28;
-    border: 2px solid #1B2626;
-    background-color: #101717;
-}
-
-QDialog#booking-form {
-    border: 3px solid #1B2626;
-    background-color: #8EA09F;
-}
-
-#login QPushButton {
-    margin-top: 25px;
-    font: 15px 'Arial';
-    background-color: #1B2626;
-    padding: 10 30 10 30;
-    border-radius: 0px;
-}
-
-#login QLineEdit {
-    background-color: white;
-    color: black;
-    border-radius: 0px;
-    border: 3px solid #293737;
-    padding: 5px;
-}
-
-#login QLabel#HEADER {
-    qproperty-alignment: AlignCenter;
-    background-color: #1B2626;
-    color: white;
-    font: bold 41px 'Arial';
-    padding: 15;
-
-}
-
-#booking-form QPushButton {
-    margin-top: 25px;
-    font: 15px 'Arial';
-    background-color: #1B2626;
-    padding: 10 30 10 30;
-    border-radius: 0px;
-}
-
-#booking-form QLineEdit {
-    background-color: white;
-    color: black;
-    border-radius: 0px;
-    border: 3px solid #293737;
-    padding: 5px;
-}
-
-#booking-form QDateEdit {
-    background-color: white;
-    color: black;
-    border-radius: 0px;
-    border: 3px solid #293737;
-    padding: 5px;
-}
-
-#booking-form QLabel  {
-    font: bold 15px 'Arial';
-    color: #293737;
-}
-
-#booking-form QLabel#header  {
-    qproperty-alignment: AlignCenter;
-    background-color: #1B2626;
-    color: white;
-    font: bold 41px 'Arial';
-    padding: 15;
 }
 
 QListView {
@@ -191,3 +71,7 @@ QListView::item {
     padding: 10px;
 }
 
+
+#DIVIDER {
+    background-color: #1B2626;
+}

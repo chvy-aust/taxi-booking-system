@@ -1,6 +1,9 @@
+import logging
 import sqlite3
 
-from database.db import DatabaseConnection
+from src.core.database import DatabaseConnection
+
+
 
 USER_SCHEMA = """
     CREATE TABLE IF NOT EXISTS user (
@@ -11,10 +14,31 @@ USER_SCHEMA = """
         dob TEXT NOT NULL,
         phonenum TEXT NOT NULL,
         email TEXT NOT NULL UNIQUE,
-        address TEXT NOT NULL,
         password TEXT NOT NULL
     )
     """
+
+CUSTOMER_ADDRESS_SCHEMA = """
+    CREATE TABLE IF NOT EXISTS customer_address (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        customer_id INT NOT NULL REFERENCES user(id),
+        name TEXT NOT NULL,
+        physical_address TEXT NOT NULL,
+        lat TEXT NOT NULL,
+        long TEXT NOT NULL
+    )
+"""
+
+DRIVER_PROFILE_SCHEMA = """
+    CREATE TABLE IF NOT EXISTS driver_profile (
+        id INTEGER PRIMARY KEY REFERENCES user(id), 
+        car_make TEXT NOT NULL,
+        car_color TEXT NOT NULL,
+        plate_num TEXT NOT NULL,
+        note TEXT NULL
+    )
+"""
+
 
 BOOKING_SCHEMA = """
     CREATE TABLE IF NOT EXISTS booking (
@@ -31,21 +55,22 @@ BOOKING_SCHEMA = """
     """
 
 def initialize_database():
-    print("( ℹ ) Initializing Database …")
+    logger = logging.getLogger(__name__)
+    logger.info("Initializing Database …")
     try:
         with DatabaseConnection() as cursor:
-            print("❯❯ Attempting to create tables … [ ]")
+            logger.info("Attempting to create tables … [  ]")
             cursor.execute(USER_SCHEMA)
             cursor.execute(BOOKING_SCHEMA)
-            print("❯❯ Tables successfully created [ ✔ ]")
+            cursor.execute(CUSTOMER_ADDRESS_SCHEMA)
+            cursor.execute(DRIVER_PROFILE_SCHEMA)
+            logger.info("Tables created successfully … [ ✔ ]")
             # Other executions here
             # Eg. Creating indexes, creating triggers, etc
 
     except sqlite3.Error as e:
-        print(f"( CRITICAL ⚠ ) Failed to initialize database! ERROR: {e}")
+        logger.exception(f"Failed to initialize database: {e}")
         raise
     else:
-        print("( ℹ ) Database successfully created !")
+        logger.info("Database initialized.")
 
-if __name__ == "__main__":
-    initialize_database()

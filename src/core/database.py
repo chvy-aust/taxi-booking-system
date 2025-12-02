@@ -1,8 +1,12 @@
+import logging
 import sqlite3
 from pathlib import Path
 from typing import Any
 
-DB_FILE = Path(__file__).parent.parent / 'taxibooking.db'
+from src.core.models import User, Booking
+
+DB_FILE = Path(__file__).parent.parent.parent / 'taxibooking.db'
+logger = logging.getLogger(__name__)
 
 class DatabaseConnection:
     """Database class to handle transactions."""
@@ -22,8 +26,6 @@ class DatabaseConnection:
         """Clean up transactions and close database."""
         if exc_type:
             self.conn.rollback()
-            print(f"( WARNING ⚠ ) Transaction rolled back due to caught exception.\n"
-                  f"( ⚠ ) {exc_type}: {exc_val}")
         else:
             self.conn.commit()
 
@@ -35,42 +37,65 @@ class DatabaseConnection:
         return self.conn.execute(sql, params)
 
     def lookup_user(self, email):
+        """Return a User instance or None if no user is fetched."""
         cursor = self.execute(
             "SELECT * FROM user WHERE email = ?", (email,))
-        return cursor.fetchone()
+        row = cursor.fetchone()
+        if not row:
+            return None
+        return User(row)
 
-    def fetch_bookings(self, user_id: int = None, user_role: str = "customer"):
+    def fetch_bookings(self,
+                       user_id: int = None,
+                       user_role: str = "customer"):
         """
-        Return all booking records in database.
+        Return a list of queried Booking instances.
         Accepts an optional user id condition.
         """
         sql = "SELECT * FROM booking"
+        params = None
+
         if user_id:
             sql += f" WHERE {user_role}_id = ?"
-            return self.execute(sql, (user_id,)).fetchall()
-        else:
-            return self.execute(sql).fetchall()
+            params = (user_id,)
 
-    def create_user(self, firstname, lastname, dob, phonenum,
-                    email, address, password, role="customer"):
+        cursor = self.execute(sql, params)
+        return [Booking(row) for row in cursor.fetchall()]
+
+    def create_user(self, info: dict[str, Any]):
+        role = info.get("role", "customer")
+        username = f"({info["firstname"]} {info["lastname"]})"
         try:
-            print(f"( ℹ ) Adding new user ({firstname} {lastname}) to database …")
+            logger.info(f"Adding new user {username} to database …")
             self.execute("""
                      INSERT INTO user (
                                 role, firstname, lastname, dob,
-                                phonenum, email, address, password)
-                     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                                phonenum, email, password)
+                     VALUES (?, ?, ?, ?, ?, ?, ?)
                                 """, (
-                                role, firstname, lastname, dob,
-                                phonenum, email, address, password,)
+                                role, info["firstname"], info["lastname"],
+                                info["dob"], info["phonenum"],
+                                info["email"], info["create_pass"],)
             )
         except sqlite3.Error as e:
-            print(f"( WARNING ⚠ ) Failed to add user to database! ERROR: {e}")
+            logger.exception(f"Failed to add user {username} to database: {e}")
             raise
         else:
-            print(f"( ℹ ) Successfully added user to database!")
+            logger.info(f"Successfully added user {username} to database.")
 
-    def create_booking(self, customer_id: int, info: dict[str, Any]):
+    def update_user(self, user_id, new_attr: dict[str, Any]):
+        # Return concatenated str of placeholders. (ie, firstname = ?, dob = ?)
+        fields = ', '.join(f"{field} = ?" for field in new_attr.keys())
+        params = tuple(new_attr.values()) + (user_id,)
+        try:
+            self.execute(f"UPDATE user SET {fields} WHERE id = ?", params)
+        except sqlite3.Error as e:
+            logger.exception(f"Failed to update user ({user_id}) within database: {e}")
+            raise
+        else:
+            logger.info(f"Successfully updated user ({user_id}) within database.")
+
+    def create_booking(self, info: dict[str, Any]):
 
         # Append default data if booking is confirmed.
         driver_id = info.get("driver_id", None)
@@ -83,7 +108,7 @@ class DatabaseConnection:
                                 pickup, date, time, status)
                     VALUES (?, ?, ?, ?, ?, ?, ?) 
                                 """, (
-                                customer_id,
+                                info["customer_id"],
                                 driver_id,
                                 info["dropoff"],
                                 info["pickup"],
@@ -92,7 +117,7 @@ class DatabaseConnection:
                                 status,)
             )
         except sqlite3.Error as e:
-            print(f"( WARNING ⚠ ) Failed to make booking! ERROR: {e}")
+            logger.exception(f"Failed to make booking for user ({info["customer_id"]}): {e}")
             raise
         else:
-            print(f"( ℹ ) Successfully created new booking!")
+            logger.info(f"Successfully created new booking for ({info["customer_id"]})")

@@ -1,11 +1,31 @@
 import datetime
 
-from PyQt6.QtCore import QDate
-from PyQt6.QtWidgets import QLineEdit, QLabel, QVBoxLayout, QWidget, QDateEdit, \
-    QHBoxLayout, QSizePolicy, QTimeEdit
+from PyQt6.QtCore import Qt, QDate, QAbstractListModel
+from PyQt6.QtWidgets import QPushButton, QDateEdit, QLineEdit, QHBoxLayout, \
+    QTimeEdit, QLabel, QVBoxLayout, QWidget, QDialog
 
-MIN_WIDTH = QSizePolicy.Policy.Minimum
-MIN_HEIGHT = QSizePolicy.Policy.Minimum
+"""
+Provides custom project widgets.
+Includes:
+    - Buttons,
+    - Input Fields: InputEdit, DateEdit
+    - List Model for Bookings
+    - Dialogs: Information, Confirm
+"""
+
+class Button(QPushButton):
+    """Custom QPushButton class."""
+
+    def __init__(self, label, signal, object_name=None, ):
+        """Initialize and set default configurations."""
+        super().__init__()
+        self.setObjectName(object_name)
+        self.setText(label)
+        self.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.signal = signal
+        self.clicked.connect(self.signal)
+
+
 class InputEdit(QWidget):
     def __init__(self,
                  prompt: str,
@@ -13,7 +33,6 @@ class InputEdit(QWidget):
                  object_name: str = None):
         super().__init__()
         self.setObjectName(object_name)
-        self.setSizePolicy(MIN_WIDTH, MIN_HEIGHT)
         self.prompt = QLabel(prompt)
         self.prompt.setFixedHeight(25)
         self.input_field = input_type()
@@ -91,6 +110,8 @@ class DateEdit(InputEdit):
         self.input_field.setMinimumDate(date)
 
     def set_text(self, date):
+        if isinstance(date, str):
+            date = datetime.datetime.strptime(date, "%Y-%m-%d")
         self.input_field.setDate(date)
 
     def reset(self):
@@ -101,4 +122,74 @@ class DateEdit(InputEdit):
     def text_changed(self):
         return self.input_field.dateChanged
 
+class BookingListModel(QAbstractListModel):
+    def __init__(self, bookings=None):
+        super().__init__()
+        self.bookings = bookings or []
 
+    def data(self, index, role: int = ...):
+        if role == Qt.ItemDataRole.DisplayRole:
+            return str(self.bookings[index.row()])
+
+    def rowCount(self, parent=...):
+        return len(self.bookings)
+
+
+class SystemFeedback:
+    DATABASE_ERROR = (
+        "A database exception occurred during this transaction. "
+        "Data was not stored and/or updated."
+    )
+    UNEXPECTED_ERROR = "An unknown exception was caught. Please Try Again or contact Support."
+
+class InfoDialog(QDialog):
+    def __init__(self, text, parent=None):
+        super().__init__(parent)
+        self.setWindowFlag(Qt.WindowType.FramelessWindowHint)
+        self.setObjectName("popup")
+
+        # Create dialog elements.
+        text = QLabel(text)
+        text.setMinimumHeight(80)
+        ok_btn = Button("OK", self._on_ok_click)
+
+        # Add elements to layout.
+        container = QVBoxLayout()
+        container.addWidget(text)
+        container.addWidget(ok_btn)
+        self.setLayout(container)
+
+    def _on_ok_click(self):
+        self.accept()
+
+
+class ConfirmationDialog(QDialog):
+    def __init__(self, text="", title: str = "Are you sure?", parent=None):
+        super().__init__(parent)
+        self.setWindowFlag(Qt.WindowType.FramelessWindowHint)
+        self.setObjectName("popup")
+
+        # Create dialog elements.
+        title = QLabel(title)
+        title.setObjectName("conf-popup-header")
+        text = QLabel(text)
+        text.setMinimumHeight(80)
+        confirm_btn = Button("Yes!", self._on_confirm_click)
+        cancel_btn = Button("Cancel", self._on_cancel_click)
+
+        btns = QHBoxLayout()
+        btns.addWidget(confirm_btn)
+        btns.addWidget(cancel_btn)
+
+        # Add elements to layout.
+        container = QVBoxLayout()
+        container.addWidget(title)
+        container.addWidget(text)
+        container.addWidget(btns)
+        self.setLayout(container)
+
+    def _on_confirm_click(self):
+        self.accept()
+
+    def _on_cancel_click(self):
+        self.reject()

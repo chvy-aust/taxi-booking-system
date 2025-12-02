@@ -2,7 +2,7 @@ import re
 
 from PyQt6.QtCore import QDate
 
-from database.db import DatabaseConnection
+from src.core.database import DatabaseConnection
 
 COUNTRY_CODE = r"(?:\+?\d{1,3}[-\s]?)?"
 AREA_CODE = r"(?:\(\d{1,3}\)|\d{1,3})[-\s]?"

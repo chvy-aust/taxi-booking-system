@@ -1,30 +1,32 @@
 import sqlite3
 from typing import override
 
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout
+from PyQt6.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QWidget, \
+    QLabel, QFrame
 
-from database.db import DatabaseConnection
+from src.core.database import DatabaseConnection
+from src.widgets import SystemFeedback
 from src.scenes import BaseScene
-from src.dialogs import SystemFeedback
-from src.widgets import Button
-from src.widgets.user_form import UserForm
+from src.signals import signals
+from src.utils import validate_email, validate_password, validate_phonenum, \
+    validate_dob, is_email_unique
+from src.widgets import Button, InputEdit, DateEdit
+from src.utils.constants import FieldHint
 
 
 class RegisterScene(BaseScene):
     """Register scene class for the application."""
 
-    def __init__(self, signals):
-        super().__init__(
-            scene_name="register",
-            signals=signals)
-        self.signals = signals
+    def __init__(self):
+        super().__init__(scene_name="register")
         self._load_ui()
 
     @override
     def _load_ui(self):
         """Setup UI."""
-        # Register scene header label.
-        header = QLabel("Create a new Account")
+
+        # Form header.
+        header = QLabel("Create a New Account")
         header.setObjectName("HEADER")
         header.setFixedHeight(80)
 
@@ -33,15 +35,52 @@ class RegisterScene(BaseScene):
         divider.setObjectName("DIVIDER")
         divider.setFixedHeight(3)
 
-        # Set user form..
-        self.form = UserForm(self)
-        self.form.setObjectName("register_form")
+        # Name fields.
+        self.firstname = InputEdit("Enter first name:")
+        self.lastname = InputEdit("Enter last name:")
+        # Date of birth field + tooltip.
+        self.dob = DateEdit("Enter date of birth:")
+        self.dob.set_tooltip(FieldHint.AGE_REQUIREMENT_HINT)
+        # Phone number field + tooltip.
+        self.phonenum = InputEdit("Enter phone number:")
+        self.phonenum.set_tooltip(FieldHint.PHONENUM_FORMAT_HINT)
+        # Email field + tooltip.
+        self.email = InputEdit("Enter email address:")
+        self.email.set_tooltip(FieldHint.EMAIL_FORMAT_HINT)
+        # Password fields + tooltips.
+        self.create_pass = InputEdit("Create new password:")
+        self.create_pass.set_tooltip(FieldHint.PASSWORD_FORMAT_HINT)
+        self.create_pass.set_echo_mode(QLineEdit.EchoMode.Password)
+        self.confirm_pass = InputEdit("Confirm new password:")
+        self.confirm_pass.set_tooltip(FieldHint.MATCHING_PASSWORD_HINT)
+        self.confirm_pass.set_echo_mode(QLineEdit.EchoMode.Password)
 
-        # Make buttons.
-        back_btn = Button("Return to Main Menu", self._return_to_menu)
-        register_btn = Button("Register", self._start_registration)
+        self.fields = [
+            self.firstname, self.lastname,
+            self.dob, self.phonenum,
+            self.email,
+            self.create_pass,
+            self.confirm_pass
+        ]
 
-        # Add buttons to container.
+        self.form_layout = QVBoxLayout()
+        self.form_layout.addWidget(header)
+        self.form_layout.addWidget(divider)
+        # Add fields to layout.
+        self.add_row(self.firstname, self.lastname)
+        self.add_row(self.dob, self.phonenum)
+        self.add_row(self.email)
+        self.add_row(self.create_pass, self.confirm_pass)
+
+        form = QFrame()
+        form.setLayout(self.form_layout)
+        form.setObjectName("register-form")
+
+        # Make user form buttons.
+        back_btn = Button("Return to Sign In", self._return_to_signin)
+        register_btn = Button("Sign Up", self._start_registration)
+
+        # Buttons for filling out user form.
         btns = QHBoxLayout()
         btns.addWidget(back_btn)
         btns.addStretch()
@@ -51,46 +90,107 @@ class RegisterScene(BaseScene):
         container = QVBoxLayout()
         container.addWidget(header)
         container.addWidget(divider)
-        container.addWidget(self.form)
+        container.addWidget(form)
         container.addLayout(btns)
 
         # Set layout to scene.
         self.setLayout(container)
 
-    def _return_to_menu(self):
-        self.signals.trigger_refresh.emit()
-        self.signals.request_splash.emit()
+    def _return_to_signin(self):
+        signals.trigger_refresh.emit()
+        signals.request_login.emit()
 
     def _start_registration(self):
         """Start the registration process."""
-        # Get credentials from fields.
-        values = self.form.get_credentials()
-        # If credentials not valid, terminate process.
-        if values is None:
-            return
 
         try:
-            # Save user to database.
+            # Get credentials from fields.
+            new_user = self.get_credentials()
+            # If credentials not valid, terminate process.
+            if new_user is None:
+                return
+
+            # Save user to db.
             with DatabaseConnection() as conn:
-                conn.create_user(
-                    values["firstname"],
-                    values["lastname"],
-                    # Convert QDate to str.
-                    values["dob"].toString("yyyy-MM-dd"),
-                    values["phonenum"],
-                    values["email"],
-                    values["address"],
-                    values["create_pass"],)
+                conn.create_user(new_user,)
         except sqlite3.Error:
-            self.critical_popup(SystemFeedback.DATABASE_ERROR)
+            self.info_popup(SystemFeedback.DATABASE_ERROR)
         else:
             self.info_popup("Successfully registered! Redirecting back to landing screen…")
-            self._return_to_menu()
+            self._return_to_signin()
 
-    @override
+    def get_credentials(self):
+        """Return dict of valid user data or None."""
+        values = {
+            "firstname": self.firstname.text().title(),
+            "lastname": self.lastname.text().title(),
+            "dob": self.dob.date(),
+            "phonenum": self.phonenum.text(),
+            "email": self.email.text().lower(),
+            "create_pass": self.create_pass.text(),
+            "confirm_pass": self.confirm_pass.text()
+        }
+
+        is_valid = self._check_validation(values)
+
+        if is_valid:
+            # Convert QDate to str.
+            values["dob"] = values["dob"].toString("yyyy-MM-dd")
+            return values
+        return None
+
+    def _check_validation(self, values) -> bool:
+        """Validate credentials and show validation hints."""
+        self._reset_validation_hints()
+
+        # Return a mapping of field instances to their format validity.
+        validation_checks: list[bool] = [
+            values["firstname"] != "",
+            values["lastname"] != "",
+            validate_dob(values["dob"]),
+            validate_phonenum(values["phonenum"]),
+            validate_email(values["email"]),
+            validate_password(values["create_pass"]),
+            values["create_pass"] == values["confirm_pass"]
+        ]
+
+        flag = True
+        # Store bool indication of whether all fields have valid formats (True).
+        for field, is_valid in zip(self.fields, validation_checks):
+            if not is_valid:
+                field.show_error()
+                flag = False
+
+        if not is_email_unique(values["email"]):
+            self.email.show_error()
+            self.info_popup("This email is already in use!")
+            flag = False
+
+        return flag
+
+    def _reset_validation_hints(self):
+        """Remove error hinting."""
+        for field in self.fields:
+            field.clear_error()
+
+    def reset_fields(self):
+        """Clear text + error hinting from fields."""
+        for field in self.fields:
+            field.reset()
+
     def refresh_scene(self):
         """Remove error hinting and clear fields."""
-        self.form.reset_fields()
+        self.reset_fields()
+
+    def add_row(self, *fields):
+        """Add arbitrary amount of fields to row."""
+        row = QHBoxLayout()
+        for field in fields:
+            row.addWidget(field)
+        # Add row to layout.
+        self.form_layout.addLayout(row)
+
+
 
 
 
