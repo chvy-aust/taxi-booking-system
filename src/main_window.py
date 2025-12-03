@@ -19,15 +19,15 @@ class MainWindow(QMainWindow):
     """
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Taxi Booking System")
-        self.setFixedSize(600, 600)
+        self.setWindowTitle("AC Taxi Services")
+        self.setFixedSize(800, 600)
         self.scene_manager = QStackedWidget()
 
         # Store application scenes.
         self.scenes = {
             "login": LoginScene(),
             "register": RegisterScene(),
-            "customer_dash": CustomerDashboardScene(),
+            # "customer_dash": CustomerDashboardScene(),
         }
 
         for scene in self.scenes:

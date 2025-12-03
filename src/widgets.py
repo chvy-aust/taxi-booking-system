@@ -1,6 +1,6 @@
 import datetime
 
-from PyQt6.QtCore import Qt, QDate, QAbstractListModel
+from PyQt6.QtCore import Qt, QDate, QAbstractListModel, pyqtSignal
 from PyQt6.QtWidgets import QPushButton, QDateEdit, QLineEdit, QHBoxLayout, \
     QTimeEdit, QLabel, QVBoxLayout, QWidget, QDialog
 
@@ -25,40 +25,41 @@ class Button(QPushButton):
         self.signal = signal
         self.clicked.connect(self.signal)
 
+class Link(QLabel):
+    clicked = pyqtSignal()
+    def __init__(self, parent):
+        super().__init__(parent)
+
+    def mouseReleaseEvent(self, ev):
+        """Emit signal when left-clicked."""
+        if ev.button() == Qt.MouseButton.LeftButton:
+            self.clicked.emit()
+
 
 class InputEdit(QWidget):
     def __init__(self,
-                 prompt: str,
+                 parent=None,
                  input_type: type[QLineEdit | QDateEdit | QTimeEdit] = QLineEdit,
                  object_name: str = None):
-        super().__init__()
+        super().__init__(parent)
         self.setObjectName(object_name)
-        self.prompt = QLabel(prompt)
-        self.prompt.setFixedHeight(25)
         self.input_field = input_type()
         self.input_field.setFixedHeight(40)
-        self.tooltip = QLabel("( i )")
-        self.setLayout(self._load_layout())
 
-    def _load_layout(self) -> QVBoxLayout:
-        container = QVBoxLayout()
-        # Add container containing prompt + potential tooltip.
-        self.lbl_tltp = QHBoxLayout()
-        self.lbl_tltp.addWidget(self.prompt)
-        container.addLayout(self.lbl_tltp)
-        # Add input field to container.
-        container.addWidget(self.input_field)
-        return container
+        self.error_prompt = QLabel()
+        self.error_prompt.setFixedHeight(20)
+        self.error_prompt.setStyleSheet("color: #5B0D0D")
+        self.error_prompt.hide()
 
-    def set_tooltip(self, hint: str):
-        # Set text for tooltip.
-        self.tooltip.setToolTip(hint)
-        # Add tooltip to container next to prompt.
-        self.lbl_tltp.addStretch()
-        self.lbl_tltp.addWidget(self.tooltip)
+        self.container = QVBoxLayout()
+        self.container.addWidget(self.input_field)
+        self.container.addWidget(self.error_prompt)
 
-    def set_prompt(self, text):
-        self.prompt.setText(text)
+
+        self.setLayout(self.container)
+
+    def set_error_prompt(self, text):
+        self.error_prompt.setText(text)
 
     def set_echo_mode(self, mode: QLineEdit.EchoMode):
         self.input_field.setEchoMode(mode)
@@ -76,15 +77,15 @@ class InputEdit(QWidget):
 
     def show_error(self):
         """Hint at errors with red highlighting."""
-        self.prompt.setStyleSheet("color: #5B0D0D")
-        self.tooltip.setStyleSheet("color: #5B0D0D")
         self.input_field.setStyleSheet("border: 3px solid #5B0D0D;")
+        self.error_prompt.show()
+        self.update()
 
     def clear_error(self):
         """Remove error hint."""
-        self.prompt.setStyleSheet("color: #293737;")
-        self.tooltip.setStyleSheet("color: #293737;")
         self.input_field.setStyleSheet("border: 3px solid #293737;")
+        self.error_prompt.hide()
+        self.update()
 
     @property
     def text_changed(self):
@@ -92,8 +93,8 @@ class InputEdit(QWidget):
 
 
 class DateEdit(InputEdit):
-    def __init__(self, prompt: str, object_name: str = None):
-        super().__init__(prompt,
+    def __init__(self, object_name: str = None, parent=None):
+        super().__init__(parent,
                          input_type=QDateEdit,
                          object_name=object_name)
         self.input_field.setDisplayFormat("yyyy-MM-dd")

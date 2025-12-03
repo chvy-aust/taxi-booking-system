@@ -1,57 +1,35 @@
 import sqlite3
 
-from PyQt6.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QLabel, QWidget
+from PyQt6 import uic
+from PyQt6.QtWidgets import QLineEdit
 
 from src.core.database import DatabaseConnection
 from src.scenes import BaseScene
-from src.widgets import Button, InputEdit
-from src.widgets import SystemFeedback
 from src.signals import signals
+from src.widgets import SystemFeedback
 
 
 class LoginScene(BaseScene):
     def __init__(self):
         super().__init__(scene_name="login")
-        self._load_ui()
-
-    def _load_ui(self):
-
-        header = QLabel("LOG IN")
-        header.setObjectName("HEADER")
-        header.setFixedHeight(80)
-
-        # Custom divider.
-        divider = QWidget()
-        divider.setObjectName("DIVIDER")
-        divider.setFixedHeight(3)
-
-        self.email = InputEdit("Enter email address:")
-        self.password = InputEdit("Enter password:")
+        uic.loadUi("src/ui/login.ui", self)
+        # Hide password characters
         self.password.set_echo_mode(QLineEdit.EchoMode.Password)
 
-        # Add buttons to container.
-        self.back_btn =  Button("Sign Up", self._trigger_register)
-        self.login_btn = Button("Login", self._start_login)
-        btn_continer = QHBoxLayout()
-        btn_continer.addWidget(self.back_btn)
-        btn_continer.addWidget(self.login_btn)
-
-        # Set layout to scene.
-        container = QVBoxLayout()
-        container.addWidget(header)
-        container.addWidget(divider)
-        container.addWidget(self.email)
-        container.addWidget(self.password)
-        container.addLayout(btn_continer)
-        self.setLayout(container)
+        # Setup button events
+        self.signup_link.clicked.connect(self._trigger_register)
+        self.login_btn.clicked.connect(self._start_login)
 
     def _trigger_register(self):
+        """Navigate to register scene."""
         self._reset_fields()
         signals.request_register.emit()
 
     def _start_login(self):
-        # Get user input from fields.
-        user_input = self._get_input()
+        user_input = {
+            "email": self.email.text().lower(),
+            "password": self.password.text()
+        }
 
         try:
             with DatabaseConnection() as conn:
@@ -65,18 +43,13 @@ class LoginScene(BaseScene):
             self.info_popup(SystemFeedback.DATABASE_ERROR)
 
 
-    def _get_input(self):
-        values = {
-            "email": self.email.text().lower(),
-            "password": self.password.text()
-        }
-        return values
-
     def _reset_fields(self):
+        """Cleanup text left in fields."""
         self.email.reset()
         self.password.reset()
 
     def _switch_to_dashboard(self, user):
+        """Enforce RBA and navigate to required dashboard."""
         self._reset_fields()
         if user.role == "admin":
             signals.request_admin_dash.emit(user)

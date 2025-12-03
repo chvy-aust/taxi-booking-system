@@ -74,3 +74,6 @@ def initialize_database():
     else:
         logger.info("Database initialized.")
 
+
+if __name__ == "__main__":
+    initialize_database()

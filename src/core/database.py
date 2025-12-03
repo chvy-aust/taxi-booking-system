@@ -121,3 +121,22 @@ class DatabaseConnection:
             raise
         else:
             logger.info(f"Successfully created new booking for ({info["customer_id"]})")
+
+    def save_address(self, address: dict[str, Any]):
+        try:
+            self.execute("""
+            INSERT INTO customer_address (
+                customer_id, name, physical_address, lat, long) 
+            VALUES (?, ?, ?, ?, ?)
+                        """, (
+                address["customer_id"],
+                address["name"],
+                address["physical_address"],
+                address["lat"],
+                address["long"]),
+            )
+        except sqlite3.Error as e:
+            logger.exception(f"Failed to add address for user ({address["customer_id"]}): {e}")
+            raise
+        else:
+            logger.info(f"Successfully created new address for ({address["customer_id"]})")

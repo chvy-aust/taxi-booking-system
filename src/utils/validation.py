@@ -4,11 +4,11 @@ from PyQt6.QtCore import QDate
 
 from src.core.database import DatabaseConnection
 
-COUNTRY_CODE = r"(?:\+?\d{1,3}[-\s]?)?"
-AREA_CODE = r"(?:\(\d{1,3}\)|\d{1,3})[-\s]?"
-LOCAL_CODE = r"\d{1,3}[-\s]?\d{1,4}"
+# COUNTRY_CODE = r"(?:\+?\d{1,3}[-\s]?)?"
+# AREA_CODE = r"(?:\(\d{1,3}\)|\d{1,3})[-\s]?"
+# LOCAL_CODE = r"\d{1,3}[-\s]?\d{1,4}"
 
-PHONENUM_PATTERN = re.compile(f"^{COUNTRY_CODE}{AREA_CODE}{LOCAL_CODE}$")
+PHONENUM_PATTERN = re.compile(r"^\d{3}[-\s]?\d{3}[-\s]?\d{4}$")
 EMAIL_PATTERN = re.compile(r"^[\w\-.]+@([\w-]+\.)+[\w-]{2,4}$")
 PASSWORD_PATTERN = re.compile(r"^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}")
 
