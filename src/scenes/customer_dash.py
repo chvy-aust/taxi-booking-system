@@ -17,17 +17,11 @@ class CustomerDashboardScene(BaseScene):
         self._load_ui()
 
     def _load_ui(self):
-        self.greeting = QLabel()
-        self.greeting.setObjectName("dash-greeting")
-
-        self.layout = QHBoxLayout()
-        self._setup_side_panel()
+        self.layout = QVBoxLayout()
+        self._setup_header_panel()
         self._setup_center_panel()
 
-        self.container = QVBoxLayout()
-        self.container.addWidget(self.greeting)
-        self.container.addLayout(self.layout)
-        self.setLayout(self.container)
+        self.setLayout(self.layout)
 
     def _setup_center_panel(self):
         """
@@ -68,24 +62,29 @@ class CustomerDashboardScene(BaseScene):
         self._load_panel(self.booking_panel)
         self.layout.addWidget(self.center_panel)
 
-    def _setup_side_panel(self):
+    def _setup_header_panel(self):
         """
-        Configure the dashboard's side panel.
+        Configure the dashboard's header panel.
         Handles switching center panel widgets and logging out.
         """
-        self.side_panel = QVBoxLayout()
+        self.greeting = QLabel()
+        self.greeting.setObjectName("dash-greeting")
+        self.header_panel = QHBoxLayout()
 
         # Side panel buttons.
         view_profile_btn = Button("Account", lambda: self._load_panel(self.account_panel))
         view_bookings_btn = Button("Bookings", lambda: self._load_panel(self.booking_panel))
         self.logout_btn = Button("Log out", self._log_out)
         # Add buttons to panel
-        self.side_panel.addWidget(view_profile_btn)
-        self.side_panel.addWidget(view_bookings_btn)
-        self.side_panel.addStretch()
-        self.side_panel.addWidget(self.logout_btn)
+        self.header_panel.addWidget(self.greeting)
+        self.header_panel.addStretch()
 
-        self.layout.addLayout(self.side_panel)
+        self.header_panel.addWidget(view_bookings_btn)
+        self.header_panel.addStretch()
+        self.header_panel.addWidget(view_profile_btn)
+        self.header_panel.addWidget(self.logout_btn)
+
+        self.layout.addLayout(self.header_panel)
 
 
     def _update_user(self):

@@ -27,7 +27,7 @@ class MainWindow(QMainWindow):
         self.scenes = {
             "login": LoginScene(),
             "register": RegisterScene(),
-            # "customer_dash": CustomerDashboardScene(),
+            "customer_dash": CustomerDashboardScene(),
         }
 
         for scene in self.scenes:

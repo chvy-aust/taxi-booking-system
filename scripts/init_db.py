@@ -23,9 +23,7 @@ CUSTOMER_ADDRESS_SCHEMA = """
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         customer_id INT NOT NULL REFERENCES user(id),
         name TEXT NOT NULL,
-        physical_address TEXT NOT NULL,
-        lat TEXT NOT NULL,
-        long TEXT NOT NULL
+        physical_address TEXT NOT NULL
     )
 """
 

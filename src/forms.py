@@ -28,8 +28,17 @@ class BookingForm(QFrame):
         booking_header.setFixedHeight(80)
         booking_header.setObjectName("header")
 
-        self.dropoff = InputEdit("Enter drop off location:")
-        self.pickup = InputEdit("Enter pickup location:")
+        dropoff_ctn = QVBoxLayout()
+        dropoff_lbl = QLabel("Enter drop off location:")
+        self.dropoff = InputEdit()
+        dropoff_ctn.addWidget(dropoff_lbl)
+        dropoff_ctn.addWidget(self.dropoff)
+
+        pickup_ctn = QVBoxLayout()
+        pickup_lbl = QLabel("Enter pickup location:")
+        self.pickup = InputEdit()
+        pickup_ctn.addWidget(pickup_lbl)
+        pickup_ctn.addWidget(self.pickup)
 
         self.datetime_option = QComboBox()
         self.datetime_option.addItems(("Book now ⓘ", "Book in advance ⓘ"))
@@ -37,25 +46,35 @@ class BookingForm(QFrame):
         self.pickup_now = True
 
         minimum_date = self.today + datetime.timedelta(days=1)
-        self.date = DateEdit("Enter date for pickup:")
+        date_ctn = QVBoxLayout()
+        self.date_lbl = QLabel("Enter date for pickup:")
+        self.date = DateEdit()
         self.date.minimum_date(minimum_date)
         self.date.set_text(minimum_date)
+        date_ctn.addWidget(self.date_lbl)
+        date_ctn.addWidget(self.date)
 
-        self.time = InputEdit("Enter time for pickup:", QTimeEdit)
+        time_ctn = QVBoxLayout()
+        self.time_lbl = QLabel("Enter time for pickup:")
+        self.time = InputEdit(input_type=QTimeEdit)
+        time_ctn.addWidget(self.time_lbl)
+        time_ctn.addWidget(self.time)
 
         # Hide date_time options on default.
         self.time.hide()
+        self.time_lbl.hide()
         self.date.hide()
+        self.date_lbl.hide()
 
         self.book_btn = Button("Confirm", self._on_confirm_click)
 
         container = QVBoxLayout()
         container.addWidget(booking_header)
-        container.addWidget(self.pickup)
-        container.addWidget(self.dropoff)
+        container.addLayout(pickup_ctn)
+        container.addLayout(dropoff_ctn)
         container.addWidget(self.datetime_option)
-        container.addWidget(self.date)
-        container.addWidget(self.time)
+        container.addLayout(date_ctn)
+        container.addLayout(time_ctn)
         container.addWidget(self.book_btn)
 
         self.setLayout(container)
@@ -66,12 +85,16 @@ class BookingForm(QFrame):
         ADVANCE_BOOKING = 1
 
         if index == PICKUP_NOW:
+            self.date_lbl.hide()
             self.date.hide()
+            self.time_lbl.hide()
             self.time.hide()
             self.pickup_now = True
 
         if index == ADVANCE_BOOKING:
+            self.date_lbl.show()
             self.date.show()
+            self.time_lbl.show()
             self.time.show()
             self.pickup_now = False
         self.update()

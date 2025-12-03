@@ -25,7 +25,6 @@ class RegisterScene(BaseScene):
             self.create_pass,
             self.confirm_pass
         ]
-
         self.addresses = []
 
         self.create_pass.set_echo_mode(QLineEdit.EchoMode.Password)
@@ -36,7 +35,8 @@ class RegisterScene(BaseScene):
         self.lastname.set_error_prompt("\u26A0 Please enter a lastname.")
         self.dob.set_error_prompt("\u26A0 You must be 18 years or over to use this service.")
         self.email.set_error_prompt("\u26A0 Please enter a valid email.")
-        self.phonenum.set_error_prompt("\u26A0 Please enter a valid phone number.")
+        self.phonenum.set_error_prompt("\u26A0 Please enter a valid phone number. "
+                                       "(Area code, Local Code, No Parenthesis/Hyphens.)")
         self.create_pass.set_error_prompt("\u26A0 This password is not strong enough.")
         self.confirm_pass.set_error_prompt("\u26A0 These passwords do not match.")
 
@@ -132,16 +132,12 @@ class RegisterScene(BaseScene):
         self.addresses.clear()
         home_address = {
             "name": "Home",
-            "physical_address": self.home_address.text(),
-            "lat": "TBA",
-            "long": "TBA"
+            "physical_address": self.home_address.text()
         }
 
         work_address = {
             "name": "Work",
-            "physical_address": self.work_address.text(),
-            "lat": "TBA",
-            "long": "TBA"
+            "physical_address": self.work_address.text()
         }
 
         if home_address["physical_address"] != "":
