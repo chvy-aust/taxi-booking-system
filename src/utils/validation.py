@@ -28,7 +28,7 @@ def validate_dob(dob: QDate) -> bool:
     # Calculate user age, not considering if their birthday passed.
     age = today.year() - dob.year()
     # If user's birthday has not passed, subtract a year.
-    if [today.month(), today.day()] > [dob.month(), dob.day()]:
+    if [today.month(), today.day()] < [dob.month(), dob.day()]:
         age -= 1
     return age >= AGE_REQUIREMENT
 
