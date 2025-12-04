@@ -125,15 +125,13 @@ class DatabaseConnection:
     def save_address(self, address: dict[str, Any]):
         try:
             self.execute("""
-            INSERT INTO customer_address (
-                customer_id, name, physical_address, lat, long) 
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO addresses (
+                customer_id, name, physical_address) 
+            VALUES (?, ?, ?)
                         """, (
                 address["customer_id"],
                 address["name"],
-                address["physical_address"],
-                address["lat"],
-                address["long"]),
+                address["physical_address"],)
             )
         except sqlite3.Error as e:
             logger.exception(f"Failed to add address for user ({address["customer_id"]}): {e}")

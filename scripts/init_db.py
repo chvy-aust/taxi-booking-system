@@ -18,8 +18,8 @@ USER_SCHEMA = """
     )
     """
 
-CUSTOMER_ADDRESS_SCHEMA = """
-    CREATE TABLE IF NOT EXISTS customer_address (
+ADDRESSES_SCHEMA = """
+    CREATE TABLE IF NOT EXISTS addresses (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         customer_id INT NOT NULL REFERENCES user(id),
         name TEXT NOT NULL,
@@ -60,7 +60,7 @@ def initialize_database():
             logger.info("Attempting to create tables … [  ]")
             cursor.execute(USER_SCHEMA)
             cursor.execute(BOOKING_SCHEMA)
-            cursor.execute(CUSTOMER_ADDRESS_SCHEMA)
+            cursor.execute(ADDRESSES_SCHEMA)
             cursor.execute(DRIVER_PROFILE_SCHEMA)
             logger.info("Tables created successfully … [ ✔ ]")
             # Other executions here
