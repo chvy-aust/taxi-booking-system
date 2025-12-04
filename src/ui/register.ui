@@ -26,7 +26,7 @@
       </sizepolicy>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="step_one">
       <layout class="QVBoxLayout" name="verticalLayout_24">
@@ -248,7 +248,7 @@
       </layout>
      </widget>
      <widget class="QWidget" name="step_two">
-      <layout class="QVBoxLayout" name="verticalLayout_9">
+      <layout class="QVBoxLayout" name="verticalLayout_7">
        <item>
         <widget class="QLabel" name="s2_header">
          <property name="sizePolicy">
@@ -360,27 +360,7 @@
         </layout>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_11">
-         <item>
-          <layout class="QVBoxLayout" name="verticalLayout_11">
-           <item>
-            <widget class="QLabel" name="lastname_label">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Last Name:</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="InputEdit" name="lastname" native="true"/>
-           </item>
-          </layout>
-         </item>
+        <layout class="QHBoxLayout" name="horizontalLayout_6">
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_10">
            <item>
@@ -401,6 +381,26 @@
            </item>
            <item>
             <widget class="InputEdit" name="firstname" native="true"/>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_11">
+           <item>
+            <widget class="QLabel" name="lastname_label">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>Last Name:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="InputEdit" name="lastname" native="true"/>
            </item>
           </layout>
          </item>
