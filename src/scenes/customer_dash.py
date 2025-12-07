@@ -22,7 +22,9 @@ class CustomerDashboardScene(BaseScene):
         ui.account_btn.clicked.connect(
             lambda:ui.stackedWidget.setCurrentWidget(ui.profile_page)
         )
-
+        ui.cancel_edit_btn.clicked.connect(
+            lambda:ui.stackedWidget.setCurrentWidget(ui.homePage)
+        )
         ui.home_btn.clicked.connect(
             lambda:ui.stackedWidget.setCurrentWidget(ui.homePage)
         )
