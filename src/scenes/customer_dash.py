@@ -31,6 +31,9 @@ class CustomerDashboardScene(BaseScene):
         ui.ride_btn.clicked.connect(
             lambda:ui.stackedWidget.setCurrentWidget(ui.book_ride_page)
         )
+        ui.cancel_driver_reg_btn.clicked.connect(
+            lambda:ui.stackedWidget.setCurrentWidget(ui.homePage)
+        )
         ui.driver_btn.clicked.connect(
             lambda:ui.stackedWidget.setCurrentWidget(ui.become_driver_page)
     )
