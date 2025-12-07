@@ -1,6 +1,6 @@
  /* Global Styling */
 QMainWindow {
-    background-color: #466060;
+    background-color: #8ea19e;
     border-radius: 0px;
 }
 
