@@ -10,6 +10,7 @@ ROOT_DIR = Path(__file__).parent
 LOG_DIR = ROOT_DIR / 'logs'
 LOG_CONF = LOG_DIR / 'config.json'
 DB_FILE = ROOT_DIR / 'taxibooking.db'
+ICONS_DIR = ROOT_DIR / 'src' / 'ui' / 'icons'
 
 def main():
     # Set global logger configurations.
