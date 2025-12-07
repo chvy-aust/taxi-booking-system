@@ -9,19 +9,32 @@ from src.widgets import SystemFeedback
 from src.scenes import BaseScene
 from src.widgets import BookingListModel, Button
 from src.forms import BookingForm
+from src.ui.updated_dashboard import Ui_Dashboard
 
 
 class CustomerDashboardScene(BaseScene):
     def __init__(self):
         super().__init__("customer-dash")
-        self._load_ui()
+        ui=Ui_Dashboard()
+        ui.setupUi(self)
 
+        # Buttons for switching pages
+        ui.account_btn.clicked.connect(
+            lambda:ui.stackedWidget.setCurrentWidget(ui.profile_page)
+        )
+
+        ui.home_btn.clicked.connect(
+            lambda:ui.stackedWidget.setCurrentWidget(ui.homePage)
+        )
+        ui.ride_btn.clicked.connect(
+            lambda:ui.stackedWidget.setCurrentWidget(ui.book_ride_page)
+        )
+        ui.driver_btn.clicked.connect(
+            lambda:ui.stackedWidget.setCurrentWidget(ui.become_driver_page)
+    )
     def _load_ui(self):
-        self.layout = QVBoxLayout()
-        self._setup_header_panel()
-        self._setup_center_panel()
+        pass
 
-        self.setLayout(self.layout)
 
     def _setup_center_panel(self):
         """
@@ -140,8 +153,7 @@ class CustomerDashboardScene(BaseScene):
             signals.request_login.emit()
             return
 
-        self.greeting.setText(f"Welcome, {self.user.firstname} {self.user.lastname}!")
-        self._load_bookings()
+
 
     def _load_bookings(self):
         """Fetch and load all user bookings onto list view."""
