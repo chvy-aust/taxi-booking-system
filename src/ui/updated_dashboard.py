@@ -533,7 +533,7 @@ class Ui_Dashboard(object):
 "    background-color: #4A5C66;\n"
 "    border: 2px solid #FFFFFF;\n"
 "}")
-        self.cancel_edit_btn.setObjectName("cancleEdit_btn")
+        self.cancel_edit_btn.setObjectName("cancelEdit_btn")
         self.frame_8 = QtWidgets.QFrame(parent=self.edit_profile_form)
         self.frame_8.setGeometry(QtCore.QRect(30, 10, 511, 391))
         self.frame_8.setFrameShape(QtWidgets.QFrame.Shape.StyledPanel)
