@@ -1,0 +1,979 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>driver_dashboard</class>
+ <widget class="QWidget" name="driver_dashboard">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>782</width>
+    <height>603</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>782</width>
+    <height>603</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>782</width>
+    <height>603</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">#driver_dashboard{
+	background-color: #8EA09F;
+}</string>
+  </property>
+  <widget class="QWidget" name="driver_widget" native="true">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>781</width>
+     <height>601</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">*{
+	color: #000;
+	border: none;
+}
+
+#appHeader{
+	color: #293737;
+}
+
+#card1, #card2, #card3, #card4{
+background-color: #fefeff;
+border-radius: 20px;
+}</string>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QWidget" name="driver_left_menu" native="true">
+      <property name="maximumSize">
+       <size>
+        <width>200</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">#driver_left_menu{
+	background-color: #293737;
+}</string>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QFrame" name="driver_side_menu">
+         <property name="maximumSize">
+          <size>
+           <width>250</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::Shape::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Shadow::Raised</enum>
+         </property>
+         <widget class="QWidget" name="layoutWidget">
+          <property name="geometry">
+           <rect>
+            <x>-10</x>
+            <y>-10</y>
+            <width>201</width>
+            <height>591</height>
+           </rect>
+          </property>
+          <layout class="QVBoxLayout" name="driver_vertical_layout">
+           <item>
+            <widget class="QFrame" name="driver_frame_4">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="frameShape">
+              <enum>QFrame::Shape::StyledPanel</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Shadow::Raised</enum>
+             </property>
+             <widget class="QLabel" name="driver_lable">
+              <property name="geometry">
+               <rect>
+                <x>40</x>
+                <y>20</y>
+                <width>125</width>
+                <height>24</height>
+               </rect>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>125</width>
+                <height>75</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <family>Arial</family>
+                <pointsize>16</pointsize>
+                <bold>true</bold>
+                <underline>true</underline>
+               </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">  QLabel {
+        color: white;
+    }</string>
+              </property>
+              <property name="text">
+               <string>Driver Menu</string>
+              </property>
+             </widget>
+             <widget class="QWidget" name="layoutWidget">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>60</y>
+                <width>201</width>
+                <height>201</height>
+               </rect>
+              </property>
+              <layout class="QVBoxLayout" name="driver_vertical_layout_2">
+               <property name="spacing">
+                <number>10</number>
+               </property>
+               <item>
+                <widget class="QPushButton" name="driver_home_bn">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <family>Arial</family>
+                   <pointsize>-1</pointsize>
+                   <bold>true</bold>
+                  </font>
+                 </property>
+                 <property name="cursor">
+                  <cursorShape>PointingHandCursor</cursorShape>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true">QPushButton {
+    background-color: #476061;
+    color: #FFFFFF;      
+    font-size: 14px;
+    padding: 10px 10px;
+
+    /* Border and Shape */
+    border: 2px solid #556D7A; 
+    border-radius: 8px;
+    margin: 5px 10px 5px 10px;
+    text-align: center;
+}
+
+/* Style for when the mouse hovers over the button */
+QPushButton:hover {
+    background-color: #4A5C66;
+    border: 2px solid #FFFFFF; 
+}</string>
+                 </property>
+                 <property name="text">
+                  <string> Home</string>
+                 </property>
+                 <property name="icon">
+                  <iconset>
+                   <normaloff>../making dash/dash/icons/home.png</normaloff>../making dash/dash/icons/home.png</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>32</width>
+                   <height>32</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="assigned_trips_btn">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <family>Arial</family>
+                   <pointsize>-1</pointsize>
+                   <bold>true</bold>
+                  </font>
+                 </property>
+                 <property name="cursor">
+                  <cursorShape>PointingHandCursor</cursorShape>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true">QPushButton {
+    background-color: #476061;
+    color: #FFFFFF;      
+    font-size: 14px;
+    padding: 10px 10px;
+
+    /* Border and Shape */
+    border: 2px solid #556D7A; 
+    border-radius: 8px;
+    margin: 5px 10px 5px 10px;
+    text-align: center;
+}
+
+/* Style for when the mouse hovers over the button */
+QPushButton:hover {
+    background-color: #4A5C66;
+    border: 2px solid #FFFFFF; 
+}</string>
+                 </property>
+                 <property name="text">
+                  <string>Assigned Trips</string>
+                 </property>
+                 <property name="icon">
+                  <iconset>
+                   <normaloff>admin icons/route_icon.png</normaloff>admin icons/route_icon.png</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>40</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+             <widget class="QFrame" name="driver_frame_5">
+              <property name="geometry">
+               <rect>
+                <x>20</x>
+                <y>490</y>
+                <width>161</width>
+                <height>81</height>
+               </rect>
+              </property>
+              <property name="frameShape">
+               <enum>QFrame::Shape::StyledPanel</enum>
+              </property>
+              <property name="frameShadow">
+               <enum>QFrame::Shadow::Raised</enum>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_12">
+               <item>
+                <widget class="QPushButton" name="driver_logout_btn">
+                 <property name="font">
+                  <font>
+                   <family>Arial</family>
+                   <pointsize>-1</pointsize>
+                  </font>
+                 </property>
+                 <property name="cursor">
+                  <cursorShape>PointingHandCursor</cursorShape>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true">QPushButton {
+    background-color: #476061;
+    color: #FFFFFF;
+    font-size: 14px;
+    padding: 10px 10px;
+
+    /* Border and Shape */
+    border: 2px solid #556D7A;
+    border-radius: 8px;
+    margin: 5px 10px 5px 10px;
+    text-align: center;
+}
+
+/* Style for when the mouse hovers over the button */
+QPushButton:hover {
+    background-color: #d17575;
+    border: 2px solid #FFFFFF;
+}</string>
+                 </property>
+                 <property name="text">
+                  <string>Log Out</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QWidget" name="driver_mainBody" native="true">
+      <widget class="QStackedWidget" name="driver_stackedWidget">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>561</width>
+         <height>591</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
+       <property name="currentIndex">
+        <number>1</number>
+       </property>
+       <widget class="QWidget" name="driver_home_page">
+        <layout class="QVBoxLayout" name="verticalLayout_11">
+         <item>
+          <layout class="QVBoxLayout" name="driver_home_vertical_Layout">
+           <item>
+            <widget class="QWidget" name="driver_home_frame" native="true">
+             <widget class="QWidget" name="driver_header_frame" native="true">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>541</width>
+                <height>71</height>
+               </rect>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">#driver_header_frame{
+	background-color:#476160;
+	border: 5px solid #293737;
+	border-radius: 8px;  
+}</string>
+              </property>
+              <layout class="QHBoxLayout" name="horizontalLayout_7">
+               <item>
+                <widget class="QWidget" name="driver_header_box" native="true">
+                 <layout class="QHBoxLayout" name="horizontalLayout_2">
+                  <item>
+                   <widget class="QWidget" name="driver_side_widget" native="true">
+                    <layout class="QHBoxLayout" name="horizontalLayout_3">
+                     <item alignment="Qt::AlignmentFlag::AlignLeft">
+                      <widget class="QPushButton" name="driver_menu_btn">
+                       <property name="cursor">
+                        <cursorShape>PointingHandCursor</cursorShape>
+                       </property>
+                       <property name="text">
+                        <string/>
+                       </property>
+                       <property name="icon">
+                        <iconset>
+                         <normaloff>../making dash/dash/icons/png_ucggt.png</normaloff>../making dash/dash/icons/png_ucggt.png</iconset>
+                       </property>
+                       <property name="iconSize">
+                        <size>
+                         <width>25</width>
+                         <height>25</height>
+                        </size>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QWidget" name="driver_widget_2" native="true">
+                    <layout class="QHBoxLayout" name="horizontalLayout_4">
+                     <item>
+                      <widget class="QLabel" name="driver_welcome_app_header">
+                       <property name="font">
+                        <font>
+                         <family>Arial</family>
+                         <pointsize>16</pointsize>
+                         <bold>true</bold>
+                        </font>
+                       </property>
+                       <property name="styleSheet">
+                        <string notr="true">#driver_welcome_app_header{
+color:white;
+}</string>
+                       </property>
+                       <property name="text">
+                        <string>Welcome Driver</string>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QWidget" name="driver_widget_3" native="true">
+                    <layout class="QHBoxLayout" name="horizontalLayout_6">
+                     <property name="spacing">
+                      <number>0</number>
+                     </property>
+                     <property name="leftMargin">
+                      <number>0</number>
+                     </property>
+                     <property name="topMargin">
+                      <number>0</number>
+                     </property>
+                     <property name="rightMargin">
+                      <number>0</number>
+                     </property>
+                     <property name="bottomMargin">
+                      <number>0</number>
+                     </property>
+                     <item alignment="Qt::AlignmentFlag::AlignRight">
+                      <widget class="QPushButton" name="driver_account_btn">
+                       <property name="text">
+                        <string/>
+                       </property>
+                       <property name="icon">
+                        <iconset>
+                         <normaloff>icons/usericon.png</normaloff>icons/usericon.png</iconset>
+                       </property>
+                       <property name="iconSize">
+                        <size>
+                         <width>25</width>
+                         <height>25</height>
+                        </size>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+             <widget class="QWidget" name="driver_cards_widget" native="true">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>90</y>
+                <width>541</width>
+                <height>171</height>
+               </rect>
+              </property>
+              <property name="styleSheet">
+               <string notr="true"/>
+              </property>
+              <layout class="QHBoxLayout" name="horizontalLayout_8">
+               <item>
+                <widget class="QFrame" name="driver_card1">
+                 <property name="styleSheet">
+                  <string notr="true">#driver_card1{
+	background-color: #466061;
+	border: 5px solid #293737;
+	border-radius: 20px;
+}</string>
+                 </property>
+                 <property name="frameShape">
+                  <enum>QFrame::Shape::StyledPanel</enum>
+                 </property>
+                 <property name="frameShadow">
+                  <enum>QFrame::Shadow::Raised</enum>
+                 </property>
+                 <layout class="QVBoxLayout" name="verticalLayout_3">
+                  <item>
+                   <widget class="QFrame" name="driver_frame">
+                    <property name="frameShape">
+                     <enum>QFrame::Shape::StyledPanel</enum>
+                    </property>
+                    <property name="frameShadow">
+                     <enum>QFrame::Shadow::Raised</enum>
+                    </property>
+                    <layout class="QVBoxLayout" name="verticalLayout_7">
+                     <item alignment="Qt::AlignmentFlag::AlignHCenter|Qt::AlignmentFlag::AlignVCenter">
+                      <widget class="QLabel" name="professional_label">
+                       <property name="font">
+                        <font>
+                         <family>Arial</family>
+                         <pointsize>12</pointsize>
+                         <bold>true</bold>
+                        </font>
+                       </property>
+                       <property name="styleSheet">
+                        <string notr="true">  QLabel {
+        color: white;
+    }</string>
+                       </property>
+                       <property name="text">
+                        <string>Be Professional</string>
+                       </property>
+                       <property name="scaledContents">
+                        <bool>false</bool>
+                       </property>
+                      </widget>
+                     </item>
+                     <item alignment="Qt::AlignmentFlag::AlignHCenter|Qt::AlignmentFlag::AlignVCenter">
+                      <widget class="QLabel" name="professional_icon_lable">
+                       <property name="maximumSize">
+                        <size>
+                         <width>40</width>
+                         <height>40</height>
+                        </size>
+                       </property>
+                       <property name="text">
+                        <string/>
+                       </property>
+                       <property name="pixmap">
+                        <pixmap>admin icons/professional.png</pixmap>
+                       </property>
+                       <property name="scaledContents">
+                        <bool>true</bool>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+               <item>
+                <widget class="QFrame" name="driver_card2">
+                 <property name="styleSheet">
+                  <string notr="true">#driver_card2{
+	background-color: #466061;
+	border: 5px solid #293737;
+	border-radius: 20px;
+}</string>
+                 </property>
+                 <property name="frameShape">
+                  <enum>QFrame::Shape::StyledPanel</enum>
+                 </property>
+                 <property name="frameShadow">
+                  <enum>QFrame::Shadow::Raised</enum>
+                 </property>
+                 <layout class="QVBoxLayout" name="verticalLayout_4">
+                  <item>
+                   <widget class="QFrame" name="driver_frame_2">
+                    <property name="frameShape">
+                     <enum>QFrame::Shape::StyledPanel</enum>
+                    </property>
+                    <property name="frameShadow">
+                     <enum>QFrame::Shadow::Raised</enum>
+                    </property>
+                    <layout class="QVBoxLayout" name="verticalLayout_8">
+                     <item alignment="Qt::AlignmentFlag::AlignHCenter|Qt::AlignmentFlag::AlignVCenter">
+                      <widget class="QLabel" name="be_careful_label">
+                       <property name="font">
+                        <font>
+                         <family>Arial</family>
+                         <pointsize>12</pointsize>
+                         <bold>true</bold>
+                        </font>
+                       </property>
+                       <property name="styleSheet">
+                        <string notr="true">  QLabel {
+        color: white;
+    }</string>
+                       </property>
+                       <property name="text">
+                        <string>Be Careful</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item alignment="Qt::AlignmentFlag::AlignHCenter|Qt::AlignmentFlag::AlignVCenter">
+                      <widget class="QLabel" name="careful_icon_label">
+                       <property name="maximumSize">
+                        <size>
+                         <width>35</width>
+                         <height>35</height>
+                        </size>
+                       </property>
+                       <property name="text">
+                        <string/>
+                       </property>
+                       <property name="pixmap">
+                        <pixmap>admin icons/safe.png</pixmap>
+                       </property>
+                       <property name="scaledContents">
+                        <bool>true</bool>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+               <item>
+                <widget class="QFrame" name="driver_card3">
+                 <property name="styleSheet">
+                  <string notr="true">#driver_card3{
+	background-color: #466061;
+	border: 5px solid #293737;
+	border-radius: 20px;
+}</string>
+                 </property>
+                 <property name="frameShape">
+                  <enum>QFrame::Shape::StyledPanel</enum>
+                 </property>
+                 <property name="frameShadow">
+                  <enum>QFrame::Shadow::Raised</enum>
+                 </property>
+                 <layout class="QVBoxLayout" name="verticalLayout_5">
+                  <item>
+                   <widget class="QFrame" name="driver_frame_3">
+                    <property name="frameShape">
+                     <enum>QFrame::Shape::StyledPanel</enum>
+                    </property>
+                    <property name="frameShadow">
+                     <enum>QFrame::Shadow::Raised</enum>
+                    </property>
+                    <layout class="QVBoxLayout" name="verticalLayout_6">
+                     <item alignment="Qt::AlignmentFlag::AlignHCenter|Qt::AlignmentFlag::AlignVCenter">
+                      <widget class="QLabel" name="be_on_time_label">
+                       <property name="font">
+                        <font>
+                         <family>Arial</family>
+                         <pointsize>12</pointsize>
+                         <bold>true</bold>
+                        </font>
+                       </property>
+                       <property name="styleSheet">
+                        <string notr="true">  QLabel {
+        color: white;
+    }</string>
+                       </property>
+                       <property name="text">
+                        <string>Be On Time</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item alignment="Qt::AlignmentFlag::AlignHCenter|Qt::AlignmentFlag::AlignVCenter">
+                      <widget class="QLabel" name="time_image_label">
+                       <property name="maximumSize">
+                        <size>
+                         <width>35</width>
+                         <height>35</height>
+                        </size>
+                       </property>
+                       <property name="text">
+                        <string/>
+                       </property>
+                       <property name="pixmap">
+                        <pixmap>admin icons/on_time.png</pixmap>
+                       </property>
+                       <property name="scaledContents">
+                        <bool>true</bool>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+             <widget class="QWidget" name="driver_main_frame" native="true">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>280</y>
+                <width>559</width>
+                <height>321</height>
+               </rect>
+              </property>
+              <widget class="QLabel" name="driver_banner_photo">
+               <property name="geometry">
+                <rect>
+                 <x>10</x>
+                 <y>0</y>
+                 <width>521</width>
+                 <height>281</height>
+                </rect>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">#driver_banner_photo{
+	border: 5px solid #293737;
+	border-radius: 8px;  
+}</string>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="pixmap">
+                <pixmap>admin icons/driver_banner.png</pixmap>
+               </property>
+               <property name="scaledContents">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </widget>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="view_trip_page">
+        <widget class="QFrame" name="view_trips_form">
+         <property name="geometry">
+          <rect>
+           <x>-10</x>
+           <y>0</y>
+           <width>561</width>
+           <height>581</height>
+          </rect>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::Shape::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Shadow::Raised</enum>
+         </property>
+         <widget class="QFrame" name="view_trips_layout">
+          <property name="geometry">
+           <rect>
+            <x>30</x>
+            <y>0</y>
+            <width>511</width>
+            <height>581</height>
+           </rect>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::Shape::StyledPanel</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Shadow::Raised</enum>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_2">
+           <item row="1" column="0" alignment="Qt::AlignmentFlag::AlignHCenter|Qt::AlignmentFlag::AlignTop">
+            <widget class="QLabel" name="view_trips_label">
+             <property name="styleSheet">
+              <string notr="true">QLabel {
+    background-color: #466061; 
+    border: 2px solid #101717; 
+    border-radius: 8px; 
+    padding: 6px;
+    color: white; 
+    font-size: 25px;            
+}</string>
+             </property>
+             <property name="text">
+              <string>View Assigned Trips</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QTabWidget" name="tabWidget">
+             <property name="styleSheet">
+              <string notr="true">QTabBar::tab{
+	color:white
+
+}
+
+QTabWidget {
+    background-color: #879396;
+    color: #FFFFFF;
+    font-size: 15px;
+    padding: 10px 10px;
+
+    border: 2px solid #101717; 
+    border-radius: 15px; 
+    margin: 5px 10px 5px 10px;
+    text-align: center;
+}
+
+QPushButton:pressed {
+    background-color: #4A5C66;
+    border: 2px solid #FFFFFF;
+}</string>
+             </property>
+             <property name="currentIndex">
+              <number>0</number>
+             </property>
+             <widget class="QWidget" name="assigned_drives_tab">
+              <attribute name="title">
+               <string>Assigned Drive</string>
+              </attribute>
+              <widget class="QWidget" name="layoutWidget">
+               <property name="geometry">
+                <rect>
+                 <x>-4</x>
+                 <y>0</y>
+                 <width>491</width>
+                 <height>471</height>
+                </rect>
+               </property>
+               <layout class="QVBoxLayout" name="tab_verticalLayout">
+                <item>
+                 <widget class="QTableWidget" name="assign_table_widget"/>
+                </item>
+                <item>
+                 <widget class="QFrame" name="back_to_home">
+                  <property name="frameShape">
+                   <enum>QFrame::Shape::StyledPanel</enum>
+                  </property>
+                  <property name="frameShadow">
+                   <enum>QFrame::Shadow::Raised</enum>
+                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_5">
+                   <item>
+                    <widget class="QPushButton" name="cancel_drive_btn">
+                     <property name="font">
+                      <font>
+                       <family>Arial</family>
+                       <pointsize>-1</pointsize>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="cursor">
+                      <cursorShape>PointingHandCursor</cursorShape>
+                     </property>
+                     <property name="styleSheet">
+                      <string notr="true">QPushButton {
+    background-color: #476061;
+    color: #FFFFFF;
+    font-size: 15px;
+    padding: 10px 10px;
+
+    /* Border and Shape */
+    border: 2px solid #101717; 
+    border-radius: 15px; 
+    margin: 5px 10px 5px 10px;
+    text-align: center;
+}
+
+/* Style for hover over button */
+QPushButton:pressed {
+    background-color: #4A5C66;
+    border: 2px solid #FFFFFF;
+}</string>
+                     </property>
+                     <property name="text">
+                      <string>Cancel</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="completed_drive_btn">
+                     <property name="font">
+                      <font>
+                       <family>Arial</family>
+                       <pointsize>-1</pointsize>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="cursor">
+                      <cursorShape>PointingHandCursor</cursorShape>
+                     </property>
+                     <property name="styleSheet">
+                      <string notr="true">QPushButton {
+    background-color: #476061;
+    color: #FFFFFF;
+    font-size: 15px;
+    padding: 10px 10px;
+
+    /* Border and Shape */
+    border: 2px solid #101717; 
+    border-radius: 15px; 
+    margin: 5px 10px 5px 10px;
+    text-align: center;
+}
+
+/* Style for hover over button */
+QPushButton:pressed {
+    background-color: #4A5C66;
+    border: 2px solid #FFFFFF;
+}</string>
+                     </property>
+                     <property name="text">
+                      <string>Completed</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </widget>
+             <widget class="QWidget" name="completed_drives_tab">
+              <attribute name="title">
+               <string>Completed Drives</string>
+              </attribute>
+              <widget class="QWidget" name="layoutWidget">
+               <property name="geometry">
+                <rect>
+                 <x>-3</x>
+                 <y>0</y>
+                 <width>491</width>
+                 <height>461</height>
+                </rect>
+               </property>
+               <layout class="QVBoxLayout" name="completed_verticalLayout_9">
+                <item>
+                 <widget class="QTableWidget" name="completed_table_widget"/>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="back_to_home_btn_3">
+                  <property name="styleSheet">
+                   <string notr="true">QPushButton {
+    background-color: #476061;
+    color: #FFFFFF;
+    font-size: 15px;
+    padding: 10px 10px;
+
+    /* Border and Shape */
+    border: 2px solid #101717; 
+    border-radius: 15px; 
+    margin: 5px 10px 5px 10px;
+    text-align: center;
+}
+
+/* Style for hover over button */
+QPushButton:pressed {
+    background-color: #4A5C66;
+    border: 2px solid #FFFFFF;
+}</string>
+                  </property>
+                  <property name="text">
+                   <string>Back to Home</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </widget>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </widget>
+       </widget>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
