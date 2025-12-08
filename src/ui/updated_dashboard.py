@@ -1097,7 +1097,7 @@ class Ui_Dashboard(object):
         self.label_19.setText(_translate("Dashboard", "Updated Email Address"))
         self.authorize_info_update.setText(_translate("Dashboard", "I authorize my information to be updated"))
         self.confirm_driver_reg_btn.setText(_translate("Dashboard", "Confirm"))
-        self.cancel_driver_reg_btn.setText(_translate("Dashboard", "Cancle"))
+        self.cancel_driver_reg_btn.setText(_translate("Dashboard", "Cancel"))
         self.yes_no_dropbox.setItemText(0, _translate("Dashboard", "No"))
         self.yes_no_dropbox.setItemText(1, _translate("Dashboard", "Yes"))
         self.label_9.setText(_translate("Dashboard", "Make of Vehicle"))
