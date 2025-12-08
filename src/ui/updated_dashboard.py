@@ -1087,7 +1087,7 @@ class Ui_Dashboard(object):
         self.label_3.setText(_translate("Dashboard", "5 Star Rated"))
         self.label_7.setText(_translate("Dashboard", "Always Available"))
         self.confirm_edit_btn.setText(_translate("Dashboard", "Confirm"))
-        self.cancel_edit_btn.setText(_translate("Dashboard", "Cancle"))
+        self.cancel_edit_btn.setText(_translate("Dashboard", "Cancel"))
         self.label_21.setText(_translate("Dashboard", "Updated Last Name"))
         self.label_20.setText(_translate("Dashboard", "Updated Phone Number"))
         self.label_16.setText(_translate("Dashboard", "Updated First Name"))
