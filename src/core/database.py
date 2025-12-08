@@ -1,13 +1,11 @@
 import logging
 import sqlite3
-from pathlib import Path
 from typing import Any
 
 from src.core.models import User, Booking
+from src.utils.constants import DB_FILE
 
-DB_FILE = Path(__file__).parent.parent.parent / 'taxibooking.db'
 logger = logging.getLogger(__name__)
-
 class DatabaseConnection:
     """Database class to handle transactions."""
     def __init__(self):
@@ -75,13 +73,11 @@ class DatabaseConnection:
                                 """, (
                                 role, info["firstname"], info["lastname"],
                                 info["dob"], info["phonenum"],
-                                info["email"], info["create_pass"],)
+                                info["email"], info["password"],)
             )
         except sqlite3.Error as e:
             logger.exception(f"Failed to add user {username} to database: {e}")
             raise
-        else:
-            logger.info(f"Successfully added user {username} to database.")
 
     def update_user(self, user_id, new_attr: dict[str, Any]):
         # Return concatenated str of placeholders. (ie, firstname = ?, dob = ?)
@@ -92,8 +88,6 @@ class DatabaseConnection:
         except sqlite3.Error as e:
             logger.exception(f"Failed to update user ({user_id}) within database: {e}")
             raise
-        else:
-            logger.info(f"Successfully updated user ({user_id}) within database.")
 
     def create_booking(self, info: dict[str, Any]):
 
@@ -117,10 +111,8 @@ class DatabaseConnection:
                                 status,)
             )
         except sqlite3.Error as e:
-            logger.exception(f"Failed to make booking for user ({info["customer_id"]}): {e}")
+            logger.exception(f"Failed to make booking for user ({info['customer_id']}): {e}")
             raise
-        else:
-            logger.info(f"Successfully created new booking for ({info["customer_id"]})")
 
     def save_address(self, address: dict[str, Any]):
         try:
@@ -134,7 +126,5 @@ class DatabaseConnection:
                 address["physical_address"],)
             )
         except sqlite3.Error as e:
-            logger.exception(f"Failed to add address for user ({address["customer_id"]}): {e}")
+            logger.exception(f"Failed to add address for user ({address['customer_id']}): {e}")
             raise
-        else:
-            logger.info(f"Successfully created new address for ({address["customer_id"]})")

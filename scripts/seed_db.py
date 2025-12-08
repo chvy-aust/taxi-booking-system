@@ -1,3 +1,5 @@
+import logging
+import random
 import sqlite3
 
 from faker import Faker
@@ -5,40 +7,71 @@ from faker import Faker
 from src.core.database import DatabaseConnection
 
 faker = Faker()
+logger = logging.getLogger(__name__)
 def generate_users():
-    users = [{"id": 110, "role": "customer", "email": "jnjo32@gmail.com", "password": "P@ss123!"},
-             {"id": 111, "role": "customer", "email": "ran_cust1@gmail.com", "password": "Cust_m1**!"},
-             {"id": 105, "role": "driver", "email": "drv_12@gmail.com", "password": "0Dv32!**"},
-             {"id": 106, "role": "driver", "email": "ran_driv1@gmail.com", "password": "Driv_r1**!"},
-             {"id": 101, "role": "admin", "email": "drv_12@gmail.com", "password": "0Dv32!**"},
-             {"id": 102, "role": "admin", "email": "ran_driv1@gmail.com", "password": "Driv_r1**!"}]
+    sample_users = [
+             {"role": "customer", "email": "customer_123@gmail.com"},
+             {"role": "customer", "email": "ran_customer1@gmail.com"},
+             {"role": "driver", "email": "driver_123@gmail.com"},
+             {"role": "driver", "email": "ran_driver1@gmail.com"},
+             {"role": "admin", "email": "admin_123@gmail.com"},
+             {"role": "admin", "email": "ran_admin1@gmail.com"}
+    ]
 
-    for user in users:
+    for user in sample_users:
+        # Generate generic information for test users.
         user["firstname"] = faker.first_name()
         user["lastname"] = faker.last_name()
         user["dob"] = faker.date_of_birth(minimum_age=18).strftime("yyyy-MM-dd")
-        user["phonenum"] = faker.phone_number()
+        user["phonenum"] = faker.numerify("868 ### ####")
+        user["password"] = "Pass123**"
 
-    return users
+    for role, amount in {'customer': 25, 'driver': 8, 'admin': 4}.items():
+        # Generate additional full sample users.
+        sample_users += [{
+                "role": role,
+                "firstname": faker.first_name(),
+                "lastname": faker.last_name(),
+                "dob": faker.date_of_birth(minimum_age=18).strftime("yyyy-MM-dd"),
+                "phonenum": faker.phone_number(),
+                "email": faker.email(),
+                "password": faker.password(8)
+        } for _ in range(amount)]
 
-def generate_bookings():
-    return [{"": 1}]
+    return sample_users
 
-if __name__ == "__main__":
-    print("( ℹ ) Seeding Database …")
+
+def generate_bookings(generated_users):
+    sample_bookings, customers, drivers = [], [], []
     try:
         with DatabaseConnection() as conn:
-            print("❯❯ Attempting to generate user data … [ ]")
-            for user in generate_users():
-                conn.create_user(user)
-            print("❯❯ User data generated … [ ✔ ]")
-            print("❯❯ Attempting to generate booking data … [ ]")
-            for booking in generate_bookings():
-                conn.create_booking(booking)
-            print("❯❯ Booking data generated … [ ✔ ]")
-            print("❯❯ Data successfully generated [ ✔ ]")
+            users = [conn.lookup_user(user["email"] for user in generated_users)]
+            for user in users:
+                if user.role == "customer":
+                    customers += user
+                if user.role == "driver":
+                    drivers += user
     except sqlite3.Error as e:
-            print(f"( CRITICAL ⚠ ) Failed to seed database! ERROR: {e}")
-            raise
+        logger.exception(e)
+
+
+
+def seed_database():
+
+    logger.info("Seeding Database …")
+    try:
+        with DatabaseConnection() as conn:
+            logger.info("❯❯ Attempting to generate user data … [ ]")
+            generated_users = generate_users()
+            for generated_user in generated_users:
+                conn.create_user(generated_user)
+            logger.info("❯❯ User data generated … [ ✔ ]")
+            logger.info("❯❯ Attempting to generate booking data … [ ]")
+            # db method goes here
+            # logger.info("❯❯ Booking data generated … [ ✔ ]")
+            logger.info("❯❯ Data successfully generated [ ✔ ]")
+    except sqlite3.Error as e:
+        logger.exception(e)
+        raise
     else:
-        print("( ℹ ) Database successfully seeded !")
+        logger.info("Successfully seeded database!")

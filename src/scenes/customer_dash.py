@@ -1,104 +1,110 @@
 import sqlite3
 
-from PyQt6.QtWidgets import QVBoxLayout, QLabel, QListView, \
-    QHBoxLayout, QWidget, QStackedWidget
+from PyQt6.QtWidgets import QLineEdit
 
-from src.signals import signals
 from src.core.database import DatabaseConnection
-from src.widgets import SystemFeedback
 from src.scenes import BaseScene
-from src.widgets import BookingListModel, Button
-from src.forms import BookingForm
+from src.signals import signals
+from src.ui.ui_customer_dash import Ui_Dashboard
+from src.utils import validate_phonenum, validate_email, validate_password, \
+    is_fields_valid, is_email_unique
+from src.widgets import BookingListModel
+from src.widgets import SystemFeedback
 
 
-class CustomerDashboardScene(BaseScene):
+class CustomerDashboardScene(BaseScene, Ui_Dashboard):
     def __init__(self):
         super().__init__("customer-dash")
-        self._load_ui()
+        self.setupUi(self)
 
-    def _load_ui(self):
-        self.layout = QVBoxLayout()
-        self._setup_header_panel()
-        self._setup_center_panel()
+        # HOME BTN + LOGOUT BTN  + MENU BTN-----
+        # --- button events (switch to panel)
+        self.home_btn.clicked.connect(lambda: self.switch_to(self.homePage))
+        self.log_out_btn.clicked.connect(self._log_out)
 
-        self.setLayout(self.layout)
+        # USER PROFILE SETTINGS -----
+        # --- button events (switch to panel, cancel update, confirm update)
+        self.account_btn.clicked.connect(lambda: self.switch_to(self.profile_page))
+        self.cancel_edit_btn.clicked.connect(lambda: self.switch_to(self.homePage))
+        self.update_account_btn.clicked.connect(self._update_user)
 
-    def _setup_center_panel(self):
-        """
-        Configure the dashboard's center (main) panel.
-        Features:
-            - Account Profile Settings : Change user attributes.
-            - Booking Management : Make bookings and view booking history.
-        """
-        self.center_panel = QStackedWidget()
+        # --- fields (user credentials)
+        self.account_fields = [
+            self.firstname, self.lastname, self.email,
+            self.new_password, self.confirm_password
+        ]
+        # Hide password characters
+        self.new_password.set_echo_mode(QLineEdit.EchoMode.Password)
+        self.confirm_password.set_echo_mode(QLineEdit.EchoMode.Password)
 
-        # USER ACCOUNT PROFILE
-        profile_layout = QVBoxLayout()
-        self.user_form = QWidget()
-        update_user_btn = Button("Update", self._update_user)
-        profile_layout.addWidget(self.user_form)
-        profile_layout.addWidget(update_user_btn)
 
-        self.account_panel = QWidget()
-        self.account_panel.setLayout(profile_layout)
-        self.center_panel.addWidget(self.account_panel)
+        # BOOK A RIDE PAGE -----
+        # --- button events (switch to panel)
+        self.ride_btn.clicked.connect(lambda: self.switch_to(self.book_ride_page))
 
-        # BOOKING MANAGEMENT PROFILE
-        booking_layout = QHBoxLayout()
-        # View bookings
-        booking_list_model = BookingListModel()
-        self.booking_list = QListView()
-        self.booking_list.setModel(booking_list_model)
-        # Make a booking
-        self.booking_form = BookingForm()
-        self.booking_form.make_booking.connect(self._on_make_booking)
-        booking_layout.addWidget(self.booking_list)
-        booking_layout.addWidget(self.booking_form)
+        # DRIVER APPLICATION PAGE -----
+        # --- button events (switch to panel, cancel application)
+        self.driver_btn.clicked.connect(
+            lambda: self.switch_to(self.become_driver_page))
+        self.cancel_driver_reg_btn.clicked.connect(
+            lambda: self.switch_to(self.homePage))
 
-        self.booking_panel = QWidget()
-        self.booking_panel.setLayout(booking_layout)
-        self.center_panel.addWidget(self.booking_panel)
-        # Load booking panel on initialization.
-        self._load_panel(self.booking_panel)
-        self.layout.addWidget(self.center_panel)
 
-    def _setup_header_panel(self):
-        """
-        Configure the dashboard's header panel.
-        Handles switching center panel widgets and logging out.
-        """
-        self.greeting = QLabel()
-        self.greeting.setObjectName("dash-greeting")
-        self.header_panel = QHBoxLayout()
 
-        # Side panel buttons.
-        view_profile_btn = Button("Account", lambda: self._load_panel(self.account_panel))
-        view_bookings_btn = Button("Bookings", lambda: self._load_panel(self.booking_panel))
-        self.logout_btn = Button("Log out", self._log_out)
-        # Add buttons to panel
-        self.header_panel.addWidget(self.greeting)
-        self.header_panel.addStretch()
-
-        self.header_panel.addWidget(view_bookings_btn)
-        self.header_panel.addStretch()
-        self.header_panel.addWidget(view_profile_btn)
-        self.header_panel.addWidget(self.logout_btn)
-
-        self.layout.addLayout(self.header_panel)
-
+    def switch_to(self, page):
+        self.refresh_scene()
+        self.customer_dash_panel.setCurrentWidget(page)
 
     def _update_user(self):
         """
         Compares collected credentials from user form.
         Updates user record, if new credentials are found.
         """
-        # Get valid credentials from user form.
-        valid_values = []
-        if not valid_values:
+        # Clear error for null confirm pass field.
+        self.clear_errors()
+        info = {
+            "firstname": self.firstname.text(),
+            "lastname": self.lastname.text(),
+            "phonenum": self.phonenum.text(),
+            "email": self.email.text().lower(),
+            "password": self.new_password.text(),
+            "confirm_pass": self.confirm_password.text()
+        }
+
+        # Check for basic information.
+        validation_checks = {
+            # Check against null fields and formatting.
+            self.firstname: bool(info["firstname"]),
+            self.lastname: bool(info["lastname"]),
+            self.phonenum: validate_phonenum(info["phonenum"]),
+        }
+
+        # Only check passwords if new values are provided.
+        if info["password"] != self.user.password or info["confirm_pass"]:
+            # Check password formatting and matching.
+            validation_checks |= {
+                self.new_password: validate_password(info["password"]),
+                self.confirm_password:
+                    info["confirm_pass"] == info["password"]
+            }
+
+        # Only check email if new value is provided.
+        if info["email"] != self.user.email:
+            # Check unique constraint.
+            if not is_email_unique(info["email"]):
+                self.info_popup("This email is already in use!")
+                return
+            # Check email formatting if unique.
+            validation_checks |= {
+                self.email: validate_email(info["email"])
+            }
+
+        # Terminate if any field is invalid.
+        if not is_fields_valid(validation_checks):
             return
 
         # Get new credentials, drop unchanged credentials.
-        new_values = self.user.compare_attr(valid_values)
+        new_values = self.user.compare_attr(info)
         if not new_values:
             return
 
@@ -108,7 +114,7 @@ class CustomerDashboardScene(BaseScene):
             self.info_popup(SystemFeedback.DATABASE_ERROR)
         else:
             self.info_popup("Successfully updated profile!")
-            signals.trigger_refresh.emit()
+            self.refresh_scene()
 
     def _on_make_booking(self, info):
         """Collect information and save to database.."""
@@ -123,26 +129,6 @@ class CustomerDashboardScene(BaseScene):
                 "Please wait for a driver to be assigned to your ride…")
             self.refresh_scene()
 
-    def _log_out(self):
-        self.user = None
-        signals.request_login.emit()
-
-    def _load_panel(self, panel):
-        self.center_panel.setCurrentWidget(panel)
-
-    def refresh_scene(self):
-        self._depopulate_date()
-        self.populate_data()
-
-    def populate_data(self):
-        if self.user is None:
-            self.info_popup("Could not access your account. Please Try Again or contact Support.")
-            signals.request_login.emit()
-            return
-
-        self.greeting.setText(f"Welcome, {self.user.firstname} {self.user.lastname}!")
-        self._load_bookings()
-
     def _load_bookings(self):
         """Fetch and load all user bookings onto list view."""
         try:
@@ -152,6 +138,43 @@ class CustomerDashboardScene(BaseScene):
         except sqlite3.Error:
             self.info_popup(SystemFeedback.DATABASE_ERROR)
 
+    def _log_out(self):
+        """Return to launch screen."""
+        signals.request_login.emit()
+        self.user = None
 
-    def _depopulate_date(self):
-        self.greeting.setText(None)
+    def clear_errors(self):
+        for field in self.account_fields:
+            field.clear_error()
+
+
+    def refresh_scene(self):
+        self.depopulate_date()
+        self.populate_data()
+
+    def depopulate_date(self):
+        for field in self.account_fields:
+            field.reset()
+
+    def populate_data(self):
+        if self.user is None:
+            self.info_popup("Could not access your account. Please Try Again or contact Support.")
+            signals.request_login.emit()
+            return
+        self.firstname.set_text(self.user.firstname)
+        self.lastname.set_text(self.user.lastname)
+        self.phonenum.set_text(self.user.phonenum)
+        self.email.set_text(self.user.email)
+        self.new_password.set_text(self.user.password)
+
+        self.firstname.set_error("\u26A0 Please enter a firstname.")
+        self.lastname.set_error("\u26A0 Please enter a lastname.")
+        self.email.set_error("\u26A0 Please enter a valid email.")
+        self.phonenum.set_error("\u26A0 Invalid phone number format.")
+        self.new_password.set_error("\u26A0 Password not strong enough.")
+        self.confirm_password.set_error("\u26A0 These passwords do not match.")
+
+
+
+
+

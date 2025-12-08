@@ -19,9 +19,9 @@ class BaseScene(QWidget):
         """
         pass
 
-    def _depopulate_date(self):
+    def depopulate_data(self):
         """
-        Clear all populated data fields if user has logged out.
+        Clear all data fields.
         To be overridden by subclassed scenes.
         """
         pass
@@ -34,10 +34,9 @@ class BaseScene(QWidget):
         pass
 
     def refresh_scene(self):
-        """
-        Refresh available data fields within scene.
-        To be overridden by subclassed scenes.
-        """
+        """Refresh available data fields within scene."""
+        self.depopulate_data()
+        self.populate_data()
 
     def info_popup(self, info):
         """Display an informative message to the user."""

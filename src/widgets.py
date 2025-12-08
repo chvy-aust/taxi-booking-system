@@ -2,7 +2,7 @@ import datetime
 
 from PyQt6.QtCore import Qt, QDate, QAbstractListModel, pyqtSignal
 from PyQt6.QtWidgets import QPushButton, QDateEdit, QLineEdit, QHBoxLayout, \
-    QTimeEdit, QLabel, QVBoxLayout, QWidget, QDialog
+    QTimeEdit, QLabel, QVBoxLayout, QWidget, QDialog, QSizePolicy
 
 """
 Provides custom project widgets.
@@ -45,47 +45,62 @@ class InputEdit(QWidget):
         self.setObjectName(object_name)
         self.input_field = input_type()
         self.input_field.setFixedHeight(40)
+        self.input_field.setSizePolicy(QSizePolicy.Policy.Expanding,
+                                       QSizePolicy.Policy.Preferred)
 
-        self.error_prompt = QLabel()
-        self.error_prompt.setFixedHeight(20)
-        self.error_prompt.setStyleSheet("color: #5B0D0D")
-        self.error_prompt.hide()
+        self.error_field = QLabel("")
+        self.error_field.setStyleSheet("color: #5B0D0D;")
+        self.error_field.setFixedHeight(20)
+        self.error_field.setWordWrap(True)
+        self.error_prompt = None
 
         self.container = QVBoxLayout()
+        self.container.setContentsMargins(0,0,0,0)
+        self.container.setSpacing(0)
         self.container.addWidget(self.input_field)
-        self.container.addWidget(self.error_prompt)
+        self.container.addWidget(self.error_field)
 
 
         self.setLayout(self.container)
 
-    def set_error_prompt(self, text):
-        self.error_prompt.setText(text)
+    def set_focus(self):
+        self.input_field.setFocus()
 
     def set_echo_mode(self, mode: QLineEdit.EchoMode):
         self.input_field.setEchoMode(mode)
+
+    def set_text(self, text):
+        self.input_field.setText(text)
+
 
     def text(self):
         """Return value from field."""
         return self.input_field.text().strip()
 
-    def set_text(self, text):
-        self.input_field.setText(text)
-
     def reset(self):
         self.clear_error()
         self.input_field.clear()
 
+    def set_error(self, text):
+        self.error_prompt = text
+
     def show_error(self):
         """Hint at errors with red highlighting."""
-        self.input_field.setStyleSheet("border: 3px solid #5B0D0D;")
-        self.error_prompt.show()
-        self.update()
+        self.setProperty("invalid", True)
+        self.error_field.setText(self.error_prompt)
+        self._repolish()
 
     def clear_error(self):
         """Remove error hint."""
-        self.input_field.setStyleSheet("border: 3px solid #293737;")
-        self.error_prompt.hide()
-        self.update()
+        self.setProperty("invalid", False)
+        self.error_field.setText("")
+        self._repolish()
+
+    def _repolish(self):
+        self.style().unpolish(self.input_field)
+        self.style().unpolish(self.error_field)
+        self.style().polish(self.input_field)
+        self.style().polish(self.error_field)
 
     @property
     def text_changed(self):

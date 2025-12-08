@@ -36,9 +36,10 @@ class User:
         # Check if credential is != current user credential.
         for key, value in attr.items():
             # Collect any updated credential
-            if value != getattr(self, key):
-                new_attr[key] = value
-        return attr
+            if hasattr(self, key):
+                if value != getattr(self, key):
+                    new_attr[key] = value
+        return new_attr
 
 class Booking:
     def __init__(self, row_object):
@@ -60,12 +61,15 @@ class Booking:
                 SET status = ?
                 WHERE id = ?
                 """, ("cancelled", self.id))
-        except sqlite3.Error as e:
+        except  sqlite3.Error as e:
             print(f"( WARNING ⚠ ) ERROR: {e}")
             raise
         else:
             # Update the booking instance.
             setattr(self, "status", "cancelled")
+
+    def __repr__(self):
+        pass
 
     def __str__(self):
         string = f":: {self.date} - {self.time}"

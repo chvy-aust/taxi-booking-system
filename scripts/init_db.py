@@ -32,8 +32,7 @@ DRIVER_PROFILE_SCHEMA = """
         id INTEGER PRIMARY KEY REFERENCES user(id), 
         car_make TEXT NOT NULL,
         car_color TEXT NOT NULL,
-        plate_num TEXT NOT NULL,
-        note TEXT NULL
+        plate_num TEXT NOT NULL
     )
 """
 

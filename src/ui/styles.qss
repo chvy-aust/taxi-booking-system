@@ -1,6 +1,6 @@
  /* Global Styling */
 QMainWindow {
-    background-color: #466060;
+    background-color: #8ea19e;
     border-radius: 0px;
 }
 
@@ -65,12 +65,27 @@ QLabel#signup_link:hover, QLabel#signin_link:hover {
     color: #101111;
 }
 
-QLineEdit, QDateEdit {
-    background-color: white;
-    color: black;
-    border-radius: 5px;
-    border: 3px solid #293737;
-    padding: 5px;
+InputEdit QLineEdit, InputEdit QDateEdit {
+    background-color: #466061;
+    border: 2px solid #101717;
+    border-radius: 8px;
+    padding: 6px;
+    color: white;
+    font-size: 15px;
+}
+
+InputEdit[error="false"]  QLabel {
+    color: transparent;
+}
+
+InputEdit QLineEdit:focus, InputEdit QDateEdit:focus {
+    background-color: #4A5C66;
+    border: 2px solid #FFFFFF;
+}
+
+InputEdit[error="true"] QLineEdit,
+InputEdit[error="true"] QDateEdit, {
+    border: 2px solid #5B0D0D;
 }
 
 QCalendar {

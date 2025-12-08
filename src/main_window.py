@@ -1,15 +1,14 @@
 import logging
-from pathlib import Path
 
 from PyQt6.QtWidgets import QMainWindow, QApplication, QStackedWidget
 
-from src.signals import signals
-from src.scenes import (
-            RegisterScene, LoginScene,
-            CustomerDashboardScene, BaseScene)
 from src.core.models import User
+from src.scenes import (
+    RegisterScene, LoginScene,
+    CustomerDashboardScene, BaseScene)
+from src.signals import signals
+from src.utils.constants import STYLE_FILE
 
-STYLE_FILE = Path(__file__).parent / 'styles.qss'
 logger = logging.getLogger(__name__)
 
 class MainWindow(QMainWindow):
@@ -20,7 +19,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("AC Taxi Services")
-        self.setFixedSize(800, 600)
+        self.setFixedSize(770, 600)
         self.scene_manager = QStackedWidget()
 
         # Store application scenes.
@@ -49,30 +48,20 @@ class MainWindow(QMainWindow):
         signals.request_customer_dash.connect(
             lambda user: self._switch_to('customer_dash', user)
         )
-        signals.request_driver_dash.connect(
-            lambda: logger.info("This screen has not been added yet!")
-        )
-        signals.request_admin_dash.connect(
-            lambda: logger.info("This screen has not been added yet!")
-        )
 
-        signals.trigger_refresh.connect(self.refresh)
 
     def _switch_to(self, scene_name: str, data: User | None = None):
-        """Navigate to requested scene and populates data, if provided."""
+        """Navigate to requested scene and populate data if provided."""
+        # Clean up current scene.
+        self.scene_manager.currentWidget().depopulate_data()
+
+        # Switch scene.
         scene = self.scenes[scene_name]
-        scene.user = data
-        scene.populate_data()
+        if data:
+            scene.user = data
+            scene.populate_data()
         self.scene_manager.setCurrentWidget(scene)
-
-    def refresh(self):
-        """Reloads the current scene."""
-        current_widget: BaseScene | None = self.scene_manager.currentWidget()
-        if current_widget is not None:
-            current_widget.refresh_scene()
-        else:
-            logger.warning("Could not reload application.")
-
+        scene.refresh_scene()
 
     def _center_window(self):
             """Center main window on screen."""

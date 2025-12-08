@@ -15,26 +15,19 @@ class LoginScene(BaseScene):
         uic.loadUi("src/ui/login.ui", self)
         # Hide password characters
         self.password.set_echo_mode(QLineEdit.EchoMode.Password)
-
         # Setup button events
-        self.signup_link.clicked.connect(self._trigger_register)
         self.login_btn.clicked.connect(self._start_login)
+        self.signup_link.clicked.connect(signals.request_register.emit)
 
-    def _trigger_register(self):
-        """Navigate to register scene."""
-        self._reset_fields()
-        signals.request_register.emit()
 
     def _start_login(self):
-        user_input = {
-            "email": self.email.text().lower(),
-            "password": self.password.text()
-        }
+        email = self.email.text().lower()
+        password = self.password.text()
 
         try:
             with DatabaseConnection() as conn:
-                user = conn.lookup_user(user_input['email'])
-                if user and user.password == user_input['password']:
+                user = conn.lookup_user(email)
+                if user and user.password == password:
                     self.info_popup("Login successful")
                     self._switch_to_dashboard(user)
                 else:
@@ -42,15 +35,8 @@ class LoginScene(BaseScene):
         except sqlite3.Error:
             self.info_popup(SystemFeedback.DATABASE_ERROR)
 
-
-    def _reset_fields(self):
-        """Cleanup text left in fields."""
-        self.email.reset()
-        self.password.reset()
-
     def _switch_to_dashboard(self, user):
         """Enforce RBA and navigate to required dashboard."""
-        self._reset_fields()
         if user.role == "admin":
             signals.request_admin_dash.emit(user)
         elif user.role == "driver":
@@ -58,4 +44,12 @@ class LoginScene(BaseScene):
         elif user.role == "customer":
             signals.request_customer_dash.emit(user)
         else:
-            self.info_popup("Could not navigate to dashboard.")
+            self.info_popup("Could not access user information.")
+
+    def populate_data(self):
+        self.email.set_focus()
+
+    def depopulate_data(self):
+        """Cleanup text left in fields."""
+        self.email.reset()
+        self.password.reset()
