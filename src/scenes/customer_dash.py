@@ -176,5 +176,15 @@ class CustomerDashboardScene(BaseScene, Ui_Dashboard):
 
 
 
+    def _load_bookings(self):
+        """Fetch and load all user bookings onto list view."""
+        try:
+            with DatabaseConnection() as conn:
+                bookings = conn.fetch_bookings(self.user.id,)
+                self.booking_list.setModel(BookingListModel(bookings))
+        except sqlite3.Error:
+            self.info_popup(SystemFeedback.DATABASE_ERROR)
 
 
+    def _depopulate_date(self):
+        self.greeting.setText(None)
