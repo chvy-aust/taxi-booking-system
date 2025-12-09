@@ -13,6 +13,10 @@ from src.widgets import SystemFeedback
 
 
 class CustomerDashboardScene(BaseScene, Ui_Dashboard):
+    """
+    View controller for the Customer Dashboard.
+    Inherits from base scene and pyuic6 converted UI file.
+    """
     def __init__(self):
         super().__init__("customer-dash")
         self.setupUi(self)
@@ -80,13 +84,18 @@ class CustomerDashboardScene(BaseScene, Ui_Dashboard):
         }
 
         # Only check passwords if new values are provided.
-        if info["password"] != self.user.password or info["confirm_pass"]:
+        if info["password"]:
+            if info["password"] == self.user.password:
+                self.info_popup("Please provide a new password.")
+                return
             # Check password formatting and matching.
             validation_checks |= {
                 self.new_password: validate_password(info["password"]),
                 self.confirm_password:
                     info["confirm_pass"] == info["password"]
             }
+        else:
+            info.pop("password", "confirm_pass")
 
         # Only check email if new value is provided.
         if info["email"] != self.user.email:
@@ -149,10 +158,10 @@ class CustomerDashboardScene(BaseScene, Ui_Dashboard):
 
 
     def refresh_scene(self):
-        self.depopulate_date()
+        self.depopulate_data()
         self.populate_data()
 
-    def depopulate_date(self):
+    def depopulate_data(self):
         for field in self.account_fields:
             field.reset()
 
@@ -161,30 +170,15 @@ class CustomerDashboardScene(BaseScene, Ui_Dashboard):
             self.info_popup("Could not access your account. Please Try Again or contact Support.")
             signals.request_login.emit()
             return
+        # Preload account field text
         self.firstname.set_text(self.user.firstname)
         self.lastname.set_text(self.user.lastname)
         self.phonenum.set_text(self.user.phonenum)
         self.email.set_text(self.user.email)
-        self.new_password.set_text(self.user.password)
-
+        # Set account field validation hints
         self.firstname.set_error("\u26A0 Please enter a firstname.")
         self.lastname.set_error("\u26A0 Please enter a lastname.")
         self.email.set_error("\u26A0 Please enter a valid email.")
         self.phonenum.set_error("\u26A0 Invalid phone number format.")
         self.new_password.set_error("\u26A0 Password not strong enough.")
         self.confirm_password.set_error("\u26A0 These passwords do not match.")
-
-
-
-    def _load_bookings(self):
-        """Fetch and load all user bookings onto list view."""
-        try:
-            with DatabaseConnection() as conn:
-                bookings = conn.fetch_bookings(self.user.id,)
-                self.booking_list.setModel(BookingListModel(bookings))
-        except sqlite3.Error:
-            self.info_popup(SystemFeedback.DATABASE_ERROR)
-
-
-    def _depopulate_date(self):
-        self.greeting.setText(None)
