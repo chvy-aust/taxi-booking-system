@@ -1,22 +1,22 @@
 import sqlite3
 
-from PyQt6 import uic
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QLineEdit
 
 from src.core.database import DatabaseConnection
 from src.scenes import BaseScene
 from src.signals import signals
+from src.ui import UiRegister
 from src.utils import validate_email, validate_password, validate_phonenum, \
     validate_dob, is_email_unique, is_fields_valid
 from src.widgets import SystemFeedback
 
 
-class RegisterScene(BaseScene):
+class RegisterScene(BaseScene, UiRegister):
     """Register scene class for the application."""
     def __init__(self):
-        super().__init__(scene_name="register")
-        uic.loadUi("src/ui/register.ui", self)
+        super().__init__("register")
+        self.setupUi(self)
         self.page.setCurrentWidget(self.step_one)
         self.fields = [
             self.firstname, self.lastname,

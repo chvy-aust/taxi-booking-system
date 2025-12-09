@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Form</class>
- <widget class="QWidget" name="Form">
+ <class>register_form</class>
+ <widget class="QWidget" name="register_form">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -364,7 +364,7 @@
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_10">
            <item>
-            <widget class="QLabel" name="0">
+            <widget class="QLabel" name="firstname_label">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                <horstretch>0</horstretch>

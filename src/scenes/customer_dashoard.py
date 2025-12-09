@@ -5,20 +5,18 @@ from PyQt6.QtWidgets import QLineEdit
 from src.core.database import DatabaseConnection
 from src.scenes import BaseScene
 from src.signals import signals
-from src.ui.ui_customer_dash import Ui_Dashboard
-from src.utils import validate_phonenum, validate_email, validate_password, \
-    is_fields_valid, is_email_unique
-from src.widgets import BookingListModel
-from src.widgets import SystemFeedback
+from src.ui import UiCustomerDashboard
+from src.utils.validation import *
+from src.widgets import BookingListModel, SystemFeedback
 
 
-class CustomerDashboardScene(BaseScene, Ui_Dashboard):
+class CustomerDashboardScene(BaseScene, UiCustomerDashboard):
     """
     View controller for the Customer Dashboard.
     Inherits from base scene and pyuic6 converted UI file.
     """
     def __init__(self):
-        super().__init__("customer-dash")
+        super().__init__("customer-dashboard")
         self.setupUi(self)
 
         # HOME BTN + LOGOUT BTN  + MENU BTN-----

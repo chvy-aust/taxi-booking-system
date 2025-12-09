@@ -25,13 +25,12 @@ if __name__ == '__main__':
             initialize_database()
             seed_database()
 
-        # Start event loop
-        from src import MainWindow
-
         # main window has to be imported after log config
+        from src import MainWindow
         app = QApplication(sys.argv)
         window = MainWindow()
         window.show()
+        # Start event loop
         sys.exit(app.exec())
     except Exception as e:
         logger.exception(e)

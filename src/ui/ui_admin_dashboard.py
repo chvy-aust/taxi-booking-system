@@ -7,10 +7,11 @@
 
 
 from PyQt6 import QtCore, QtGui, QtWidgets
-from main import ICONS_DIR
+from src.utils.constants import ICONS_DIR
 
 
-class Ui_admin_dashboard(object):
+
+class UiAdminDashboard(object):
     def setupUi(self, admin_dashboard):
         admin_dashboard.setObjectName("admin_dashboard")
         admin_dashboard.resize(782, 603)

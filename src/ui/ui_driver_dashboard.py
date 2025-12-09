@@ -7,9 +7,9 @@
 
 
 from PyQt6 import QtCore, QtGui, QtWidgets
-from main import ICONS_DIR
+from src.utils.constants import ICONS_DIR
 
-class Ui_driver_dashboard(object):
+class UiDriverDashboard(object):
     def setupUi(self, driver_dashboard):
         driver_dashboard.setObjectName("driver_dashboard")
         driver_dashboard.resize(782, 603)

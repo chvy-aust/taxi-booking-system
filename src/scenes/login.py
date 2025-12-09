@@ -1,18 +1,18 @@
 import sqlite3
 
-from PyQt6 import uic
 from PyQt6.QtWidgets import QLineEdit
 
 from src.core.database import DatabaseConnection
 from src.scenes import BaseScene
 from src.signals import signals
+from src.ui.ui_login import UiLogin
 from src.widgets import SystemFeedback
 
 
-class LoginScene(BaseScene):
+class LoginScene(BaseScene, UiLogin):
     def __init__(self):
-        super().__init__(scene_name="login")
-        uic.loadUi("src/ui/login.ui", self)
+        super().__init__("login")
+        self.setupUi(self)
         # Hide password characters
         self.password.set_echo_mode(QLineEdit.EchoMode.Password)
         # Setup button events

@@ -4,8 +4,11 @@ from PyQt6.QtWidgets import QMainWindow, QApplication, QStackedWidget
 
 from src.core.models import User
 from src.scenes import (
-    RegisterScene, LoginScene,
-    CustomerDashboardScene, BaseScene)
+                RegisterScene,
+                LoginScene,
+                CustomerDashboardScene,
+                AdminDashboardScene,
+                DriverDashboardScene)
 from src.signals import signals
 from src.utils.constants import STYLE_FILE
 
@@ -27,6 +30,8 @@ class MainWindow(QMainWindow):
             "login": LoginScene(),
             "register": RegisterScene(),
             "customer_dash": CustomerDashboardScene(),
+            "driver_dash": DriverDashboardScene(),
+            "admin_dash": AdminDashboardScene()
         }
 
         for scene in self.scenes:
@@ -35,7 +40,7 @@ class MainWindow(QMainWindow):
         # Listen for signals.
         self._handle_signals()
 
-        # Set scene manager + styling..
+        # Set scene manager + styling.
         self._center_window()
         self._set_style()
         self.setCentralWidget(self.scene_manager)
@@ -46,8 +51,11 @@ class MainWindow(QMainWindow):
         signals.request_login.connect(lambda: self._switch_to('login'))
 
         signals.request_customer_dash.connect(
-            lambda user: self._switch_to('customer_dash', user)
-        )
+            lambda user: self._switch_to('customer_dash', user))
+        signals.request_driver_dash.connect(
+            lambda user: self._switch_to('driver_dash', user))
+        signals.request_admin_dash.connect(
+            lambda user: self._switch_to('admin_dash', user))
 
 
     def _switch_to(self, scene_name: str, data: User | None = None):

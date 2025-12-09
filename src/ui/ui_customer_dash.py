@@ -9,7 +9,7 @@
 from PyQt6 import QtCore, QtGui, QtWidgets
 from src.utils.constants import ICONS_DIR
 
-class Ui_Dashboard(object):
+class UiCustomerDashboard(object):
     def setupUi(self, Dashboard):
         Dashboard.setObjectName("Dashboard")
         Dashboard.resize(782, 603)
