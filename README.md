@@ -4,7 +4,7 @@
 
 # Test accounts
 - customer accounts: 
-  - email: customer_123@gmail, pass: Pass123**
+  - email: customer_123@gmail.com, pass: Pass123**
   - email: ran_customer1@gmail.com, pass: Pass123**
 - driver accounts:
   - email: driver_123@gmail.com, pass: Pass123**

@@ -398,7 +398,7 @@ class UiDriverDashboard(object):
 "    border-radius: 8px;  \n"
 "}")
         self.driver_banner_photo.setText("")
-        self.driver_banner_photo.setPixmap(QtGui.QPixmap(str(ICONS_DIR / "diver_banner.png")))
+        self.driver_banner_photo.setPixmap(QtGui.QPixmap(str(ICONS_DIR / "driver_banner.png")))
         self.driver_banner_photo.setScaledContents(True)
         self.driver_banner_photo.setObjectName("driver_banner_photo")
         self.driver_home_vertical_Layout.addWidget(self.driver_home_frame)

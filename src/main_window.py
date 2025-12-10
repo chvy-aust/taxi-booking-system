@@ -21,7 +21,7 @@ class MainWindow(QMainWindow):
     """
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("AC Taxi Services")
+        self.setWindowTitle("A&C Taxi Services")
         self.setFixedSize(770, 600)
         self.scene_manager = QStackedWidget()
 
