@@ -1,6 +1,8 @@
 from src.signals import signals
 from src.scenes import BaseScene
 from src.ui import UiAdminDashboard
+import sqlite3
+from PyQt6 import QtWidgets
 
 
 class AdminDashboardScene(BaseScene, UiAdminDashboard):
