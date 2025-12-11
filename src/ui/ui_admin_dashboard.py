@@ -553,6 +553,22 @@ class UiAdminDashboard(object):
         self.driver_table_widget.setObjectName("driver_table_widget")
         self.driver_table_widget.setColumnCount(0)
         self.driver_table_widget.setRowCount(0)
+        #STYLE SHEET FOR DRIVER TABLE
+        self.driver_table_widget.setStyleSheet(
+        "QTableWidget {\n"
+        "    background-color: #7d918f;\n"
+        "    color:white;\n"
+        "    font-size: 14px;\n"
+        "    gridline-color:#293736;\n"
+        "    border:1px solid #293736;\n"
+        "}"
+        "QHeaderView::section {\n"
+        "    background-color: #476061;\n"
+        "    color: white;\n"
+        "    font-weight: bold;\n"
+        "    font-size: 14px;\n"
+        "    border:1px solid #293736;\n"
+        "}")
         self.users_tab_widget.addTab(self.drivers_tab, "")
         self.gridLayout_2.addWidget(self.users_tab_widget, 1, 0, 1, 1)
         self.admin_stackedWidget.addWidget(self.view_users_page)
