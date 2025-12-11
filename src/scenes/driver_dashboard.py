@@ -1,6 +1,7 @@
 from src.scenes import BaseScene
 from src.signals import signals
 from src.ui import UiDriverDashboard
+from src.ui import UiCustomerDashboard
 
 
 class DriverDashboardScene(BaseScene, UiDriverDashboard):
@@ -11,7 +12,16 @@ class DriverDashboardScene(BaseScene, UiDriverDashboard):
     def __init__(self):
         super().__init__("driver-dashboard")
         self.setupUi(self)
+
+        # HOME BTN + LOGOUT BTN  + MENU BTN-----
+        # --- button events (switch to panel)
+        self.driver_home_bn.clicked.connect(lambda: self.switch_to(self.driver_home_page))
         self.driver_logout_btn.clicked.connect(self._log_out)
+
+        # VIEW ASSIGNED RIDES PAGE -----
+        # --- button events (switch to panel)
+        self.assigned_trips_btn.clicked.connect(lambda: self.switch_to(self.view_trip_page))
+        self.back_to_home_btn_3.clicked.connect(lambda: self.switch_to(self.driver_home_page))
 
     def switch_to(self, page):
         self.refresh_scene()

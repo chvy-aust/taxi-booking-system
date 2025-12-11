@@ -1,4 +1,4 @@
-# Form implementation generated from reading ui file 'src/ui/Updated_Dashboard.ui'
+# Form implementation generated from reading ui file 'src/ui/customer_dashboard.ui'
 #
 # Created by: PyQt6 UI code generator 6.10.0
 #

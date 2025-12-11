@@ -11,7 +11,21 @@ class AdminDashboardScene(BaseScene, UiAdminDashboard):
     def __init__(self):
         super().__init__("admin-dashboard")
         self.setupUi(self)
+
+        # HOME BTN + LOGOUT BTN  + MENU BTN-----
+        # --- button events (switch to panel)
+        self.admin_home_bn.clicked.connect(lambda: self.switch_to(self.admin_home_page))
         self.admin_logout_btn.clicked.connect(self._log_out)
+
+        # ASSIGN DRIVER PAGE -----
+        # --- button events (switch to panel)
+        self.assign_drivers_btn.clicked.connect(lambda: self.switch_to(self.assign_drivers_page))
+        self.cancel_assignment_btn.clicked.connect(lambda: self.switch_to(self.admin_home_page))
+
+        # VIEW USERS PAGE -----
+        # --- button events (switch to panel)
+        self.view_users_btn.clicked.connect(lambda: self.switch_to(self.view_users_page))
+        self.back_to_home_btn.clicked.connect(lambda: self.switch_to(self.admin_home_page))
 
     def switch_to(self, page):
         self.refresh_scene()
