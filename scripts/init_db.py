@@ -5,8 +5,8 @@ from src.core.database import DatabaseConnection
 
 
 
-USER_SCHEMA = """
-    CREATE TABLE IF NOT EXISTS user (
+USERS_SCHEMA = """
+    CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         role TEXT NOT NULL,
         firstname TEXT NOT NULL,
@@ -21,33 +21,54 @@ USER_SCHEMA = """
 ADDRESSES_SCHEMA = """
     CREATE TABLE IF NOT EXISTS addresses (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        customer_id INT NOT NULL REFERENCES user(id),
+        customer_id INT NOT NULL REFERENCES users(id),
         name TEXT NOT NULL,
         physical_address TEXT NOT NULL
     )
 """
 
-DRIVER_PROFILE_SCHEMA = """
-    CREATE TABLE IF NOT EXISTS driver_profile (
-        id INTEGER PRIMARY KEY REFERENCES user(id), 
+DRIVER_SCHEMA = """
+    CREATE TABLE IF NOT EXISTS drivers (
+        id INTEGER PRIMARY KEY REFERENCES users(id), 
         car_make TEXT NOT NULL,
-        car_color TEXT NOT NULL,
-        plate_num TEXT NOT NULL
+        car_model TEXT NOT NULL,
+        car_colour TEXT NOT NULL,
+        man_year INT NOT NULL,
+        plate_num TEXT NOT NULL,
+        is_online BOOLEAN NOT NULL DEFAULT FALSE
     )
 """
 
+DRIVER_APPLICATION_SCHEMA = """
+    CREATE TABLE IF NOT EXISTS driver_applications (
+    id INTEGER PRIMARY KEY AUTOINCREMENT, 
+    user_id INT NOT NULL REFERENCES users(id),
+    car_make TEXT NOT NULL,
+    car_model TEXT NOT NULL,
+    car_colour TEXT NOT NULL,
+    man_year INT NOT NULL,
+    plate_num TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'pending' CHECK ( 
+        status IN('pending', 'approved', 'rejected')),
+    submitted_at TEXT NOT NULL,
+    reviewed_at TEXT NULL,
+    reviewed_by INT NULL REFERENCES users(id),
+    review_comment TEXT NULL
+    )
+"""
 
-BOOKING_SCHEMA = """
-    CREATE TABLE IF NOT EXISTS booking (
+BOOKINGS_SCHEMA = """
+    CREATE TABLE IF NOT EXISTS bookings (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        customer_id INT NOT NULL REFERENCES user(id),
-        driver_id INT NULL REFERENCES user(id),
+        customer_id INT NOT NULL REFERENCES users(id),
+        driver_id INT NULL REFERENCES users(id),
         dropoff TEXT NOT NULL,
         pickup TEXT NOT NULL,
         date TEXT NOT NULL,
         time TEXT NOT NULL,
         status TEXT NOT NULL DEFAULT 'waiting_for_assignment' CHECK(
-            status IN('waiting_for_assignment', 'waiting_for_pickup', 'in_process', 'completed', 'cancelled'))
+            status IN('waiting_for_assignment', 'waiting_for_pickup', 
+                      'in_process', 'completed', 'cancelled'))
     )
     """
 
@@ -57,10 +78,11 @@ def initialize_database():
     try:
         with DatabaseConnection() as cursor:
             logger.info("Attempting to create tables … [  ]")
-            cursor.execute(USER_SCHEMA)
-            cursor.execute(BOOKING_SCHEMA)
+            cursor.execute(USERS_SCHEMA)
+            cursor.execute(BOOKINGS_SCHEMA)
             cursor.execute(ADDRESSES_SCHEMA)
-            cursor.execute(DRIVER_PROFILE_SCHEMA)
+            cursor.execute(DRIVER_SCHEMA)
+            cursor.execute(DRIVER_APPLICATION_SCHEMA)
             logger.info("Tables created successfully … [ ✔ ]")
             # Other executions here
             # Eg. Creating indexes, creating triggers, etc
