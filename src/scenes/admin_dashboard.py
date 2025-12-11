@@ -49,8 +49,8 @@ class AdminDashboardScene(BaseScene, UiAdminDashboard):
         cur = connection.cursor()
         sqlquery = "SELECT ID, FIRSTNAME, PHONENUM, EMAIL, ROLE FROM user"
 
-        self.customer_table_widget.setRowCount(100)
-        self.driver_table_widget.setRowCount(100)
+        self.customer_table_widget.setRowCount(25)
+        self.driver_table_widget.setRowCount(25)
 
         customer_table_row = 0
         driver_table_row = 0
