@@ -1,3 +1,5 @@
+import datetime
+import logging
 import sqlite3
 
 from PyQt6.QtWidgets import QLineEdit
@@ -9,7 +11,7 @@ from src.ui import UiCustomerDashboard
 from src.utils.validation import *
 from src.widgets import BookingListModel, SystemFeedback
 
-
+logger = logging.getLogger(__name__)
 class CustomerDashboardScene(BaseScene, UiCustomerDashboard):
     """
     View controller for the Customer Dashboard.
@@ -45,11 +47,12 @@ class CustomerDashboardScene(BaseScene, UiCustomerDashboard):
         self.ride_btn.clicked.connect(lambda: self.switch_to(self.book_ride_page))
 
         # DRIVER APPLICATION PAGE -----
-        # --- button events (switch to panel, cancel application)
+        # --- button events (switch to panel, cancel/confirm application)
         self.driver_btn.clicked.connect(
             lambda: self.switch_to(self.become_driver_page))
         self.cancel_driver_reg_btn.clicked.connect(
             lambda: self.switch_to(self.homePage))
+        self.confirm_driver_reg_btn.clicked.connect(self._start_driver_application)
 
 
 
@@ -123,6 +126,31 @@ class CustomerDashboardScene(BaseScene, UiCustomerDashboard):
             self.info_popup("Successfully updated profile!")
             self.refresh_scene()
 
+    def _start_driver_application(self):
+        """Collect driver application and save to database."""
+        info = {
+            "user_id": self.user.id,
+            "car_make": self.car_make.text(),
+            "car_model": self.car_model.text(),
+            "car_colour": self.car_colour.text(),
+            "man_year": self.manufacture_year.text(),
+            "plate_num": self.license_plate_reg.text(),
+            "status": "pending",
+            "submitted_at": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        }
+        try:
+            with DatabaseConnection() as conn:
+                conn.create_driver_application(info)
+        except sqlite3.Error as e:
+            self.info_popup(SystemFeedback.DATABASE_ERROR)
+            logger.exception(e)
+        else:
+            self.info_popup("Application submitted! "
+                            "Please give administration "
+                            "time to review your application.")
+            self.refresh_scene()
+
+
     def _on_make_booking(self, info):
         """Collect information and save to database.."""
         try:
@@ -132,8 +160,9 @@ class CustomerDashboardScene(BaseScene, UiCustomerDashboard):
         except sqlite3.Error:
             self.info_popup(SystemFeedback.DATABASE_ERROR)
         else:
-            self.info_popup("Successfully booked! " +
-                "Please wait for a driver to be assigned to your ride…")
+            self.info_popup("Successfully booked! "
+                            "Please wait for a driver "
+                            "to be assigned to your ride…")
             self.refresh_scene()
 
     def _load_bookings(self):

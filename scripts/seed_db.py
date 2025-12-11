@@ -20,11 +20,13 @@ def generate_users():
 
     for user in sample_users:
         # Generate generic information for test users.
-        user["firstname"] = faker.first_name()
-        user["lastname"] = faker.last_name()
-        user["dob"] = faker.date_of_birth(minimum_age=18).strftime("yyyy-MM-dd")
-        user["phonenum"] = faker.numerify("868 ### ####")
-        user["password"] = "Pass123**"
+        user.update({
+            "firstname": faker.first_name(),
+            "lastname": faker.last_name(),
+            "dob": faker.date_of_birth(minimum_age=18),
+            "phonenum": faker.numerify("868 ### ####"),
+            "password": "Pass123**"
+        })
 
     for role, amount in {'customer': 25, 'driver': 8, 'admin': 4}.items():
         # Generate additional full sample users.
@@ -32,8 +34,8 @@ def generate_users():
                 "role": role,
                 "firstname": faker.first_name(),
                 "lastname": faker.last_name(),
-                "dob": faker.date_of_birth(minimum_age=18).strftime("yyyy-MM-dd"),
-                "phonenum": faker.phone_number(),
+                "dob": faker.date_of_birth(minimum_age=18),
+                "phonenum": faker.numerify("868 ### ####"),
                 "email": faker.email(),
                 "password": faker.password(8)
         } for _ in range(amount)]

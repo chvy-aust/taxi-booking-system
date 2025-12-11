@@ -32,12 +32,17 @@ class DatabaseConnection:
 
     def execute(self, sql: str, params=()) -> sqlite3.Cursor:
         """Return easily accessible cursor.execute() method."""
-        return self.conn.execute(sql, params)
+        try:
+            cursor = self.conn.execute(sql, params)
+            return cursor
+        except sqlite3.Error as e:
+            logger.exception(e)
+            raise
 
     def lookup_user(self, email):
         """Return a User instance or None if no user is fetched."""
         cursor = self.execute(
-            "SELECT * FROM user WHERE email = ?", (email,))
+            "SELECT * FROM users WHERE email = ?", (email,))
         row = cursor.fetchone()
         if not row:
             return None
@@ -50,7 +55,7 @@ class DatabaseConnection:
         Return a list of queried Booking instances.
         Accepts an optional user id condition.
         """
-        sql = "SELECT * FROM booking"
+        sql = "SELECT * FROM bookings"
         params = None
 
         if user_id:
@@ -66,17 +71,34 @@ class DatabaseConnection:
         try:
             logger.info(f"Adding new user {username} to database …")
             self.execute("""
-                     INSERT INTO user (
+                     INSERT INTO users (
                                 role, firstname, lastname, dob,
                                 phonenum, email, password)
                      VALUES (?, ?, ?, ?, ?, ?, ?)
-                                """, (
+                     """, (
                                 role, info["firstname"], info["lastname"],
                                 info["dob"], info["phonenum"],
                                 info["email"], info["password"],)
             )
         except sqlite3.Error as e:
             logger.exception(f"Failed to add user {username} to database: {e}")
+            raise
+    def create_driver_application(self, info: dict[str, Any]):
+        try:
+            self.execute("""
+                    INSERT INTO driver_applications (
+                                user_id, car_make, car_model,
+                                car_colour, man_year, plate_num,
+                                status, submitted_at
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                    """, (
+                    info["user_id"], info["car_make"], info["car_model"],
+                    info["car_colour"], info["man_year"], info["plate_num"],
+                    info["status"],info["submitted_at"],)
+            )
+        except sqlite3.Error as e:
+            logger.exception(f"Failed to submit driver application "
+                             f"for user {info['user_id']}: {e}")
             raise
 
     def update_user(self, user_id, new_attr: dict[str, Any]):
@@ -97,18 +119,13 @@ class DatabaseConnection:
 
         try:
             self.execute("""
-                    INSERT INTO booking (
+                    INSERT INTO bookings (
                                 customer_id, driver_id, dropoff, 
                                 pickup, date, time, status)
                     VALUES (?, ?, ?, ?, ?, ?, ?) 
-                                """, (
-                                info["customer_id"],
-                                driver_id,
-                                info["dropoff"],
-                                info["pickup"],
-                                info["date"],
-                                info["time"],
-                                status,)
+                    """, (
+                    info["customer_id"], driver_id, info["dropoff"],
+                    info["pickup"], info["date"], info["time"], status,)
             )
         except sqlite3.Error as e:
             logger.exception(f"Failed to make booking for user ({info['customer_id']}): {e}")
