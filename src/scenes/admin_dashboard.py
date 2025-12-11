@@ -83,6 +83,9 @@ class AdminDashboardScene(BaseScene, UiAdminDashboard):
             #customer_table_row += 1
         connection.close()
 
+
+
+
     def switch_to(self, page):
         self.refresh_scene()
         self.admin_stackedWidget.setCurrentWidget(page)

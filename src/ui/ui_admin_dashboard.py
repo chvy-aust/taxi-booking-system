@@ -682,19 +682,52 @@ class UiAdminDashboard(object):
         self.driver_tab_widget.setObjectName("driver_tab_widget")
         self.pending_tab = QtWidgets.QWidget()
         self.pending_tab.setObjectName("pending_tab")
-        self.current_table_widget = QtWidgets.QTableWidget(parent=self.pending_tab)
-        self.current_table_widget.setGeometry(QtCore.QRect(5, 11, 481, 341))
-        self.current_table_widget.setObjectName("current_table_widget")
-        self.current_table_widget.setColumnCount(0)
-        self.current_table_widget.setRowCount(0)
+        self.pending_table_widget = QtWidgets.QTableWidget(parent=self.pending_tab)
+        self.pending_table_widget.setGeometry(QtCore.QRect(5, 11, 481, 341))
+        self.pending_table_widget.setObjectName("current_table_widget")
+        self.pending_table_widget.setColumnCount(0)
+        self.pending_table_widget.setRowCount(0)
+        #STYLE SHEET FOR PENDING RIDES TABLE
+        self.pending_table_widget.setStyleSheet(
+            "QTableWidget {\n"
+            "    background-color: #7d918f;\n"
+            "    color:white;\n"
+            "    font-size: 14px;\n"
+            "    gridline-color:#293736;\n"
+            "    border:1px solid #293736;\n"
+            "}"
+            "QHeaderView::section {\n"
+            "    background-color: #476061;\n"
+            "    color: white;\n"
+            "    font-weight: bold;\n"
+            "    font-size: 14px;\n"
+            "    border:1px solid #293736;\n"
+            "}")
+
         self.driver_tab_widget.addTab(self.pending_tab, "")
         self.completed_tab = QtWidgets.QWidget()
         self.completed_tab.setObjectName("completed_tab")
-        self.pending_table_widget = QtWidgets.QTableWidget(parent=self.completed_tab)
-        self.pending_table_widget.setGeometry(QtCore.QRect(0, 0, 481, 351))
-        self.pending_table_widget.setObjectName("pending_table_widget")
-        self.pending_table_widget.setColumnCount(0)
-        self.pending_table_widget.setRowCount(0)
+        self.complete_admin_table_widget = QtWidgets.QTableWidget(parent=self.completed_tab)
+        self.complete_admin_table_widget.setGeometry(QtCore.QRect(0, 0, 481, 351))
+        self.complete_admin_table_widget.setObjectName("pending_table_widget")
+        self.complete_admin_table_widget.setColumnCount(0)
+        self.complete_admin_table_widget.setRowCount(0)
+        # STYLE SHEET FOR COMPLETED RIDES TABLE
+        self.complete_admin_table_widget.setStyleSheet(
+            "QTableWidget {\n"
+            "    background-color: #7d918f;\n"
+            "    color:white;\n"
+            "    font-size: 14px;\n"
+            "    gridline-color:#293736;\n"
+            "    border:1px solid #293736;\n"
+            "}"
+            "QHeaderView::section {\n"
+            "    background-color: #476061;\n"
+            "    color: white;\n"
+            "    font-weight: bold;\n"
+            "    font-size: 14px;\n"
+            "    border:1px solid #293736;\n"
+            "}")
         self.driver_tab_widget.addTab(self.completed_tab, "")
         self.gridLayout.addWidget(self.driver_tab_widget, 1, 0, 1, 1)
         self.admin_stackedWidget.addWidget(self.assign_drivers_page)
