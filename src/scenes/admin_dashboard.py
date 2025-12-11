@@ -62,7 +62,7 @@ class AdminDashboardScene(BaseScene, UiAdminDashboard):
                 current_row = customer_table_row
                 customer_table_row += 1
 
-            elif user_role == "driver" or user_role == "admin":
+            elif user_role == "driver":
                 table = self.driver_table_widget
                 current_row = driver_table_row
                 driver_table_row += 1
