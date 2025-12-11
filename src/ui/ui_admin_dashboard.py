@@ -528,6 +528,23 @@ class UiAdminDashboard(object):
         self.customer_table_widget.setObjectName("customer_table_widget")
         self.customer_table_widget.setColumnCount(0)
         self.customer_table_widget.setRowCount(0)
+        #STYLE SHEET FOR CUSTOMER TABLE
+        self.customer_table_widget.setStyleSheet(
+            "QTableWidget {\n"
+            "    background-color: #7d918f;\n"
+            "    color:white;\n"
+            "    font-size: 14px;\n"
+            "    gridline-color:#293736;\n"
+            "    border:1px solid #293736;\n"
+            "}"
+            "QHeaderView::section {\n"
+            "    background-color: #476061;\n"
+            "    color: white;\n"
+            "    font-weight: bold;\n"
+            "    font-size: 14px;\n"
+            "    border:1px solid #293736;\n"
+            "}")
+
         self.users_tab_widget.addTab(self.customers_tab, "")
         self.drivers_tab = QtWidgets.QWidget()
         self.drivers_tab.setObjectName("drivers_tab")
