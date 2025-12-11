@@ -47,7 +47,7 @@ class AdminDashboardScene(BaseScene, UiAdminDashboard):
     def load_data(self):
         connection = sqlite3.connect("taxibooking.db")
         cur = connection.cursor()
-        sqlquery = "SELECT ID, FIRSTNAME, PHONENUM, EMAIL, ROLE FROM user"
+        sqlquery = "SELECT ID, FIRSTNAME, PHONENUM, EMAIL, ROLE FROM users"
 
         self.customer_table_widget.setRowCount(25)
         self.driver_table_widget.setRowCount(25)
