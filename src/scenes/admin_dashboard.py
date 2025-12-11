@@ -31,8 +31,16 @@ class AdminDashboardScene(BaseScene, UiAdminDashboard):
 
 
         # --- VIEW USERS TABLE SETUP
+
+        #CUSTOMER TABLE
         self.customer_table_widget.setColumnCount(5)
         self.customer_table_widget.setHorizontalHeaderLabels(["User ID", "Name", "Email", "Phone","Role"])
+        self.customer_table_widget.verticalHeader().hide()
+
+        #DRIVER AND ADMIN TABLE
+        self.driver_table_widget.setColumnCount(5)
+        self.driver_table_widget.setHorizontalHeaderLabels(["User ID", "Name", "Email", "Phone", "Role"])
+        self.driver_table_widget.verticalHeader().hide()
         self.load_data()
 
     #--- LOAD DATA FROM DATABASE TO TABLE
@@ -42,15 +50,37 @@ class AdminDashboardScene(BaseScene, UiAdminDashboard):
         sqlquery = "SELECT ID,FIRSTNAME, PHONENUM, EMAIL, ROLE FROM user"
 
         self.customer_table_widget.setRowCount(100)
-        self.customer_table_widget.verticalHeader().hide()
-        tablerow = 0
+        self.driver_table_widget.setRowCount(100)
+
+        customer_table_row = 0
+        driver_table_row = 0
+
         for row in cur.execute(sqlquery):
-            self.customer_table_widget.setItem(tablerow, 0, QtWidgets.QTableWidgetItem(row[0]))
-            self.customer_table_widget.setItem(tablerow, 1, QtWidgets.QTableWidgetItem(row[1]))
-            self.customer_table_widget.setItem(tablerow, 2, QtWidgets.QTableWidgetItem(row[2]))
-            self.customer_table_widget.setItem(tablerow, 3, QtWidgets.QTableWidgetItem(row[3]))
-            self.customer_table_widget.setItem(tablerow, 4, QtWidgets.QTableWidgetItem(row[4]))
-            tablerow += 1
+            user_role = row[4].lower()
+            if user_role == "customer":
+                table = self.customer_table_widget
+                current_row = customer_table_row
+                customer_table_row += 1
+
+            elif user_role == "driver" or user_role == "admin":
+                table = self.driver_table_widget
+                current_row = driver_table_row
+                driver_table_row += 1
+            else:
+                continue  # Skip unknown roles
+
+            table.insertRow(current_row)
+            table.setItem(current_row, 0, QtWidgets.QTableWidgetItem(str(row[0])))
+            table.setItem(current_row, 1, QtWidgets.QTableWidgetItem(row[1]))
+            table.setItem(current_row, 2, QtWidgets.QTableWidgetItem(row[3]))
+            table.setItem(current_row, 3, QtWidgets.QTableWidgetItem(row[2]))
+            table.setItem(current_row, 4, QtWidgets.QTableWidgetItem(row[4]))
+            #self.customer_table_widget.setItem(customer_table_row, 0, QtWidgets.QTableWidgetItem(row[0]))
+            #self.customer_table_widget.setItem(customer_table_row, 1, QtWidgets.QTableWidgetItem(row[1]))
+            #self.customer_table_widget.setItem(customer_table_row, 2, QtWidgets.QTableWidgetItem(row[2]))
+            #self.customer_table_widget.setItem(customer_table_row, 3, QtWidgets.QTableWidgetItem(row[3]))
+            #self.customer_table_widget.setItem(customer_table_row, 4, QtWidgets.QTableWidgetItem(row[4]))
+            #customer_table_row += 1
         connection.close()
 
     def switch_to(self, page):
