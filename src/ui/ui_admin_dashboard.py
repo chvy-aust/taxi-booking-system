@@ -505,7 +505,7 @@ class UiAdminDashboard(object):
 "}\n"
 "\n"
 "QTabWidget {\n"
-"    background-color: #879396;\n"
+"    background-color: #8ea19f;\n"
 "    color: #FFFFFF;\n"
 "    font-size: 15px;\n"
 "    padding: 10px 10px;\n"
