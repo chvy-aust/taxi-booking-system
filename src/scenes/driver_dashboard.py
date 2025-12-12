@@ -1,12 +1,12 @@
 import sqlite3
 
-from PyQt6.QtWidgets import QTableWidgetItem
+from PyQt6.QtWidgets import QTableWidgetItem, QDialog
 
 from src.core.database import DatabaseConnection
 from src.scenes import BaseScene
 from src.signals import signals
 from src.ui import UiDriverDashboard
-from src.widgets import SystemFeedback
+from src.widgets import SystemFeedback, BookingItemDialog
 
 
 class DriverDashboardScene(BaseScene, UiDriverDashboard):
@@ -92,42 +92,59 @@ class DriverDashboardScene(BaseScene, UiDriverDashboard):
         Fetch and load driver bookings.
         Displays currently assigned booking + past bookings onto TableView.
         """
-        active_booking, past_bookings = None, []
+        current_booking, assigned_booking_item, past_booking_items = None, [], []
         try:
             with DatabaseConnection() as conn:
                 bookings = conn.fetch_bookings(driver_id=self.user.id)
                 for booking in bookings:
                     if booking.status in ("cancelled", "completed"):
-                        past_bookings.append([
+                        past_booking_items.append([
                             booking.customer.fullname,
                             booking.customer.phonenum,
                             booking.pickup, booking.dropoff,
-                            booking.status, booking.date
+                            booking.status.replace("_", " ").title(),
+                            booking.date
                         ])
                     if booking.status in ("waiting_for_pickup", "in_process"):
-                        active_booking = [
+                        assigned_booking_item = [
                             booking.customer.fullname,
                             booking.customer.phonenum,
                             booking.pickup, booking.dropoff,
-                            booking.status
+                            booking.status.replace("_", " ").title()
                         ]
+                        current_booking = booking
         except sqlite3.Error:
             self.info_popup(SystemFeedback.DATABASE_ERROR)
 
         # Populate active bookings (Should only have one booking at a time.)
-        if active_booking:
+        if assigned_booking_item:
             self.assign_table_widget.setRowCount(1)
-            for column_index, value in enumerate(active_booking):
+            for column_index, value in enumerate(assigned_booking_item):
                 self.assign_table_widget.setItem(
                     0, column_index, QTableWidgetItem(str(value)))
 
+            # Clean up connections/signals if present.
+            try:
+                self.assign_table_widget.cellClicked.disconnect()
+            except TypeError:
+                pass
+            # Show dialog when item is clicked.
+            self.assign_table_widget.cellClicked.connect(
+                lambda:self._show_booking_dialog(current_booking))
+
         # Populate past bookings
-        if past_bookings:
-            self.completed_table_widget.setRowCount(len(past_bookings))
-            for row, booking in enumerate(past_bookings):
+        if past_booking_items:
+            self.completed_table_widget.setRowCount(len(past_booking_items))
+            for row, booking in enumerate(past_booking_items):
                 for column_index, value in enumerate(booking):
                     self.completed_table_widget.setItem(
                         row, column_index, QTableWidgetItem(str(value)))
+
+    def _show_booking_dialog(self, booking):
+        dialog = BookingItemDialog(booking, self)
+        if dialog.exec() == QDialog.DialogCode.Accepted:
+            self.refresh_scene()
+
 
     def _log_out(self):
         """Return to launch screen."""
@@ -135,7 +152,9 @@ class DriverDashboardScene(BaseScene, UiDriverDashboard):
         self.user = None
 
     def depopulate_data(self):
-        pass
+        # Clear bookings populated on tables
+        self.assign_table_widget.setRowCount(0)
+        self.completed_table_widget.setRowCount(0)
 
     def populate_data(self):
         if self.user is None:

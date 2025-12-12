@@ -28,6 +28,24 @@ QDialog {
     color: white;
 }
 
+#booking-item-dialog QLabel {
+    color: #1B2626;
+    padding: 5px;
+}
+
+#booking-item-dialog QPushButton {
+    background-color: #1B2626;
+    color: #8EA09F;
+    padding: 7px;
+    border-radius: 5px;
+}
+
+#booking-item-dialog QPushButton:hover {
+    background-color: transparent;
+    border: 2px solid #1B2626;
+    color: #1B2626;
+}
+
 QLabel#header, QLabel#HEADER, QLabel#login_header {
     background-color: #1B2626;
     padding: 5px;

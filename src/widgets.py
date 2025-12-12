@@ -4,6 +4,8 @@ from PyQt6.QtCore import Qt, QDate, QAbstractListModel, pyqtSignal
 from PyQt6.QtWidgets import QPushButton, QDateEdit, QLineEdit, QHBoxLayout, \
     QTimeEdit, QLabel, QVBoxLayout, QWidget, QDialog, QSizePolicy
 
+from src.core.models import Booking
+
 """
 Provides custom project widgets.
 Includes:
@@ -177,28 +179,26 @@ class InfoDialog(QDialog):
 
 
 class ConfirmationDialog(QDialog):
-    def __init__(self, text="", title: str = "Are you sure?", parent=None):
+    def __init__(self, text, parent=None):
         super().__init__(parent)
         self.setWindowFlag(Qt.WindowType.FramelessWindowHint)
         self.setObjectName("popup")
 
         # Create dialog elements.
-        title = QLabel(title)
-        title.setObjectName("conf-popup-header")
         text = QLabel(text)
-        text.setMinimumHeight(80)
+        text.setFixedWidth(200)
+        text.setWordWrap(True)
         confirm_btn = Button("Yes!", self._on_confirm_click)
         cancel_btn = Button("Cancel", self._on_cancel_click)
 
-        btns = QHBoxLayout()
+        btns = QVBoxLayout()
         btns.addWidget(confirm_btn)
         btns.addWidget(cancel_btn)
 
         # Add elements to layout.
         container = QVBoxLayout()
-        container.addWidget(title)
         container.addWidget(text)
-        container.addWidget(btns)
+        container.addLayout(btns)
         self.setLayout(container)
 
     def _on_confirm_click(self):
@@ -207,3 +207,62 @@ class ConfirmationDialog(QDialog):
     def _on_cancel_click(self):
         self.reject()
 
+class BookingItemDialog(QDialog):
+    STATUSES = {
+        1: "waiting_for_pickup",
+        2: "in_process",
+        3: "completed",
+        4: "cancelled"
+    }
+
+    def __init__(self, booking: Booking, parent=None):
+        super().__init__(parent)
+        print("dialog")
+        self.booking = booking
+        self.setWindowFlag(Qt.WindowType.FramelessWindowHint)
+        self.setObjectName("booking-item-dialog")
+
+        self.customer_lbl = QLabel(f"<b>Customer</b>: {self.booking.customer.fullname}")
+        self.phonenum_lbl = QLabel(f"<b>Phone Number</b>: {self.booking.customer.phonenum}")
+        self.pickup_lbl = QLabel(f"<b>Pickup Location</b>:\n{self.booking.pickup}")
+        self.dropoff_lbl = QLabel(f"<b>Destination</b>:\n{self.booking.dropoff}")
+
+        self.current_status = None
+        self.status_btn = Button("", self._change_status)
+        self.close_btn = Button("Exit", self._exit)
+
+        container = QVBoxLayout()
+        container.addWidget(self.status_btn)
+        container.addWidget(self.customer_lbl)
+        container.addWidget(self.phonenum_lbl)
+        container.addWidget(self.pickup_lbl)
+        container.addWidget(self.dropoff_lbl)
+        container.addWidget(self.close_btn)
+        self._update_button()
+        self.setLayout(container)
+
+    def _exit(self):
+        self.accept()
+
+    def _change_status(self):
+        updated_status = None
+        for index, status in self.STATUSES.items():
+            if status == self.booking.status:
+                updated_status = index + 1
+        if not self._get_confirmation():
+            return
+
+        self.booking.update_status(self.STATUSES[updated_status])
+        self._update_button()
+
+    def _update_button(self):
+        self.current_status = self.booking.status.replace("_", " ").title()
+        self.status_btn.setText(self.current_status)
+        if self.booking.status in ("cancelled", "completed"):
+            self.status_btn.setDisabled(True)
+
+    def _get_confirmation(self):
+        question = f"Are you sure you'd like to update the status of this "
+        question += f"booking? <b>This cannot be undone.</b>"
+        confirmation_dialog = ConfirmationDialog(question, self.parent())
+        return confirmation_dialog.exec() == QDialog.DialogCode.Accepted

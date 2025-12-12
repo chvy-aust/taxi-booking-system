@@ -43,12 +43,12 @@ class BaseScene(QWidget):
         popup = InfoDialog(info, self)
         popup.exec()
 
-    def confirmation_popup(self, question = "", title: str = "Are you sure?") -> bool:
+    def confirmation_popup(self, question = "") -> bool:
         """
         Display a confirmation question to user.
         Returns boolean confirmation indicator (ie, True if 'Confirm' clicked.)
         """
-        popup = ConfirmationDialog(question, title, self)
+        popup = ConfirmationDialog(question, self)
         return popup.exec() == QDialog.DialogCode.Accepted
 
     def critical_popup(self,

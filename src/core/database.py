@@ -177,7 +177,7 @@ class DatabaseConnection:
                 UPDATE bookings
                 SET status = ?
                 WHERE id = ?
-                """, (booking_id, status))
+                """, (status, booking_id))
         except  sqlite3.Error as e:
             logger.exception(f"Failed to update status for booking {booking_id} to {status}: {e}")
             raise
