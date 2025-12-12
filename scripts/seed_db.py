@@ -45,18 +45,15 @@ def generate_users():
 
 
 def generate_bookings(generated_users):
-    active_bookings, past_bookings = [], []
-    customer_emails, driver_emails = [], []
+
     try:
         with DatabaseConnection() as conn:
+            customers, drivers = [], []
             for user in generated_users:
                 if user["role"] == "customer":
-                    customer_emails.append(user["email"])
+                    customers.extend(conn.fetch_users(email=user["email"]))
                 elif user["role"] == "driver":
-                    driver_emails.append(user["email"])
-
-            customers = conn.fetch_users(email=customer_emails)
-            drivers = conn.fetch_users(email=driver_emails)
+                    drivers.extend(conn.fetch_users(email=user["email"]))
     except sqlite3.Error as e:
         logger.exception(e)
 
@@ -76,6 +73,7 @@ def generate_bookings(generated_users):
     end_date = datetime.date.today() - datetime.timedelta(days=1)
     start_date = end_date - datetime.timedelta(days=365)
 
+    past_bookings = []
     # Generates past bookings
     for customer in customers:
         for _ in range(random.randint(3, 10)):
@@ -84,11 +82,12 @@ def generate_bookings(generated_users):
                 "driver_id": random.choice(driver_ids),
                 "dropoff": faker.address(),
                 "pickup": faker.address(),
-                "date": faker.date_between_dates(start_date, end_date),
+                "date": str(faker.date_between_dates(start_date, end_date)),
                 "time": faker.time(),
-                "status": random.choice(["cancelled", "complete"])
+                "status": random.choice(["cancelled", "completed"])
             })
 
+    active_bookings = []
     # Generates active bookings for testing customers + drivers
     for customer, driver in zip(testing_customers, testing_drivers):
         active_bookings.append({
@@ -96,7 +95,7 @@ def generate_bookings(generated_users):
             "driver_id": driver.id,
             "dropoff": faker.address(),
             "pickup": faker.address(),
-            "date": datetime.date.today(),
+            "date": str(datetime.date.today()),
             "time": datetime.datetime.now().strftime("%H:%M:%S"),
             "status": "waiting_for_pickup"
         })
@@ -110,17 +109,26 @@ def seed_database():
         with DatabaseConnection() as conn:
             logger.info("❯❯ Attempting to generate user data … [ ]")
             generated_users = generate_users()
-            for generated_user in generated_users:
-                conn.create_user(generated_user)
-            logger.info("❯❯ User data generated … [ ✔ ]")
-            logger.info("❯❯ Attempting to generate booking data … [ ]")
-            for booking_set in generate_bookings(generated_users):
-                for booking in booking_set:
-                    conn.create_booking(booking)
-            logger.info("❯❯ Booking data generated … [ ✔ ]")
-            logger.info("❯❯ Data successfully generated [ ✔ ]")
+            for user in generated_users:
+                conn.create_user(user)
+
     except sqlite3.Error as e:
-        logger.exception(e)
+        logger.exception(f"An exception occurred during user seeding: {e}")
         raise
     else:
-        logger.info("Successfully seeded database!")
+        logger.info("❯❯ User data generated … [ ✔ ]")
+
+    try:
+        with DatabaseConnection() as conn:
+            logger.info("❯❯ Attempting to generate booking data … [ ]")
+            bookings = generate_bookings(generated_users)
+            print(bookings)
+            for booking_set in bookings:
+                for booking in booking_set:
+                    conn.create_booking(booking)
+    except sqlite3.Error as e:
+        logger.exception(f"An exception occurred during booking seeding: {e}")
+        raise
+    else:
+        logger.info("❯❯ Booking data generated … [ ✔ ]")
+

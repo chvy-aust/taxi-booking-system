@@ -35,7 +35,7 @@ class DatabaseConnection:
         return self.conn.execute(sql, params)
 
 
-    def fetch_users(self, **kwargs):
+    def fetch_users(self, **kwargs) -> list[User]:
         """
         Return a list of queried user instances.
         Accepts optional keyword arguments for filtering.
