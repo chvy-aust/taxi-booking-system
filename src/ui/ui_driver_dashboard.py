@@ -436,9 +436,10 @@ class UiDriverDashboard(object):
 "}\n"
 "\n"
 "QTabWidget {\n"
-"    background-color: #2c2d2e;\n"
+"    background-color: #8ea19f;\n"
 "    color: #FFFFFF;\n"
 "    font-size: 15px;\n"
+"    padding: 10px 10px;\n"
 "\n"
 "    border: 2px solid #101717; \n"
 "    border-radius: 15px; \n"
@@ -463,6 +464,23 @@ class UiDriverDashboard(object):
         self.assign_table_widget.setObjectName("assign_table_widget")
         self.assign_table_widget.setColumnCount(0)
         self.assign_table_widget.setRowCount(0)
+        #STYLE SHEET FOR ASSIGNED DRIVE TABLE
+        self.assign_table_widget.setStyleSheet(
+            "QTableWidget {\n"
+            "    background-color: #7d918f;\n"
+            "    color:white;\n"
+            "    font-size: 14px;\n"
+            "    gridline-color:#293736;\n"
+            "    border:1px solid #293736;\n"
+            "}"
+            "QHeaderView::section {\n"
+            "    background-color: #476061;\n"
+            "    color: white;\n"
+            "    font-weight: bold;\n"
+            "    font-size: 14px;\n"
+            "    border:1px solid #293736;\n"
+            "}")
+
         self.tab_verticalLayout.addWidget(self.assign_table_widget)
         self.back_to_home = QtWidgets.QFrame(parent=self.layoutWidget2)
         self.back_to_home.setFrameShape(QtWidgets.QFrame.Shape.StyledPanel)
@@ -538,6 +556,22 @@ class UiDriverDashboard(object):
         self.completed_table_widget.setObjectName("completed_table_widget")
         self.completed_table_widget.setColumnCount(0)
         self.completed_table_widget.setRowCount(0)
+        #STYLE SHEET FOR COMPLETED DRIVES TABLE
+        self.completed_table_widget.setStyleSheet(
+            "QTableWidget {\n"
+            "    background-color: #7d918f;\n"
+            "    color:white;\n"
+            "    font-size: 14px;\n"
+            "    gridline-color:#293736;\n"
+            "    border:1px solid #293736;\n"
+            "}"
+            "QHeaderView::section {\n"
+            "    background-color: #476061;\n"
+            "    color: white;\n"
+            "    font-weight: bold;\n"
+            "    font-size: 14px;\n"
+            "    border:1px solid #293736;\n"
+            "}")
         self.completed_verticalLayout_9.addWidget(self.completed_table_widget)
         self.back_to_home_btn_3 = QtWidgets.QPushButton(parent=self.layoutWidget3)
         self.back_to_home_btn_3.setStyleSheet("QPushButton {\n"
