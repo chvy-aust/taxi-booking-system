@@ -25,18 +25,23 @@ class DriverDashboardScene(BaseScene, UiDriverDashboard):
 
         # VIEW ASSIGNED RIDES PAGE -----
         # --- button events (switch to panel)
+        self.assigned_trips_btn.clicked.connect(lambda: self.switch_to(self.view_trip_page))
+        self.back_to_home_btn_3.clicked.connect( lambda: self.switch_to(self.driver_home_page))
 
         #ASSIGNED DRIVES TABLE
-        self.assign_table_widget.setColumnCount(5)
-        self.assign_table_widget.setHorizontalHeaderLabels(["Name", "Phone", "Pickup", "Destination", "Status"])
+        ASSIGN_TABLE_HEADERS = ["Name", "Phone", "Pickup", "Destination", "Status"]
+        self.assign_table_widget.setColumnCount(len(ASSIGN_TABLE_HEADERS))
+        self.assign_table_widget.setHorizontalHeaderLabels(ASSIGN_TABLE_HEADERS)
         self.assign_table_widget.verticalHeader().hide()
 
         #COMPLETED DRIVES TABLE
-        self.completed_table_widget.setColumnCount(5)
-        self.completed_table_widget.setHorizontalHeaderLabels(["Name", "Phone", "Pickup", "Destination", "Status"])
+        COMPLETED_TABLE_HEADERS = ASSIGN_TABLE_HEADERS + ['Date']
+        self.completed_table_widget.setColumnCount(len(COMPLETED_TABLE_HEADERS))
+        self.completed_table_widget.setHorizontalHeaderLabels(COMPLETED_TABLE_HEADERS)
         self.completed_table_widget.verticalHeader().hide()
 
         self.load_trip_data()
+
     #--- LOAD DATA FROM DATABASE TO TABLE
     def load_trip_data(self):
         connection = sqlite3.connect("taxibooking.db")
@@ -74,10 +79,6 @@ class DriverDashboardScene(BaseScene, UiDriverDashboard):
 
         #connection.close()
 
-
-        self.assigned_trips_btn.clicked.connect(lambda: self.switch_to(self.view_trip_page))
-        self.back_to_home_btn_3.clicked.connect(lambda: self.switch_to(self.driver_home_page))
-
     def switch_to(self, page):
         self.refresh_scene()
         self.driver_stackedWidget.setCurrentWidget(page)
@@ -98,22 +99,22 @@ class DriverDashboardScene(BaseScene, UiDriverDashboard):
                 for booking in bookings:
                     if booking.status in ("cancelled", "completed"):
                         past_bookings.append([
-                            booking.id, booking.customer_id, booking.pickup,
-                            booking.dropoff, booking.status, booking.date,
+                            booking.customer.fullname,
+                            booking.customer.phonenum,
+                            booking.pickup, booking.dropoff,
+                            booking.status, booking.date
                         ])
                     if booking.status in ("waiting_for_pickup", "in_process"):
                         active_booking = [
-                            booking.id, booking.customer_id,
-                            booking.pickup, booking.dropoff, booking.status
+                            booking.customer.fullname,
+                            booking.customer.phonenum,
+                            booking.pickup, booking.dropoff,
+                            booking.status
                         ]
         except sqlite3.Error:
             self.info_popup(SystemFeedback.DATABASE_ERROR)
 
-
-        # Populate active bookings (Can only have one booking at a time.)
-        ACTIVE_BOOKING_HEADERS = ['ID', 'Customer', 'Pickup', 'Dropoff', 'Status']
-        self.assign_table_widget.setColumnCount(len(ACTIVE_BOOKING_HEADERS))
-        self.assign_table_widget.setHorizontalHeaderLabels(ACTIVE_BOOKING_HEADERS)
+        # Populate active bookings (Should only have one booking at a time.)
         if active_booking:
             self.assign_table_widget.setRowCount(1)
             for column_index, value in enumerate(active_booking):
@@ -121,9 +122,6 @@ class DriverDashboardScene(BaseScene, UiDriverDashboard):
                     0, column_index, QTableWidgetItem(str(value)))
 
         # Populate past bookings
-        PAST_BOOKING_HEADERS = ACTIVE_BOOKING_HEADERS + ['Date']
-        self.completed_table_widget.setColumnCount(len(PAST_BOOKING_HEADERS))
-        self.completed_table_widget.setHorizontalHeaderLabels(PAST_BOOKING_HEADERS)
         if past_bookings:
             self.completed_table_widget.setRowCount(len(past_bookings))
             for row, booking in enumerate(past_bookings):

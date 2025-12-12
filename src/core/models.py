@@ -1,7 +1,8 @@
+import logging
 import sqlite3
 from typing import Any
 
-
+logger = logging.getLogger(__name__)
 class User:
     def __init__(self, row):
         self.id = row['id']
@@ -12,6 +13,10 @@ class User:
         self.phonenum = row['phonenum']
         self.email = row['email']
         self.password = row['password']
+
+    @property
+    def fullname(self):
+        return f"{self.firstname} {self.lastname}"
 
     def update(self, new_attr: dict[str, Any]):
         """
@@ -52,24 +57,27 @@ class Booking:
         self.time = row_object["time"]
         self.status = row_object["status"]
 
-    def cancel(self):
-        try:
-            from src.core.database import DatabaseConnection
-            with DatabaseConnection() as conn:
-                conn.execute("""
-                UPDATE bookings
-                SET status = ?
-                WHERE id = ?
-                """, ("cancelled", self.id))
-        except  sqlite3.Error as e:
-            print(f"( WARNING ⚠ ) ERROR: {e}")
-            raise
-        else:
-            # Update the booking instance.
-            setattr(self, "status", "cancelled")
+    def update_status(self, status):
+        if self.status == "cancelled":
+            raise sqlite3.Error("Cannot modify a cancelled booking.")
 
-    def __repr__(self):
-        pass
+        from src.core.database import DatabaseConnection
+        with DatabaseConnection() as conn:
+            conn.change_booking_status(self.id, status)
+        self.status = status
+
+    @property
+    def customer(self):
+        from src.core.database import DatabaseConnection
+        with DatabaseConnection() as conn:
+            return conn.fetch_users(id=self.customer_id)[0]
+
+    @property
+    def get_driver(self):
+        from src.core.database import DatabaseConnection
+        with DatabaseConnection() as conn:
+            return conn.fetch_users(id=self.driver_id)[0] or None
+
 
     def __str__(self):
         string = f":: {self.date} - {self.time}"

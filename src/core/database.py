@@ -2,7 +2,7 @@ import logging
 import sqlite3
 from typing import Any
 
-from src.core.models import Booking, User
+from src.core.models import User, Booking
 from src.utils.constants import DB_FILE
 
 logger = logging.getLogger(__name__)
@@ -54,7 +54,6 @@ class DatabaseConnection:
                 params += tuple(values)
             # Concatenate to conditional statement.
             sql += f" WHERE " + ' AND '.join(fields)
-
         try:
             cursor = self.execute(sql, params)
             return [User(row) for row in cursor.fetchall()]
@@ -89,7 +88,6 @@ class DatabaseConnection:
         except sqlite3.Error as e:
             logger.exception(f"Failed to fetch bookings: {e}")
             raise
-
 
     def create_user(self, info: dict[str, Any]):
         role = info.get("role", "customer")
@@ -171,4 +169,15 @@ class DatabaseConnection:
             )
         except sqlite3.Error as e:
             logger.exception(f"Failed to add address for user ({address['customer_id']}): {e}")
+            raise
+
+    def change_booking_status(self, booking_id, status):
+        try:
+            self.execute("""
+                UPDATE bookings
+                SET status = ?
+                WHERE id = ?
+                """, (booking_id, status))
+        except  sqlite3.Error as e:
+            logger.exception(f"Failed to update status for booking {booking_id} to {status}: {e}")
             raise

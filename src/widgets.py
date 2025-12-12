@@ -1,18 +1,14 @@
 import datetime
 
-from PyQt6.QtCore import Qt, QDate, QAbstractListModel, pyqtSignal, \
-    QAbstractTableModel
+from PyQt6.QtCore import Qt, QDate, QAbstractListModel, pyqtSignal
 from PyQt6.QtWidgets import QPushButton, QDateEdit, QLineEdit, QHBoxLayout, \
-    QTimeEdit, QLabel, QVBoxLayout, QWidget, QDialog, QSizePolicy, QTableWidget
-
-from src.core.database import DatabaseConnection
+    QTimeEdit, QLabel, QVBoxLayout, QWidget, QDialog, QSizePolicy
 
 """
 Provides custom project widgets.
 Includes:
     - Buttons,
     - Input Fields: InputEdit, DateEdit
-    - List Model for Bookings
     - Dialogs: Information, Confirm
 """
 
@@ -210,3 +206,4 @@ class ConfirmationDialog(QDialog):
 
     def _on_cancel_click(self):
         self.reject()
+

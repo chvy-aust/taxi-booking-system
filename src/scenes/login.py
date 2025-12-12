@@ -26,8 +26,7 @@ class LoginScene(BaseScene, UiLogin):
 
         try:
             with DatabaseConnection() as conn:
-                records = conn.fetch_users(email=email)
-                user = records[0] if records else None
+                user = conn.fetch_users(email=email)[0]
                 if user and user.password == password:
                     self.info_popup("Login successful")
                     self._switch_to_dashboard(user)
