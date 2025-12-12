@@ -1,7 +1,7 @@
 from src.scenes import BaseScene
 from src.signals import signals
 from src.ui import UiDriverDashboard
-from src.ui import UiCustomerDashboard
+import sqlite3
 
 
 class DriverDashboardScene(BaseScene, UiDriverDashboard):
