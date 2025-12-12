@@ -2,7 +2,7 @@ import logging
 import sqlite3
 from typing import Any
 
-from src.core.models import User, Booking
+from src.core.models import Booking, User
 from src.utils.constants import DB_FILE
 
 logger = logging.getLogger(__name__)
@@ -32,38 +32,64 @@ class DatabaseConnection:
 
     def execute(self, sql: str, params=()) -> sqlite3.Cursor:
         """Return easily accessible cursor.execute() method."""
+        return self.conn.execute(sql, params)
+
+
+    def fetch_users(self, **kwargs):
+        """
+        Return a list of queried user instances.
+        Accepts optional keyword arguments for filtering.
+        """
+        sql = "SELECT * FROM users"
+        fields, params = [], ()
+
+        # Checks for optional conditions (ie, email="customer_123@gmail.com")
+        if kwargs:
+            # Create formatted placeholders (ie, role IN (?, ?).
+            for field, values in kwargs.items():
+                if not isinstance(values, (tuple, list)):
+                    values = (values,)
+                placeholders = ', '.join("?" * len(values))
+                fields.append(f"{field} IN ({placeholders})")
+                params += tuple(values)
+            # Concatenate to conditional statement.
+            sql += f" WHERE " + ' AND '.join(fields)
+
         try:
-            cursor = self.conn.execute(sql, params)
-            return cursor
+            cursor = self.execute(sql, params)
+            return [User(row) for row in cursor.fetchall()]
         except sqlite3.Error as e:
-            logger.exception(e)
+            logger.exception(f"Failed to lookup user table: {e}")
             raise
 
-    def lookup_user(self, email):
-        """Return a User instance or None if no user is fetched."""
-        cursor = self.execute(
-            "SELECT * FROM users WHERE email = ?", (email,))
-        row = cursor.fetchone()
-        if not row:
-            return None
-        return User(row)
-
-    def fetch_bookings(self,
-                       user_id: int = None,
-                       user_role: str = "customer"):
+    def fetch_bookings(self, **kwargs):
         """
-        Return a list of queried Booking instances.
-        Accepts an optional user id condition.
+        Return a list of queried booking instances.
+        Accepts optional keyword arguments for filtering.
         """
         sql = "SELECT * FROM bookings"
-        params = None
+        fields, params = [], ()
 
-        if user_id:
-            sql += f" WHERE {user_role}_id = ?"
-            params = (user_id,)
+        # Checks for optional conditions (ie, status="pending")
+        if kwargs:
+            for field, values in kwargs.items():
+                # Create formatted placeholders (ie, status IN (?, ?))
+                if not isinstance(values, (tuple, list)):
+                    values = (values,)
+                placeholders = ', '.join("?" * len(values))
+                fields.append(f"{field} IN ({placeholders})")
+                params += tuple(values)
+            # Concatenate to conditional statement.
+            # (ie, WHERE driver_id IN (?) AND status IN (?, ?))
+            sql += f" WHERE " + ' AND '.join(fields)
 
-        cursor = self.execute(sql, params)
-        return [Booking(row) for row in cursor.fetchall()]
+        try:
+            cursor = self.execute(sql, params)
+            return [Booking(row) for row in cursor.fetchall()]
+        except sqlite3.Error as e:
+            logger.exception(f"Failed to fetch bookings: {e}")
+            raise
+
 
     def create_user(self, info: dict[str, Any]):
         role = info.get("role", "customer")
@@ -83,6 +109,7 @@ class DatabaseConnection:
         except sqlite3.Error as e:
             logger.exception(f"Failed to add user {username} to database: {e}")
             raise
+
     def create_driver_application(self, info: dict[str, Any]):
         try:
             self.execute("""
@@ -106,7 +133,7 @@ class DatabaseConnection:
         fields = ', '.join(f"{field} = ?" for field in new_attr.keys())
         params = tuple(new_attr.values()) + (user_id,)
         try:
-            self.execute(f"UPDATE user SET {fields} WHERE id = ?", params)
+            self.execute(f"UPDATE users SET {fields} WHERE id = ?", params)
         except sqlite3.Error as e:
             logger.exception(f"Failed to update user ({user_id}) within database: {e}")
             raise

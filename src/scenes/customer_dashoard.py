@@ -169,7 +169,7 @@ class CustomerDashboardScene(BaseScene, UiCustomerDashboard):
         """Fetch and load all user bookings onto list view."""
         try:
             with DatabaseConnection() as conn:
-                bookings = conn.fetch_bookings(self.user.id,)
+                bookings = conn.fetch_bookings(user_id=self.user.id,)
                 self.booking_list.setModel(BookingListModel(bookings))
         except sqlite3.Error:
             self.info_popup(SystemFeedback.DATABASE_ERROR)

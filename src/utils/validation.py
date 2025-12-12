@@ -2,8 +2,6 @@ import re
 
 from PyQt6.QtCore import QDate
 
-from src.widgets import InputEdit
-
 PHONENUM_PATTERN = re.compile(r"^\d{3}[-\s]?\d{3}[-\s]?\d{4}$")
 EMAIL_PATTERN = re.compile(r"^[\w\-.]+@([\w-]+\.)+[\w-]{2,4}$")
 PASSWORD_PATTERN = re.compile(r"^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}")
@@ -51,7 +49,7 @@ def is_email_unique(email: str) -> bool:
         return user is None
 
 
-def is_fields_valid(fields: dict[InputEdit, bool]) -> bool:
+def is_fields_valid(fields) -> bool:
     """
     Check the validity of a given field and its value.
     Return a bool indicator of whether all fields are valid.

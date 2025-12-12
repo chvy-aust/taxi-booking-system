@@ -1,8 +1,11 @@
 import datetime
 
-from PyQt6.QtCore import Qt, QDate, QAbstractListModel, pyqtSignal
+from PyQt6.QtCore import Qt, QDate, QAbstractListModel, pyqtSignal, \
+    QAbstractTableModel
 from PyQt6.QtWidgets import QPushButton, QDateEdit, QLineEdit, QHBoxLayout, \
-    QTimeEdit, QLabel, QVBoxLayout, QWidget, QDialog, QSizePolicy
+    QTimeEdit, QLabel, QVBoxLayout, QWidget, QDialog, QSizePolicy, QTableWidget
+
+from src.core.database import DatabaseConnection
 
 """
 Provides custom project widgets.
@@ -142,14 +145,12 @@ class BookingListModel(QAbstractListModel):
     def __init__(self, bookings=None):
         super().__init__()
         self.bookings = bookings or []
-
     def data(self, index, role: int = ...):
         if role == Qt.ItemDataRole.DisplayRole:
             return str(self.bookings[index.row()])
 
     def rowCount(self, parent=...):
         return len(self.bookings)
-
 
 class SystemFeedback:
     DATABASE_ERROR = (

@@ -70,7 +70,7 @@ BOOKINGS_SCHEMA = """
             status IN('waiting_for_assignment', 'waiting_for_pickup', 
                       'in_process', 'completed', 'cancelled'))
     )
-    """
+"""
 
 def initialize_database():
     logger = logging.getLogger(__name__)

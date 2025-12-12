@@ -1,7 +1,12 @@
+import sqlite3
+
+from PyQt6.QtWidgets import QTableWidgetItem
+
+from src.core.database import DatabaseConnection
 from src.scenes import BaseScene
 from src.signals import signals
 from src.ui import UiDriverDashboard
-from src.ui import UiCustomerDashboard
+from src.widgets import SystemFeedback
 
 
 class DriverDashboardScene(BaseScene, UiDriverDashboard):
@@ -31,6 +36,51 @@ class DriverDashboardScene(BaseScene, UiDriverDashboard):
         self.depopulate_data()
         self.populate_data()
 
+    def _load_bookings(self):
+        """
+        Fetch and load driver bookings.
+        Displays currently assigned booking + past bookings onto TableView.
+        """
+        active_booking, past_bookings = None, []
+        try:
+            with DatabaseConnection() as conn:
+                bookings = conn.fetch_bookings(driver_id=self.user.id)
+                for booking in bookings:
+                    if booking.status in ("cancelled", "completed"):
+                        past_bookings.append([
+                            booking.id, booking.customer_id, booking.pickup,
+                            booking.dropoff, booking.status, booking.date,
+                        ])
+                    if booking.status in ("waiting_for_pickup", "in_process"):
+                        active_booking = [
+                            booking.id, booking.customer_id,
+                            booking.pickup, booking.dropoff, booking.status
+                        ]
+        except sqlite3.Error:
+            self.info_popup(SystemFeedback.DATABASE_ERROR)
+
+
+        # Populate active bookings (Can only have one booking at a time.)
+        ACTIVE_BOOKING_HEADERS = ['ID', 'Customer', 'Pickup', 'Dropoff', 'Status']
+        self.assign_table_widget.setColumnCount(len(ACTIVE_BOOKING_HEADERS))
+        self.assign_table_widget.setHorizontalHeaderLabels(ACTIVE_BOOKING_HEADERS)
+        if active_booking:
+            self.assign_table_widget.setRowCount(1)
+            for column_index, value in enumerate(active_booking):
+                self.assign_table_widget.setItem(
+                    0, column_index, QTableWidgetItem(str(value)))
+
+        # Populate past bookings
+        PAST_BOOKING_HEADERS = ACTIVE_BOOKING_HEADERS + ['Date']
+        self.completed_table_widget.setColumnCount(len(PAST_BOOKING_HEADERS))
+        self.completed_table_widget.setHorizontalHeaderLabels(PAST_BOOKING_HEADERS)
+        if past_bookings:
+            self.completed_table_widget.setRowCount(len(past_bookings))
+            for row, booking in enumerate(past_bookings):
+                for column_index, value in enumerate(booking):
+                    self.completed_table_widget.setItem(
+                        row, column_index, QTableWidgetItem(str(value)))
+
     def _log_out(self):
         """Return to launch screen."""
         signals.request_login.emit()
@@ -44,3 +94,4 @@ class DriverDashboardScene(BaseScene, UiDriverDashboard):
             self.info_popup(
                 "Could not access your account. Please Try Again or contact Support.")
             signals.request_login.emit()
+        self._load_bookings()

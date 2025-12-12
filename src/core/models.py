@@ -57,7 +57,7 @@ class Booking:
             from src.core.database import DatabaseConnection
             with DatabaseConnection() as conn:
                 conn.execute("""
-                UPDATE booking
+                UPDATE bookings
                 SET status = ?
                 WHERE id = ?
                 """, ("cancelled", self.id))
