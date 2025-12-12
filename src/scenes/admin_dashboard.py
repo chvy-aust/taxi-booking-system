@@ -32,12 +32,12 @@ class AdminDashboardScene(BaseScene, UiAdminDashboard):
 
         # --- VIEW USERS TABLE SETUP
 
-        #CUSTOMER TABLE
+        #VIEW CUSTOMER TABLE
         self.customer_table_widget.setColumnCount(5)
         self.customer_table_widget.setHorizontalHeaderLabels(["User ID", "Name", "Email", "Phone","Role"])
         self.customer_table_widget.verticalHeader().hide()
 
-        #DRIVER AND ADMIN TABLE
+        #VIWE DRIVERS TABLE
         self.driver_table_widget.setColumnCount(5)
         self.driver_table_widget.setHorizontalHeaderLabels(["User ID", "Name", "Email", "Phone", "Role"])
         self.driver_table_widget.verticalHeader().hide()
@@ -75,13 +75,54 @@ class AdminDashboardScene(BaseScene, UiAdminDashboard):
             table.setItem(current_row, 2, QtWidgets.QTableWidgetItem(row[3]))
             table.setItem(current_row, 3, QtWidgets.QTableWidgetItem(row[2]))
             table.setItem(current_row, 4, QtWidgets.QTableWidgetItem(row[4]))
-            #self.customer_table_widget.setItem(customer_table_row, 0, QtWidgets.QTableWidgetItem(row[0]))
-            #self.customer_table_widget.setItem(customer_table_row, 1, QtWidgets.QTableWidgetItem(row[1]))
-            #self.customer_table_widget.setItem(customer_table_row, 2, QtWidgets.QTableWidgetItem(row[2]))
-            #self.customer_table_widget.setItem(customer_table_row, 3, QtWidgets.QTableWidgetItem(row[3]))
-            #self.customer_table_widget.setItem(customer_table_row, 4, QtWidgets.QTableWidgetItem(row[4]))
-            #customer_table_row += 1
         connection.close()
+
+        # --- ASSIGN DRIVERS SETUP
+
+        #TO BE COMPLETED DRIVES TABLE
+        self.pending_table_widget.setColumnCount(5)
+        self.pending_table_widget.setHorizontalHeaderLabels(["Name", "Email", "Phone","Pickup","Destination", "Status"])
+        self.pending_table_widget.verticalHeader().hide()
+
+        #DRIVER'S COMPLETED DRIVES TABLE
+        self.complete_admin_table_widget.setColumnCount(5)
+        self.complete_admin_table_widget.setHorizontalHeaderLabels(["Name", "Email", "Phone","Pickup","Destination", "Status"])
+        self.complete_admin_table_widget.verticalHeader().hide()
+        #self.load_data_assign()
+
+    # --- LOAD DATA FROM DATABASE TO TABLE
+    #def load_data_assign(self):
+        #connection = sqlite3.connect("taxibooking.db")
+        #cur = connection.cursor()
+        #sqlquery = "SELECT........FROM ........"
+
+        self.pending_table_widget.setRowCount(20)
+        self.complete_admin_table_widget.setRowCount(20)
+
+        #pending_table_row = 0
+        #completed_table_row = 0
+
+        #for row in cur.execute(sqlquery):
+            #status = row[5].lower()
+            #if status == "pending":
+                #table = self.pending_table_widget
+                #current_row = pending_table_row
+                #pending_table_row += 1
+
+            #elif status == "completed":
+                #table = self.complete_admin_table_widget
+                #current_row = completed_table_row
+                #completed_table_row += 1
+            #else:
+                #continue  # Skip unknown roles
+
+            #table.insertRow(current_row)
+            #table.setItem(current_row, 0, QtWidgets.QTableWidgetItem(str(row[0])))
+            #table.setItem(current_row, 1, QtWidgets.QTableWidgetItem(row[1]))
+            #table.setItem(current_row, 2, QtWidgets.QTableWidgetItem(row[3]))
+            #table.setItem(current_row, 3, QtWidgets.QTableWidgetItem(row[2]))
+            #table.setItem(current_row, 4, QtWidgets.QTableWidgetItem(row[4]))
+        #connection.close()
 
 
 
