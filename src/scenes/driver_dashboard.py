@@ -25,6 +25,56 @@ class DriverDashboardScene(BaseScene, UiDriverDashboard):
 
         # VIEW ASSIGNED RIDES PAGE -----
         # --- button events (switch to panel)
+
+        #ASSIGNED DRIVES TABLE
+        self.assign_table_widget.setColumnCount(5)
+        self.assign_table_widget.setHorizontalHeaderLabels(["Name", "Phone", "Pickup", "Destination", "Status"])
+        self.assign_table_widget.verticalHeader().hide()
+
+        #COMPLETED DRIVES TABLE
+        self.completed_table_widget.setColumnCount(5)
+        self.completed_table_widget.setHorizontalHeaderLabels(["Name", "Phone", "Pickup", "Destination", "Status"])
+        self.completed_table_widget.verticalHeader().hide()
+
+        self.load_trip_data()
+    #--- LOAD DATA FROM DATABASE TO TABLE
+    def load_trip_data(self):
+        connection = sqlite3.connect("taxibooking.db")
+        cur = connection.cursor()
+
+        #COME BACK AND CHECK QUERY
+        #sqlquery = "SELECT C.FIRSTNAME, C.PHONENUM, T.PICKUP, T.DROPOFF FROM bookings T JOIN users C ON T.CUSTOMER_ID = C"
+
+        self.assign_table_widget.setRowCount(25)
+        self.completed_table_widget.setRowCount(25)
+
+        assigned_table_row = 0
+        completed_table_row = 0
+
+        #for row in cur.execute(sqlquery):
+            #status = row[4].lower()
+
+            #if status == "pending":
+                #table = self.assign_table_widget
+                #current_row = assigned_table_row
+                #assigned_table_row += 1
+            #elif status == "completed":
+                #table = self.completed_table_widget
+                #current_row = completed_table_row
+                #completed_table_row += 1
+            #else:
+                #continue
+
+            #table.insertRow(current_row)
+            #table.setItem(current_row, 0, QtWidgets.QTableWidgetItem(str(row[0])))
+            #table.setItem(current_row, 1, QtWidgets.QTableWidgetItem(row[1]))
+            #table.setItem(current_row, 2, QtWidgets.QTableWidgetItem(row[3]))
+            #table.setItem(current_row, 3, QtWidgets.QTableWidgetItem(row[2]))
+            #table.setItem(current_row, 4, QtWidgets.QTableWidgetItem(row[4]))
+
+        #connection.close()
+
+
         self.assigned_trips_btn.clicked.connect(lambda: self.switch_to(self.view_trip_page))
         self.back_to_home_btn_3.clicked.connect(lambda: self.switch_to(self.driver_home_page))
 
