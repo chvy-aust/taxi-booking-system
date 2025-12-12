@@ -74,18 +74,9 @@ InputEdit QLineEdit, InputEdit QDateEdit {
     font-size: 15px;
 }
 
-InputEdit[error="false"]  QLabel {
-    color: transparent;
-}
-
 InputEdit QLineEdit:focus, InputEdit QDateEdit:focus {
     background-color: #4A5C66;
     border: 2px solid #FFFFFF;
-}
-
-InputEdit[error="true"] QLineEdit,
-InputEdit[error="true"] QDateEdit, {
-    border: 2px solid #5B0D0D;
 }
 
 QCalendar {

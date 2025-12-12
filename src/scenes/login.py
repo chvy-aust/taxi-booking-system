@@ -26,12 +26,13 @@ class LoginScene(BaseScene, UiLogin):
 
         try:
             with DatabaseConnection() as conn:
-                user = conn.fetch_users(email=email)[0]
-                if user and user.password == password:
-                    self.info_popup("Login successful")
-                    self._switch_to_dashboard(user)
-                else:
+                results = conn.fetch_users(email=email)
+                user = results[0] if results else None
+                if not user or user.password != password:
                     self.info_popup("Invalid email or password.")
+                    return
+                self.info_popup("Login successful")
+                self._switch_to_dashboard(user)
         except sqlite3.Error:
             self.info_popup(SystemFeedback.DATABASE_ERROR)
 

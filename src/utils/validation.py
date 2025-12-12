@@ -42,11 +42,11 @@ def validate_email(email: str) -> bool:
 
 
 def is_email_unique(email: str) -> bool:
-    """Return True if email is unique, else False."""
+    """Return False if any user is attached to email, else True."""
     from src.core.database import DatabaseConnection
     with DatabaseConnection() as conn:
-        user = conn.lookup_user(email)
-        return user is None
+        user = conn.fetch_users(email=email)
+        return not bool(user)
 
 
 def is_fields_valid(fields) -> bool:

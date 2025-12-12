@@ -63,9 +63,9 @@ class RegisterScene(BaseScene, UiRegister):
             with DatabaseConnection() as conn:
                 conn.create_user(self.info,)
                 if self.addresses:
-                    user = conn.lookup_user(self.info["email"],)
+                    user = conn.fetch_users(email=self.info["email"],)[0]
                     for address in self.addresses:
-                        address.update(["customer_id", user.id])
+                        address["customer_id"] = user.id
                         conn.save_address(address,)
         except sqlite3.Error:
             self.info_popup(SystemFeedback.DATABASE_ERROR)
@@ -84,11 +84,6 @@ class RegisterScene(BaseScene, UiRegister):
             "confirm_pass": self.confirm_pass.text()
         }
 
-
-        if not is_email_unique(self.info["email"]):
-            self.info_popup("This email is already in use!")
-            return
-
         validation_checks = {
             self.email: validate_email(self.info["email"]),
             self.create_pass: validate_password(self.info["create_pass"]),
@@ -96,8 +91,12 @@ class RegisterScene(BaseScene, UiRegister):
                 self.info["create_pass"] == self.info["confirm_pass"]
         }
 
-        # Ensure all fields are valid.
+        # Ensure all fields are valid + email unique.
         flag = is_fields_valid(validation_checks)
+        if not is_email_unique(self.info["email"]):
+            self.info_popup("This email is already in use!")
+            flag = False
+
         if flag:
             # Normalize password key.
             self.info["password"] = self.info.pop("create_pass")
