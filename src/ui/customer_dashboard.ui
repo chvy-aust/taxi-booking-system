@@ -397,7 +397,7 @@ QPushButton:hover {
         <string notr="true"/>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="homePage">
         <layout class="QVBoxLayout" name="verticalLayout_11">
@@ -862,7 +862,169 @@ background: transparent;
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="bookRidepage"/>
+       <widget class="QWidget" name="bookRidepage">
+        <widget class="QFrame" name="book_ride_frame">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>551</width>
+           <height>581</height>
+          </rect>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::Shape::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Shadow::Raised</enum>
+         </property>
+         <widget class="QLabel" name="book_a_ride_label">
+          <property name="geometry">
+           <rect>
+            <x>200</x>
+            <y>20</y>
+            <width>159</width>
+            <height>50</height>
+           </rect>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QLabel {
+    background-color: #466061; 
+    border: 2px solid #101717; 
+    border-radius: 8px; 
+    padding: 6px;
+    color: white; 
+    font-size: 25px;            
+}</string>
+          </property>
+          <property name="text">
+           <string>Book a Ride</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="pick_up_label">
+          <property name="geometry">
+           <rect>
+            <x>30</x>
+            <y>90</y>
+            <width>235</width>
+            <height>56</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <family>Arial</family>
+            <pointsize>-1</pointsize>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QLabel {
+    color: white;                
+    font-size: 18px;             
+}
+</string>
+          </property>
+          <property name="text">
+           <string>Pick-Up Location</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_25">
+          <property name="geometry">
+           <rect>
+            <x>30</x>
+            <y>220</y>
+            <width>235</width>
+            <height>56</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <family>Arial</family>
+            <pointsize>-1</pointsize>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QLabel {
+    color: white;                
+    font-size: 18px;             
+}
+</string>
+          </property>
+          <property name="text">
+           <string>Drop-Off Location</string>
+          </property>
+         </widget>
+         <widget class="QLineEdit" name="pick_up_input">
+          <property name="geometry">
+           <rect>
+            <x>30</x>
+            <y>160</y>
+            <width>501</width>
+            <height>38</height>
+           </rect>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QLineEdit {
+    background-color: #466061; 
+    border: 2px solid #101717; 
+    border-radius: 8px; 
+    padding: 6px;
+    color: white; 
+    font-size: 15px;            
+}
+QLineEdit:focus {
+    background-color: #4A5C66; /* Slightly lighter background on hover */
+    border: 2px solid #FFFFFF; /* Highlight the border on hover */
+}</string>
+          </property>
+         </widget>
+         <widget class="QLineEdit" name="drop_off_input">
+          <property name="geometry">
+           <rect>
+            <x>30</x>
+            <y>290</y>
+            <width>501</width>
+            <height>38</height>
+           </rect>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QLineEdit {
+    background-color: #466061; 
+    border: 2px solid #101717; 
+    border-radius: 8px; 
+    padding: 6px;
+    color: white; 
+    font-size: 15px;            
+}
+QLineEdit:focus {
+    background-color: #4A5C66; /* Slightly lighter background on hover */
+    border: 2px solid #FFFFFF; /* Highlight the border on hover */
+}</string>
+          </property>
+         </widget>
+         <widget class="QTableView" name="tableView">
+          <property name="geometry">
+           <rect>
+            <x>35</x>
+            <y>361</y>
+            <width>491</width>
+            <height>191</height>
+           </rect>
+          </property>
+         </widget>
+        </widget>
+       </widget>
        <widget class="QWidget" name="profilePage">
         <widget class="QFrame" name="driverForm_2">
          <property name="geometry">

@@ -37,7 +37,7 @@ class AdminDashboardScene(BaseScene, UiAdminDashboard):
         self.customer_table_widget.setHorizontalHeaderLabels(["User ID", "Name", "Email", "Phone","Role"])
         self.customer_table_widget.verticalHeader().hide()
 
-        #VIWE DRIVERS TABLE
+        #VIEW DRIVERS TABLE
         self.driver_table_widget.setColumnCount(5)
         self.driver_table_widget.setHorizontalHeaderLabels(["User ID", "Name", "Email", "Phone", "Role"])
         self.driver_table_widget.verticalHeader().hide()

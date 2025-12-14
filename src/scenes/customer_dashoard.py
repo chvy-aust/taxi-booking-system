@@ -46,6 +46,22 @@ class CustomerDashboardScene(BaseScene, UiCustomerDashboard):
         # --- button events (switch to panel)
         self.ride_btn.clicked.connect(lambda: self.switch_to(self.book_ride_page))
 
+        #VIEW BOOKED RIDES TABLE
+        self.booking_table_widget.setColumnCount(5)
+        self.booking_table_widget.setHorizontalHeaderLabels(["First Name", "Last Name", "Pickup", "Destination", "Status"])
+        self.booking_table_widget.verticalHeader().hide()
+        self.load_data()
+
+    # --- LOAD DATA FROM DATABASE TO TABLE
+    def load_data(self):
+        connection = sqlite3.connect("taxibooking.db")
+        cur = connection.cursor()
+        sqlquery = "SELECT FIRSTNAME, LASTNAME FROM users"
+
+        self.booking_table_widget.setRowCount(25)
+
+
+
         # DRIVER APPLICATION PAGE -----
         # --- button events (switch to panel, cancel/confirm application)
         self.driver_btn.clicked.connect(

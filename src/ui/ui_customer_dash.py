@@ -464,6 +464,128 @@ class UiCustomerDashboard(object):
         self.book_ride_page = QtWidgets.QWidget()
         self.book_ride_page.setObjectName("bookRidepage")
         self.customer_dash_panel.addWidget(self.book_ride_page)
+        self.book_a_ride_label = QtWidgets.QLabel(parent=self.book_ride_page)
+        self.book_a_ride_label.setGeometry(QtCore.QRect(200, 20, 159, 50))
+        self.book_a_ride_label.setStyleSheet("QLabel {\n"
+"    background-color: #466061; \n"
+"    border: 2px solid #101717; \n"
+"    border-radius: 8px; \n"
+"    padding: 6px;\n"
+"    color: white; \n"
+"    font-size: 25px;\n"
+"}")
+        self.book_a_ride_label.setObjectName("book_a_ride_label")
+        self.pick_up_label = QtWidgets.QLabel(parent=self.book_ride_page)
+        self.pick_up_label.setGeometry(QtCore.QRect(30, 90, 235, 30))
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(-1)
+        self.pick_up_label.setFont(font)
+        self.pick_up_label.setStyleSheet("QLabel {\n"
+                                         "    color: white;                \n"
+                                         "    font-size: 18px;             \n"
+                                         "}\n"
+                                         "")
+        self.pick_up_label.setObjectName("pick_up_label")
+        self.label_25 = QtWidgets.QLabel(parent=self.book_ride_page)
+        self.label_25.setGeometry(QtCore.QRect(30, 190, 235, 30))
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(-1)
+        self.label_25.setFont(font)
+        self.label_25.setStyleSheet("QLabel {\n"
+                                    "    color: white;                \n"
+                                    "    font-size: 18px;             \n"
+                                    "}\n"
+                                    "")
+        self.label_25.setObjectName("label_25")
+        self.pick_up_input = QtWidgets.QLineEdit(parent=self.book_ride_page)
+        self.pick_up_input.setGeometry(QtCore.QRect(30, 130, 501, 40))
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.pick_up_input.sizePolicy().hasHeightForWidth())
+        self.pick_up_input.setSizePolicy(sizePolicy)
+        self.pick_up_input.setStyleSheet("QLineEdit {\n"
+                                         "    background-color: #466061; \n"
+                                         "    border: 2px solid #101717; \n"
+                                         "    border-radius: 8px; \n"
+                                         "    padding: 6px;\n"
+                                         "    color: white; \n"
+                                         "    font-size: 15px;            \n"
+                                         "}\n"
+                                         "QLineEdit:focus {\n"
+                                         "    background-color: #4A5C66; /* Slightly lighter background on hover */\n"
+                                         "    border: 2px solid #FFFFFF; /* Highlight the border on hover */\n"
+                                         "}")
+        self.pick_up_input.setObjectName("pick_up_input")
+        self.drop_off_input = QtWidgets.QLineEdit(parent=self.book_ride_page)
+        self.drop_off_input.setGeometry(QtCore.QRect(30, 230, 501, 40))
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.drop_off_input.sizePolicy().hasHeightForWidth())
+        self.drop_off_input.setSizePolicy(sizePolicy)
+        self.drop_off_input.setStyleSheet("QLineEdit {\n"
+                                          "    background-color: #466061; \n"
+                                          "    border: 2px solid #101717; \n"
+                                          "    border-radius: 8px; \n"
+                                          "    padding: 6px;\n"
+                                          "    color: white; \n"
+                                          "    font-size: 15px;            \n"
+                                          "}\n"
+                                          "QLineEdit:focus {\n"
+                                          "    background-color: #4A5C66; /* Slightly lighter background on hover */\n"
+                                          "    border: 2px solid #FFFFFF; /* Highlight the border on hover */\n"
+                                          "}")
+        self.drop_off_input.setObjectName("drop_off_input")
+        self.booking_table_widget = QtWidgets.QTableWidget(parent=self.book_ride_page)
+        self.booking_table_widget.setGeometry(QtCore.QRect(35, 361, 491, 191))
+        self.booking_table_widget.setObjectName("booking_table_widget")
+        #STYLE SHEET FOR BOOKING TABLE
+        self.booking_table_widget.setStyleSheet(
+            "QTableWidget {\n"
+            "    background-color: #7d918f;\n"
+            "    color:white;\n"
+            "    font-size: 14px;\n"
+            "    gridline-color:#293736;\n"
+            "    border:1px solid #293736;\n"
+            "}"
+            "QHeaderView::section {\n"
+            "    background-color: #476061;\n"
+            "    color: white;\n"
+            "    font-weight: bold;\n"
+            "    font-size: 14px;\n"
+            "    border:1px solid #293736;\n"
+            "}")
+
+        self.confirm_booking_btn = QtWidgets.QPushButton(parent=self.book_ride_page)
+        self.confirm_booking_btn.setGeometry(QtCore.QRect(160, 280, 231, 51))
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(-1)
+        font.setBold(False)
+        self.confirm_booking_btn.setFont(font)
+        self.confirm_booking_btn.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+        self.confirm_booking_btn.setStyleSheet("QPushButton {\n"
+                                               "    background-color: #476061;\n"
+                                               "    color: #FFFFFF;\n"
+                                               "    font-size: 15px;\n"
+                                               "    padding: 10px 10px;\n"
+                                               "\n"
+                                               "    /* Border and Shape */\n"
+                                               "    border: 2px solid #101717; \n"
+                                               "    border-radius: 15px; \n"
+                                               "    margin: 5px 10px 5px 10px;\n"
+                                               "    text-align: center;\n"
+                                               "}\n"
+                                               "\n"
+                                               "/* Style for hover over button */\n"
+                                               "QPushButton:pressed {\n"
+                                               "    background-color: #4A5C66;\n"
+                                               "    border: 2px solid #FFFFFF;\n"
+                                               "}")
+        self.confirm_booking_btn.setObjectName("confirm_booking_btn")
         self.profile_page = QtWidgets.QWidget()
         self.profile_page.setObjectName("profilePage")
         self.edit_profile_form = QtWidgets.QFrame(parent=self.profile_page)
@@ -1062,6 +1184,10 @@ class UiCustomerDashboard(object):
         self.label.setText(_translate("Dashboard", "Cheapest Fares"))
         self.label_3.setText(_translate("Dashboard", "5 Star Rated"))
         self.label_7.setText(_translate("Dashboard", "Always Available"))
+        self.book_a_ride_label.setText(_translate("Dashboard", "Book a Ride"))
+        self.pick_up_label.setText(_translate("Dashboard", "Pick-Up Location"))
+        self.label_25.setText(_translate("Dashboard", "Drop-Off Location"))
+        self.confirm_booking_btn.setText(_translate("Dashboard", "Confirm"))
         self.update_account_btn.setText(_translate("Dashboard", "Confirm"))
         self.cancel_edit_btn.setText(_translate("Dashboard", "Cancel"))
         self.label_21.setText(_translate("Dashboard", "Updated Last Name"))
