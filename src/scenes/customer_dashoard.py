@@ -53,10 +53,9 @@ class CustomerDashboardScene(BaseScene, UiCustomerDashboard):
         self.load_data()
 
     # --- LOAD DATA FROM DATABASE TO TABLE
-    def load_data(self):
-        connection = sqlite3.connect("taxibooking.db")
-        cur = connection.cursor()
-        sqlquery = "SELECT FIRSTNAME, LASTNAME FROM users"
+    #def load_data(self):
+        #with DatabaseConnection() as conn:
+            #bookings = conn.fetch_bookings(customer_id=self.user.id)
 
         self.booking_table_widget.setRowCount(25)
 
