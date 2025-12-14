@@ -50,7 +50,7 @@ class CustomerDashboardScene(BaseScene, UiCustomerDashboard):
         self.booking_table_widget.setColumnCount(5)
         self.booking_table_widget.setHorizontalHeaderLabels(["First Name", "Last Name", "Pickup", "Destination", "Status"])
         self.booking_table_widget.verticalHeader().hide()
-        self.load_data()
+        #self.load_data()
 
     # --- LOAD DATA FROM DATABASE TO TABLE
     #def load_data(self):
