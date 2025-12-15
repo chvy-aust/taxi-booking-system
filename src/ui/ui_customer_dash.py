@@ -467,19 +467,18 @@ class UiCustomerDashboard(object):
         self.book_a_ride_label = QtWidgets.QLabel(parent=self.book_ride_page)
         self.book_a_ride_label.setGeometry(QtCore.QRect(200, 20, 159, 50))
         self.book_a_ride_label.setStyleSheet("QLabel {\n"
-"    background-color: #466061; \n"
-"    border: 2px solid #101717; \n"
-"    border-radius: 8px; \n"
-"    padding: 6px;\n"
-"    color: white; \n"
-"    font-size: 25px;\n"
-"}")
+                                             "    background-color: #466061; \n"
+                                             "    border: 2px solid #101717; \n"
+                                             "    border-radius: 8px; \n"
+                                             "    padding: 6px;\n"
+                                             "    color: white; \n"
+                                             "    font-size: 25px;\n"
+                                             "}")
         self.book_a_ride_label.setObjectName("book_a_ride_label")
         self.pick_up_label = QtWidgets.QLabel(parent=self.book_ride_page)
         self.pick_up_label.setGeometry(QtCore.QRect(30, 90, 235, 30))
         font = QtGui.QFont()
         font.setFamily("Arial")
-        font.setPointSize(-1)
         self.pick_up_label.setFont(font)
         self.pick_up_label.setStyleSheet("QLabel {\n"
                                          "    color: white;                \n"
@@ -491,7 +490,6 @@ class UiCustomerDashboard(object):
         self.label_25.setGeometry(QtCore.QRect(30, 190, 235, 30))
         font = QtGui.QFont()
         font.setFamily("Arial")
-        font.setPointSize(-1)
         self.label_25.setFont(font)
         self.label_25.setStyleSheet("QLabel {\n"
                                     "    color: white;                \n"
@@ -501,10 +499,13 @@ class UiCustomerDashboard(object):
         self.label_25.setObjectName("label_25")
         self.pick_up_input = QtWidgets.QLineEdit(parent=self.book_ride_page)
         self.pick_up_input.setGeometry(QtCore.QRect(30, 130, 501, 40))
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Policy.Expanding,
+            QtWidgets.QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.pick_up_input.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.pick_up_input.sizePolicy().hasHeightForWidth())
         self.pick_up_input.setSizePolicy(sizePolicy)
         self.pick_up_input.setStyleSheet("QLineEdit {\n"
                                          "    background-color: #466061; \n"
@@ -521,10 +522,13 @@ class UiCustomerDashboard(object):
         self.pick_up_input.setObjectName("pick_up_input")
         self.drop_off_input = QtWidgets.QLineEdit(parent=self.book_ride_page)
         self.drop_off_input.setGeometry(QtCore.QRect(30, 230, 501, 40))
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Policy.Expanding,
+            QtWidgets.QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.drop_off_input.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.drop_off_input.sizePolicy().hasHeightForWidth())
         self.drop_off_input.setSizePolicy(sizePolicy)
         self.drop_off_input.setStyleSheet("QLineEdit {\n"
                                           "    background-color: #466061; \n"
@@ -539,10 +543,11 @@ class UiCustomerDashboard(object):
                                           "    border: 2px solid #FFFFFF; /* Highlight the border on hover */\n"
                                           "}")
         self.drop_off_input.setObjectName("drop_off_input")
-        self.booking_table_widget = QtWidgets.QTableWidget(parent=self.book_ride_page)
+        self.booking_table_widget = QtWidgets.QTableWidget(
+            parent=self.book_ride_page)
         self.booking_table_widget.setGeometry(QtCore.QRect(35, 361, 491, 191))
         self.booking_table_widget.setObjectName("booking_table_widget")
-        #STYLE SHEET FOR BOOKING TABLE
+        # STYLE SHEET FOR BOOKING TABLE
         self.booking_table_widget.setStyleSheet(
             "QTableWidget {\n"
             "    background-color: #7d918f;\n"
@@ -559,14 +564,15 @@ class UiCustomerDashboard(object):
             "    border:1px solid #293736;\n"
             "}")
 
-        self.confirm_booking_btn = QtWidgets.QPushButton(parent=self.book_ride_page)
+        self.confirm_booking_btn = QtWidgets.QPushButton(
+            parent=self.book_ride_page)
         self.confirm_booking_btn.setGeometry(QtCore.QRect(160, 280, 231, 51))
         font = QtGui.QFont()
         font.setFamily("Arial")
-        font.setPointSize(-1)
         font.setBold(False)
         self.confirm_booking_btn.setFont(font)
-        self.confirm_booking_btn.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+        self.confirm_booking_btn.setCursor(
+            QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
         self.confirm_booking_btn.setStyleSheet("QPushButton {\n"
                                                "    background-color: #476061;\n"
                                                "    color: #FFFFFF;\n"

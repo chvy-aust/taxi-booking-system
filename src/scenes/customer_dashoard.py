@@ -2,14 +2,15 @@ import datetime
 import logging
 import sqlite3
 
-from PyQt6.QtWidgets import QLineEdit
+from PyQt6.QtWidgets import QLineEdit, QDialog, QTableWidgetItem, QTableWidget, \
+    QHeaderView
 
 from src.core.database import DatabaseConnection
 from src.scenes import BaseScene
 from src.signals import signals
 from src.ui import UiCustomerDashboard
 from src.utils.validation import *
-from src.widgets import BookingListModel, SystemFeedback
+from src.widgets import SystemFeedback, BookingItem
 
 logger = logging.getLogger(__name__)
 class CustomerDashboardScene(BaseScene, UiCustomerDashboard):
@@ -20,6 +21,7 @@ class CustomerDashboardScene(BaseScene, UiCustomerDashboard):
     def __init__(self):
         super().__init__("customer-dashboard")
         self.setupUi(self)
+        self.active_booking = None
 
         # HOME BTN + LOGOUT BTN  + MENU BTN-----
         # --- button events (switch to panel)
@@ -45,6 +47,15 @@ class CustomerDashboardScene(BaseScene, UiCustomerDashboard):
         # BOOK A RIDE PAGE -----
         # --- button events (switch to panel)
         self.ride_btn.clicked.connect(lambda: self.switch_to(self.book_ride_page))
+        self.confirm_booking_btn.clicked.connect(self._on_make_booking)
+
+        # VIEW BOOKED RIDES TABLE
+        self.booking_table_widget.setColumnCount(4)
+        self.booking_table_widget.setHorizontalHeaderLabels(["Driver Name", "Pickup", "Destination", "Status"])
+        self.booking_table_widget.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
+        self.booking_table_widget.setSelectionMode(QTableWidget.SelectionMode.SingleSelection)
+        self.booking_table_widget.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+        self.booking_table_widget.verticalHeader().hide()
 
         #VIEW BOOKED RIDES TABLE
         self.booking_table_widget.setColumnCount(5)
@@ -166,10 +177,29 @@ class CustomerDashboardScene(BaseScene, UiCustomerDashboard):
             self.refresh_scene()
 
 
-    def _on_make_booking(self, info):
+    def _on_make_booking(self):
         """Collect information and save to database.."""
+        if self.active_booking:
+            self.info_popup("Please cancel/finish any active booking before making a new one.")
+            return
+
+        info = {
+            "pickup": self.pick_up_input.text(),
+            "dropoff": self.drop_off_input.text(),
+        }
+
+        if info["dropoff"] == "" or info["pickup"] == "":
+            self.info_popup("Please enter both a pickup location and destination.")
+            return
+
+        info.update({
+            "customer_id": self.user.id,
+             "date": datetime.date.today(),
+             "time": datetime.datetime.now().strftime("%H-%M-%S"),
+             "status": "waiting_for_assignment"
+        })
+
         try:
-            info["customer_id"] = self.user.id
             with DatabaseConnection() as conn:
                 conn.create_booking(info)
         except sqlite3.Error:
@@ -180,14 +210,65 @@ class CustomerDashboardScene(BaseScene, UiCustomerDashboard):
                             "to be assigned to your ride…")
             self.refresh_scene()
 
+
     def _load_bookings(self):
-        """Fetch and load all user bookings onto list view."""
+        """
+        Fetch and load driver bookings.
+        Displays currently assigned booking + past bookings onto TableView.
+        """
+        bookings = []
         try:
             with DatabaseConnection() as conn:
-                bookings = conn.fetch_bookings(user_id=self.user.id,)
-                self.booking_list.setModel(BookingListModel(bookings))
+                bookings = conn.fetch_bookings(customer_id=self.user.id)
+
+                for i, booking in enumerate(bookings):
+                    if booking.status in ("waiting_for_assignment", "waiting_for_pickup", "in_process"):
+                        self.active_booking = booking
+                        break
         except sqlite3.Error:
             self.info_popup(SystemFeedback.DATABASE_ERROR)
+
+        # Populate active bookings (Should only have one booking at a time.)
+        if bookings:
+            bookings.sort(key=lambda bk: (bk.date, bk.time), reverse=True)
+            self.booking_table_widget.setRowCount(len(bookings))
+            # Name column
+            for row, booking in enumerate(bookings):
+                if booking.driver_id:
+                    self.booking_table_widget.setItem(
+                        row, 0, QTableWidgetItem(booking.driver.fullname))
+                else:
+                    self.booking_table_widget.setItem(
+                        row, 0, QTableWidgetItem("N/A"))
+                # Pickup location column
+                self.booking_table_widget.setItem(
+                    row, 1, QTableWidgetItem(booking.pickup))
+                # Destination column
+                self.booking_table_widget.setItem(
+                    row, 2, QTableWidgetItem(booking.dropoff))
+                # Booking status column
+                self.booking_table_widget.setItem(
+                    row, 3, QTableWidgetItem(booking.get_formatted_status))
+
+
+        try:
+            # Clean up connections/signals if present.
+            self.booking_table_widget.itemClicked.disconnect()
+        except TypeError:
+            pass
+
+        self.booking_table_widget.itemClicked.connect(
+            lambda item: self._show_booking_dialog(
+                bookings[item.row()])
+        )
+
+    def _show_booking_dialog(self, booking):
+        dialog = BookingItem(
+            booking=booking,
+            viewer="customer",
+            parent=self)
+        if dialog.exec() == QDialog.DialogCode.Accepted:
+            self.refresh_scene()
 
     def _log_out(self):
         """Return to launch screen."""
@@ -199,13 +280,10 @@ class CustomerDashboardScene(BaseScene, UiCustomerDashboard):
             field.clear_error()
 
 
-    def refresh_scene(self):
-        self.depopulate_data()
-        self.populate_data()
-
     def depopulate_data(self):
         for field in self.account_fields:
             field.reset()
+        self.active_booking = None
 
     def populate_data(self):
         if self.user is None:
@@ -224,3 +302,4 @@ class CustomerDashboardScene(BaseScene, UiCustomerDashboard):
         self.phonenum.set_error("\u26A0 Invalid phone number format.")
         self.new_password.set_error("\u26A0 Password not strong enough.")
         self.confirm_password.set_error("\u26A0 These passwords do not match.")
+        self._load_bookings()

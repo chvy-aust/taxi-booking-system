@@ -677,7 +677,7 @@ class UiAdminDashboard(object):
         self.pending_tab.setObjectName("pending_tab")
         self.pending_table_widget = QtWidgets.QTableWidget(parent=self.pending_tab)
         self.pending_table_widget.setGeometry(QtCore.QRect(-5, 1, 491, 351))
-        self.pending_table_widget.setObjectName("current_table_widget")
+        self.pending_table_widget.setObjectName("pending_table_widget")
         self.pending_table_widget.setColumnCount(0)
         self.pending_table_widget.setRowCount(0)
         #STYLE SHEET FOR PENDING RIDES TABLE
@@ -700,13 +700,13 @@ class UiAdminDashboard(object):
         self.driver_tab_widget.addTab(self.pending_tab, "")
         self.completed_tab = QtWidgets.QWidget()
         self.completed_tab.setObjectName("completed_tab")
-        self.complete_admin_table_widget = QtWidgets.QTableWidget(parent=self.completed_tab)
-        self.complete_admin_table_widget.setGeometry(QtCore.QRect(0, 0, 481, 355))
-        self.complete_admin_table_widget.setObjectName("pending_table_widget")
-        self.complete_admin_table_widget.setColumnCount(0)
-        self.complete_admin_table_widget.setRowCount(0)
+        self.assigned_table_widget = QtWidgets.QTableWidget(parent=self.completed_tab)
+        self.assigned_table_widget.setGeometry(QtCore.QRect(0, 0, 481, 355))
+        self.assigned_table_widget.setObjectName("assigned_table_widget")
+        self.assigned_table_widget.setColumnCount(0)
+        self.assigned_table_widget.setRowCount(0)
         # STYLE SHEET FOR COMPLETED RIDES TABLE
-        self.complete_admin_table_widget.setStyleSheet(
+        self.assigned_table_widget.setStyleSheet(
             "QTableWidget {\n"
             "    background-color: #7d918f;\n"
             "    color:white;\n"

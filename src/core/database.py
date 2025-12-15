@@ -81,6 +81,7 @@ class DatabaseConnection:
             # Concatenate to conditional statement.
             # (ie, WHERE driver_id IN (?) AND status IN (?, ?))
             sql += f" WHERE " + ' AND '.join(fields)
+            sql += f"ORDER BY date, time"
 
         try:
             cursor = self.execute(sql, params)
@@ -171,7 +172,11 @@ class DatabaseConnection:
             logger.exception(f"Failed to add address for user ({address['customer_id']}): {e}")
             raise
 
-    def change_booking_status(self, booking_id, status):
+    def update_booking_status(self, booking_id, status):
+        booking = self.fetch_bookings(id=booking_id)[0]
+        if booking.status in ("cancelled", "completed"):
+            raise sqlite3.Error("Cannot modify a non-active booking.")
+
         try:
             self.execute("""
                 UPDATE bookings
@@ -179,5 +184,27 @@ class DatabaseConnection:
                 WHERE id = ?
                 """, (status, booking_id))
         except  sqlite3.Error as e:
-            logger.exception(f"Failed to update status for booking {booking_id} to {status}: {e}")
+            logger.exception(f"Failed to change booking ({booking_id}) status to {status}: {e}")
             raise
+
+    def is_driver_available(self, driver_id) -> bool:
+        """Return False if driver has any unfinished bookings, else True."""
+        driver = self.fetch_users(id=driver_id, role="driver")[0]
+        active_bookings = self.fetch_bookings(
+            driver_id=driver.id,
+            status=("waiting_for_pickup", "in_process"))
+        return False if active_bookings else True
+
+    def assign_booking_driver(self, booking_id, driver_id):
+        try:
+            if self.is_driver_available(driver_id):
+                raise sqlite3.Error(f"This driver ({driver_id}) is currently busy.")
+
+            self.execute("""
+                UPDATE bookings
+                SET driver_id = ?, status = ?
+                WHERE id = ?
+            """, (driver_id, "waiting_for_pickup", booking_id))
+
+        except sqlite3.Error as e:
+            logger.exception(f"Failed to assign driver ({driver_id}) to booking ({booking_id}): {e}")

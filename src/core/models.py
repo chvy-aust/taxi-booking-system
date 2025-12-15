@@ -1,5 +1,4 @@
 import logging
-import sqlite3
 from typing import Any
 
 logger = logging.getLogger(__name__)
@@ -26,12 +25,10 @@ class User:
         if new_attr is None:
             return
 
-        # Update the user record in db.
         from src.core.database import DatabaseConnection
         with DatabaseConnection() as conn:
              conn.update_user(self.id, new_attr)
 
-        # Update the user instance.
         for attribute, value in new_attr.items():
             setattr(self, attribute, value)
 
@@ -47,39 +44,80 @@ class User:
         return new_attr
 
 class Booking:
-    def __init__(self, row_object):
-        self.id = row_object["id"]
-        self.customer_id = row_object["customer_id"]
-        self.driver_id = row_object["driver_id"]
-        self.dropoff = row_object["dropoff"]
-        self.pickup = row_object["pickup"]
-        self.date = row_object["date"]
-        self.time = row_object["time"]
-        self.status = row_object["status"]
+    formatted_status = {
+        "waiting_for_assignment": "Waiting for Driver Assignment",
+        "waiting_for_pickup": "Pickup in Process",
+        "in_process": "Drop off in Process",
+        "completed": "Booking Completed",
+        "cancelled": "This booking was cancelled."
+    }
 
-    def update_status(self, status):
-        if self.status == "cancelled":
-            raise sqlite3.Error("Cannot modify a cancelled booking.")
+    next_status = {
+        "waiting_for_assignment": "waiting_for_pickup",
+        "waiting_for_pickup": "in_process",
+        "in_process": "completed"
+    }
 
+    def __init__(self, row):
+        self.id = row["id"]
+        self.customer_id = row["customer_id"]
+        self.driver_id = row["driver_id"]
+        self.dropoff = row["dropoff"]
+        self.pickup = row["pickup"]
+        self.date = row["date"]
+        self.time = row["time"]
+        self.status = row["status"]
+
+    def update_status(self):
+        """
+        Progress the status of an active booking.
+        Get the next booking phase based on the current status.
+        """
+
+        new_status = self.next_status.get(self.status)
+        # Update booking instance and db record.
         from src.core.database import DatabaseConnection
         with DatabaseConnection() as conn:
-            conn.change_booking_status(self.id, status)
-        self.status = status
+            conn.update_booking_status(
+                booking_id=self.id,
+                status=new_status)
+        self.status = new_status
+
+    def assign_driver(self, driver_id):
+        """Assign an available driver to the current booking."""
+        from src.core.database import DatabaseConnection
+        with DatabaseConnection() as conn:
+            conn.assign_booking_driver(
+                booking_id=self.id,
+                driver_id=driver_id)
+        self.driver_id = driver_id
+
+
+    def cancel(self):
+        """Cancel the booking instance and db record."""
+        from src.core.database import DatabaseConnection
+        with DatabaseConnection() as conn:
+            conn.update_booking_status(
+                booking_id=self.id,
+                status="cancelled")
+        self.status = "cancelled"
 
     @property
-    def customer(self):
+    def get_formatted_status(self):
+        return self.formatted_status.get(self.status)
+
+    @property
+    def customer(self) -> User:
+        """Return the customer attached to the booking."""
         from src.core.database import DatabaseConnection
         with DatabaseConnection() as conn:
             return conn.fetch_users(id=self.customer_id)[0]
 
     @property
-    def get_driver(self):
+    def driver(self) -> User:
+        """Return the driver assigned to the booking."""
         from src.core.database import DatabaseConnection
         with DatabaseConnection() as conn:
-            return conn.fetch_users(id=self.driver_id)[0] or None
+            drivers = conn.fetch_users(id=self.driver_id)
+            return drivers[0] if drivers else None
 
-
-    def __str__(self):
-        string = f":: {self.date} - {self.time}"
-        string += f" | STATUS: {self.status.replace("_", " ".capitalize())}"
-        return string

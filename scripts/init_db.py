@@ -77,16 +77,12 @@ def initialize_database():
     logger.info("Initializing Database …")
     try:
         with DatabaseConnection() as cursor:
-            logger.info("Attempting to create tables … [  ]")
             cursor.execute(USERS_SCHEMA)
             cursor.execute(BOOKINGS_SCHEMA)
             cursor.execute(ADDRESSES_SCHEMA)
             cursor.execute(DRIVER_SCHEMA)
             cursor.execute(DRIVER_APPLICATION_SCHEMA)
             logger.info("Tables created successfully … [ ✔ ]")
-            # Other executions here
-            # Eg. Creating indexes, creating triggers, etc
-
     except sqlite3.Error as e:
         logger.exception(f"Failed to initialize database: {e}")
         raise

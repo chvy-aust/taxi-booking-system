@@ -113,6 +113,16 @@ QListView::item {
     padding: 10px;
 }
 
+QComboBox {
+    background-color: white;
+    border: 2px solid #101717;
+    color: #101717;
+    padding: 10px;
+}
+
+QComboBox:::selected {
+    background-color: #4A5C66;
+}
 
 #green_divider {
     background-color: #1B2626;

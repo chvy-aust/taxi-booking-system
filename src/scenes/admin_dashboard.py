@@ -1,8 +1,11 @@
+from PyQt6.QtWidgets import QTableWidgetItem, QHeaderView, QDialog, QTableWidget
+
+from src.widgets import SystemFeedback, populate_table, BookingItem
+from src.core.database import DatabaseConnection
 from src.signals import signals
 from src.scenes import BaseScene
 from src.ui import UiAdminDashboard
 import sqlite3
-from PyQt6 import QtWidgets
 
 
 class AdminDashboardScene(BaseScene, UiAdminDashboard):
@@ -31,101 +34,116 @@ class AdminDashboardScene(BaseScene, UiAdminDashboard):
 
 
         # --- VIEW USERS TABLE SETUP
-
-        #VIEW CUSTOMER TABLE
-        self.customer_table_widget.setColumnCount(5)
-        self.customer_table_widget.setHorizontalHeaderLabels(["User ID", "Name", "Email", "Phone","Role"])
+        USER_TABLE_HEADERS = ["User ID", "Name", "Email", "Phone", "Role"]
+        self.customer_table_widget.setColumnCount(len(USER_TABLE_HEADERS))
+        self.customer_table_widget.setHorizontalHeaderLabels(USER_TABLE_HEADERS)
         self.customer_table_widget.verticalHeader().hide()
 
-        #VIEW DRIVERS TABLE
-        self.driver_table_widget.setColumnCount(5)
-        self.driver_table_widget.setHorizontalHeaderLabels(["User ID", "Name", "Email", "Phone", "Role"])
+        self.driver_table_widget.setColumnCount(len(USER_TABLE_HEADERS))
+        self.driver_table_widget.setHorizontalHeaderLabels(USER_TABLE_HEADERS)
         self.driver_table_widget.verticalHeader().hide()
-        self.load_data()
 
-    #--- LOAD DATA FROM DATABASE TO TABLE
-    def load_data(self):
-        connection = sqlite3.connect("taxibooking.db")
-        cur = connection.cursor()
-        sqlquery = "SELECT ID, FIRSTNAME, PHONENUM, EMAIL, ROLE FROM users"
+        # --- ASSIGN DRIVERS SETUP
+        BOOKING_TABLE_HEADERS = ["Customer", "Phone", "Pickup", "Destination", "Status"]
+        self.pending_table_widget.setColumnCount(len(BOOKING_TABLE_HEADERS))
+        self.pending_table_widget.setHorizontalHeaderLabels(BOOKING_TABLE_HEADERS)
+        self.pending_table_widget.verticalHeader().hide()
+        self.pending_table_widget.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+        self.pending_table_widget.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
+        self.pending_table_widget.setSelectionMode(QTableWidget.SelectionMode.SingleSelection)
 
-        self.customer_table_widget.setRowCount(25)
-        self.driver_table_widget.setRowCount(25)
+        self.assigned_table_widget.setColumnCount(len(BOOKING_TABLE_HEADERS))
+        self.assigned_table_widget.setHorizontalHeaderLabels(BOOKING_TABLE_HEADERS)
+        self.assigned_table_widget.verticalHeader().hide()
+        self.assigned_table_widget.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+        self.assigned_table_widget.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
+        self.assigned_table_widget.setSelectionMode(QTableWidget.SelectionMode.SingleSelection)
 
-        customer_table_row = 0
-        driver_table_row = 0
+    def _load_users(self):
+        try:
+            with DatabaseConnection() as conn:
+                users = conn.fetch_users(role=("customer", "driver"))
+        except sqlite3.Error:
+            self.info_popup(SystemFeedback.DATABASE_ERROR)
 
-        for row in cur.execute(sqlquery):
-            user_role = row[4].lower()
-            if user_role == "customer":
+        customer_table_row, driver_table_row = 0, 0
+
+        for user in users:
+            if user.role == "customer":
                 table = self.customer_table_widget
                 current_row = customer_table_row
                 customer_table_row += 1
 
-            elif user_role == "driver":
+            elif user.role == "driver":
                 table = self.driver_table_widget
                 current_row = driver_table_row
                 driver_table_row += 1
             else:
-                continue  # Skip unknown roles
+                continue
 
             table.insertRow(current_row)
-            table.setItem(current_row, 0, QtWidgets.QTableWidgetItem(str(row[0])))
-            table.setItem(current_row, 1, QtWidgets.QTableWidgetItem(row[1]))
-            table.setItem(current_row, 2, QtWidgets.QTableWidgetItem(row[3]))
-            table.setItem(current_row, 3, QtWidgets.QTableWidgetItem(row[2]))
-            table.setItem(current_row, 4, QtWidgets.QTableWidgetItem(row[4]))
-        connection.close()
+            table.setItem(current_row, 0, QTableWidgetItem(str(user.id)))
+            table.setItem(current_row, 1, QTableWidgetItem(user.fullname))
+            table.setItem(current_row, 2, QTableWidgetItem(user.email))
+            table.setItem(current_row, 3, QTableWidgetItem(user.phonenum))
+            table.setItem(current_row, 4, QTableWidgetItem(user.role))
 
-        # --- ASSIGN DRIVERS SETUP
+    def _load_bookings(self):
+        """
+        Fetch and load driver bookings.
+        Displays currently assigned booking + past bookings onto TableView.
+        """
+        pending_booking_items, assigned_booking_items = [], []
+        try:
+            with DatabaseConnection() as conn:
+                bookings = conn.fetch_bookings()
+                for booking in bookings:
+                    if booking.status == 'waiting_for_assignment':
+                        pending_booking_items.append(booking)
+                    else:
+                        assigned_booking_items.append(booking)
+        except sqlite3.Error:
+            self.info_popup(SystemFeedback.DATABASE_ERROR)
 
-        #TO BE COMPLETED DRIVES TABLE
-        self.pending_table_widget.setColumnCount(5)
-        self.pending_table_widget.setHorizontalHeaderLabels(["Name", "Email", "Phone","Pickup","Destination", "Status"])
-        self.pending_table_widget.verticalHeader().hide()
+        if pending_booking_items:
+            self.pending_table_widget.setRowCount(len(pending_booking_items))
+            for row, booking in enumerate(pending_booking_items):
+                self.pending_table_widget.setItem(row, 0, QTableWidgetItem(booking.customer.fullname))
+                self.pending_table_widget.setItem(row, 1, QTableWidgetItem(booking.customer.phonenum))
+                self.pending_table_widget.setItem(row, 2, QTableWidgetItem(booking.pickup))
+                self.pending_table_widget.setItem(row, 3, QTableWidgetItem(booking.dropoff))
+                self.pending_table_widget.setItem(row, 4, QTableWidgetItem(booking.status))
 
-        #DRIVER'S COMPLETED DRIVES TABLE
-        self.complete_admin_table_widget.setColumnCount(5)
-        self.complete_admin_table_widget.setHorizontalHeaderLabels(["Name", "Email", "Phone","Pickup","Destination", "Status"])
-        self.complete_admin_table_widget.verticalHeader().hide()
-        #self.load_data_assign()
+        if assigned_booking_items:
+            self.assigned_table_widget.setRowCount(len(assigned_booking_items))
+            for row, booking in enumerate(assigned_booking_items):
+                self.assigned_table_widget.setItem(row, 0, QTableWidgetItem(booking.customer.fullname))
+                self.assigned_table_widget.setItem(row, 1, QTableWidgetItem(booking.customer.phonenum))
+                self.assigned_table_widget.setItem(row, 2, QTableWidgetItem(booking.pickup))
+                self.assigned_table_widget.setItem(row, 3, QTableWidgetItem(booking.dropoff))
+                self.assigned_table_widget.setItem(row, 4, QTableWidgetItem(booking.status))
 
-    # --- LOAD DATA FROM DATABASE TO TABLE
-    #def load_data_assign(self):
-        #connection = sqlite3.connect("taxibooking.db")
-        #cur = connection.cursor()
-        #sqlquery = "SELECT........FROM ........"
+        try:
+            # Clean up connections/signals if present.
+            self.pending_table_widget.itemClicked.disconnect()
+            self.assigned_table_widget.itemClicked.disconnect()
+        except TypeError:
+            pass
 
-        self.pending_table_widget.setRowCount(20)
-        self.complete_admin_table_widget.setRowCount(20)
-
-        #pending_table_row = 0
-        #completed_table_row = 0
-
-        #for row in cur.execute(sqlquery):
-            #status = row[5].lower()
-            #if status == "pending":
-                #table = self.pending_table_widget
-                #current_row = pending_table_row
-                #pending_table_row += 1
-
-            #elif status == "completed":
-                #table = self.complete_admin_table_widget
-                #current_row = completed_table_row
-                #completed_table_row += 1
-            #else:
-                #continue  # Skip unknown roles
-
-            #table.insertRow(current_row)
-            #table.setItem(current_row, 0, QtWidgets.QTableWidgetItem(str(row[0])))
-            #table.setItem(current_row, 1, QtWidgets.QTableWidgetItem(row[1]))
-            #table.setItem(current_row, 2, QtWidgets.QTableWidgetItem(row[3]))
-            #table.setItem(current_row, 3, QtWidgets.QTableWidgetItem(row[2]))
-            #table.setItem(current_row, 4, QtWidgets.QTableWidgetItem(row[4]))
-        #connection.close()
+        # Show dialog when item is clicked.
+        self.assigned_table_widget.itemClicked.connect(
+            lambda item: self._show_booking_dialog(assigned_booking_items[item.row()]))
+        self.pending_table_widget.itemClicked.connect(
+            lambda item: self._show_booking_dialog(pending_booking_items[item.row()]))
 
 
-
+    def _show_booking_dialog(self, booking):
+        dialog = BookingItem(
+            booking=booking,
+            viewer="admin",
+            parent=self)
+        if dialog.exec() == QDialog.DialogCode.Accepted:
+            self.refresh_scene()
 
     def switch_to(self, page):
         self.refresh_scene()
@@ -141,9 +159,14 @@ class AdminDashboardScene(BaseScene, UiAdminDashboard):
         self.user = None
 
     def depopulate_data(self):
-        pass
+        self.customer_table_widget.setRowCount(0)
+        self.driver_table_widget.setRowCount(0)
+        self.assigned_table_widget.setRowCount(0)
+        self.pending_table_widget.setRowCount(0)
 
     def populate_data(self):
         if self.user is None:
             self.info_popup("Could not access your account. Please Try Again or contact Support.")
             signals.request_login.emit()
+        self._load_users()
+        self._load_bookings()
