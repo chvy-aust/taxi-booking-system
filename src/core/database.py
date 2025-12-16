@@ -41,19 +41,19 @@ class DatabaseConnection:
         Accepts optional keyword arguments for filtering.
         """
         sql = "SELECT * FROM users"
-        fields, params = [], ()
+        conditions, params = [], ()
 
         # Checks for optional conditions (ie, email="customer_123@gmail.com")
         if kwargs:
             # Create formatted placeholders (ie, role IN (?, ?).
-            for field, values in kwargs.items():
+            for column, values in kwargs.items():
                 if not isinstance(values, (tuple, list)):
                     values = (values,)
                 placeholders = ', '.join("?" * len(values))
-                fields.append(f"{field} IN ({placeholders})")
+                conditions.append(f"{column} IN ({placeholders})")
                 params += tuple(values)
-            # Concatenate to conditional statement.
-            sql += f" WHERE " + ' AND '.join(fields)
+            # Concatenate to WHERE statement.
+            sql += f" WHERE " + ' AND '.join(conditions)
         try:
             cursor = self.execute(sql, params)
             return [User(row) for row in cursor.fetchall()]
@@ -70,21 +70,20 @@ class DatabaseConnection:
         Accepts optional keyword arguments for filtering.
         """
         sql = "SELECT * FROM bookings"
-        fields, params = [], ()
+        conditions, params = [], ()
 
         # Checks for optional conditions (ie, status="pending")
         if kwargs:
-            for field, values in kwargs.items():
+            for column, values in kwargs.items():
                 # Create formatted placeholders (ie, status IN (?, ?))
                 if not isinstance(values, (tuple, list)):
                     values = (values,)
                 placeholders = ', '.join("?" * len(values))
-                fields.append(f"{field} IN ({placeholders})")
+                conditions.append(f"{column} IN ({placeholders})")
                 params += tuple(values)
-            # Concatenate to conditional statement.
             # (ie, WHERE driver_id IN (?) AND status IN (?, ?))
-            sql += f" WHERE " + ' AND '.join(fields)
-            sql += f"ORDER BY date, time"
+            sql += " WHERE " + ' AND '.join(conditions)
+        sql += " ORDER BY date, time"
 
         try:
             cursor = self.execute(sql, params)
@@ -165,7 +164,6 @@ class DatabaseConnection:
         Insert new booking record to the database.
         Defaults null driver and booking status to waiting_for_assignment.
         """
-
         driver_id = info.get("driver_id", None)
         status = info.get("status", "waiting_for_assignment")
 
@@ -229,10 +227,9 @@ class DatabaseConnection:
 
     def is_driver_available(self, driver_id) -> bool:
         """Return False if driver has any unfinished bookings, else True."""
-        driver = self.fetch_users(id=driver_id, role="driver")[0]
         active_bookings = self.fetch_bookings(
-            driver_id=driver.id,
-            status=("waiting_for_pickup", "in_process"))
+                driver_id=driver_id,
+                status=("waiting_for_pickup", "in_process"))
         return False if active_bookings else True
 
     def assign_booking_driver(self, booking_id, driver_id):
