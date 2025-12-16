@@ -3,10 +3,11 @@ import sqlite3
 
 from src.core.database import DatabaseConnection
 
-USERS_SCHEMA = """ 
+USERS_SCHEMA = f""" 
     CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        role TEXT NOT NULL,
+        role TEXT NOT NULL DEFAULT 'customer' CHECK ( 
+            role IN ('customer', 'driver', 'admin')),
         firstname TEXT NOT NULL,
         lastname TEXT NOT NULL,
         dob TEXT NOT NULL,
@@ -47,7 +48,7 @@ DRIVER_APPLICATIONS_SCHEMA = """
         reviewed_by INT NULL REFERENCES users (id),
         review_comment TEXT NULL ) """
 
-BOOKINGS_SCHEMA = """
+BOOKINGS_SCHEMA = f"""
     CREATE TABLE IF NOT EXISTS bookings (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         customer_id INT NOT NULL REFERENCES users (id),
@@ -57,8 +58,8 @@ BOOKINGS_SCHEMA = """
         date TEXT NOT NULL,
         time TEXT NOT NULL,
         status TEXT NOT NULL DEFAULT 'waiting_for_assignment' CHECK (
-                status IN ('waiting_for_assignment','waiting_for_pickup',
-                           'in_process', 'completed', 'cancelled'))) """
+            status IN ('waiting_for_assignment','waiting_for_pickup',
+            'in_process', 'completed', 'canceled'))) """
 
 SCHEMAS = [USERS_SCHEMA,
            ADDRESSES_SCHEMA,

@@ -1,8 +1,7 @@
 import sqlite3
 from typing import Any
 
-from src.utils import NON_ACTIVE_BOOKING_STATUS
-
+from src.utils.constants import NON_ACTIVE_BOOKING_STATUS
 
 class User:
     def __init__(self, row):
@@ -50,7 +49,8 @@ class Booking:
         "completed": "Booking Completed",
         "cancelled": "This booking was cancelled."
     }
-
+    # eg. current status: waiting for assignment
+    # gets -> next status: waiting for pickup
     NEXT_STATUS = {
         "waiting_for_assignment": "waiting_for_pickup",
         "waiting_for_pickup": "in_process",

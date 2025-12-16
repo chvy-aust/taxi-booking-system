@@ -4,11 +4,11 @@ import sys
 
 from PyQt6.QtWidgets import QApplication
 
-from src import LOG_CONF, LOG_FILE, DB_FILE, MainWindow
+from src import LOG_CONF_FILE, LOG_FILE, DB_FILE, MainWindow
 
 if __name__ == '__main__':
     # Set global logger configurations.
-    with open(LOG_CONF, 'r') as f:
+    with open(LOG_CONF_FILE, 'r') as f:
         config = json.load(f)
         # Set relative config file location.
         config["handlers"]["file"]["filename"] = str(LOG_FILE)

@@ -1,7 +1,7 @@
-from PyQt6.QtWidgets import QWidget, QMessageBox, QDialog
+from PyQt6.QtWidgets import QWidget, QDialog
 
-from src.widgets import InfoDialog, ConfirmationDialog, SystemFeedback
 from src.core.models import User
+from src.widgets import InfoDialog, ConfirmationDialog
 
 
 class BaseScene(QWidget):
@@ -43,6 +43,11 @@ class BaseScene(QWidget):
         popup = InfoDialog(info, self)
         popup.exec()
 
+    def error_popup(self, err_msg):
+        text = "ERROR!\n" + err_msg
+        popup = InfoDialog(text, self)
+        popup.exec()
+
     def confirmation_popup(self, question = "") -> bool:
         """
         Display a confirmation question to user.
@@ -51,9 +56,5 @@ class BaseScene(QWidget):
         popup = ConfirmationDialog(question, self)
         return popup.exec() == QDialog.DialogCode.Accepted
 
-    def critical_popup(self,
-                       text: str | SystemFeedback,
-                       title: str = "Error!"):
-        """Display a critical error message to the user."""
-        QMessageBox.critical(self, title, text)
+
 

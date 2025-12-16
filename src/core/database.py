@@ -2,8 +2,7 @@ import logging
 import sqlite3
 from typing import Any
 
-from src.core.models import User, Booking
-from src.utils.constants import DB_FILE, ACTIVE_BOOKING_STATUS, NON_ACTIVE_BOOKING_STATUS
+from src.utils.constants import DB_FILE, NON_ACTIVE_BOOKING_STATUS, ACTIVE_BOOKING_STATUS
 
 logger = logging.getLogger(__name__)
 class DatabaseConnection:
@@ -35,11 +34,12 @@ class DatabaseConnection:
         return self.conn.execute(sql, params)
 
 
-    def fetch_users(self, **kwargs) -> list[User]:
+    def fetch_users(self, **kwargs) -> list:
         """
         Return a list of queried user instances.
         Accepts optional keyword arguments for filtering.
         """
+        from .models import User
         sql = "SELECT * FROM users"
         conditions, params = [], ()
 
@@ -64,11 +64,12 @@ class DatabaseConnection:
             )
             raise
 
-    def fetch_bookings(self, **kwargs) -> list[Booking]:
+    def fetch_bookings(self, **kwargs) -> list:
         """
         Return a list of queried booking instances.
         Accepts optional keyword arguments for filtering.
         """
+        from .models import Booking
         sql = "SELECT * FROM bookings"
         conditions, params = [], ()
 

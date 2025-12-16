@@ -57,21 +57,6 @@ class CustomerDashboardScene(BaseScene, UiCustomerDashboard):
         self.booking_table_widget.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         self.booking_table_widget.verticalHeader().hide()
 
-        #VIEW BOOKED RIDES TABLE
-        self.booking_table_widget.setColumnCount(5)
-        self.booking_table_widget.setHorizontalHeaderLabels(["First Name", "Last Name", "Pickup", "Destination", "Status"])
-        self.booking_table_widget.verticalHeader().hide()
-        #self.load_data()
-
-    # --- LOAD DATA FROM DATABASE TO TABLE
-    #def load_data(self):
-        #with DatabaseConnection() as conn:
-            #bookings = conn.fetch_bookings(customer_id=self.user.id)
-
-        self.booking_table_widget.setRowCount(25)
-
-
-
         # DRIVER APPLICATION PAGE -----
         # --- button events (switch to panel, cancel/confirm application)
         self.driver_btn.clicked.connect(
@@ -248,7 +233,7 @@ class CustomerDashboardScene(BaseScene, UiCustomerDashboard):
                     row, 2, QTableWidgetItem(booking.dropoff))
                 # Booking status column
                 self.booking_table_widget.setItem(
-                    row, 3, QTableWidgetItem(booking.get_formatted_status))
+                    row, 3, QTableWidgetItem(booking.formatted_status))
 
 
         try:

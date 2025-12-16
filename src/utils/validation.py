@@ -2,8 +2,11 @@ import re
 
 from PyQt6.QtCore import QDate
 
+from src.widgets import InputEdit
+
+# TODO: FIX PHONENUM PATTERN (Make more flexible for international numbers)
 PHONENUM_PATTERN = re.compile(r"^\d{3}[-\s]?\d{3}[-\s]?\d{4}$")
-EMAIL_PATTERN = re.compile(r"^[\w\-.]+@([\w-]+\.)+[\w-]{2,4}$")
+EMAIL_PATTERN = re.compile(r"^[^@\s]+@[^@\s]+\.[@\s]+$")
 PASSWORD_PATTERN = re.compile(r"^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}")
 AGE_REQUIREMENT = 18
 
@@ -28,7 +31,7 @@ def validate_dob(dob: QDate) -> bool:
 
 
 def validate_phonenum(phonenum: str) -> bool:
-    """Check if password matches required format."""
+    """Check if phone number matches required format."""
     if phonenum == "":
         return False
     return bool(re.match(PHONENUM_PATTERN, phonenum))
@@ -49,9 +52,9 @@ def is_email_unique(email: str) -> bool:
         return not bool(user)
 
 
-def is_fields_valid(fields) -> bool:
+def is_fields_valid(fields: dict[InputEdit, bool]) -> bool:
     """
-    Check the validity of a given field and its value.
+    Check the validity of a given InptuEdit fields + clear/show errors.
     Return a bool indicator of whether all fields are valid.
     """
     for field in fields.keys():

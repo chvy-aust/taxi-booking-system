@@ -8,7 +8,7 @@ from PyQt6.QtWidgets import QPushButton, QDateEdit, QLineEdit, QTimeEdit, \
     QTableWidgetItem, QListWidget, QListWidgetItem, QComboBox
 
 from src.core.database import DatabaseConnection
-from src.core.models import Booking
+
 
 """
 Provides custom project widgets.
@@ -220,7 +220,7 @@ class ConfirmationDialog(QDialog):
         self.reject()
 
 class BookingItem(QDialog):
-    def __init__(self, booking: Booking,
+    def __init__(self, booking,
                  viewer: Literal["customer","driver","admin"] = "customer",parent=None):
         super().__init__(parent)
         self.booking = booking
@@ -332,7 +332,7 @@ class BookingItem(QDialog):
             self.update()
 
     def update_item_status(self):
-        self.status.setText(f"<b>Status</b>: {self.booking.get_formatted_status}")
+        self.status.setText(f"<b>Status</b>: {self.booking.formatted_status}")
 
     def _cancel_booking(self):
         question = f"Are you sure you'd like to cancel this booking? "
