@@ -5,7 +5,8 @@ from typing import Literal
 from PyQt6.QtCore import Qt, QDate, QAbstractListModel, pyqtSignal
 from PyQt6.QtWidgets import QPushButton, QDateEdit, QLineEdit, QTimeEdit, \
     QLabel, QVBoxLayout, QWidget, QDialog, QSizePolicy, \
-    QTableWidgetItem, QListWidget, QListWidgetItem, QComboBox
+    QTableWidgetItem, QListWidget, QListWidgetItem, QComboBox, QTableWidget, \
+    QHeaderView
 
 from src.core.database import DatabaseConnection
 
@@ -18,6 +19,20 @@ Includes:
     - Dialogs: Information, Confirm
 """
 
+
+def setup_table(table: QTableWidget,
+                horizontal_headers: list[str],
+                vertical_headers: list[str] | None = None,
+                selection_behaviour = QTableWidget.SelectionBehavior.SelectRows,
+                selection_mode = QTableWidget.SelectionMode.SingleSelection,
+                resize_mode = QHeaderView.ResizeMode.Stretch):
+    """Helper function to configure QTableWidgets."""
+    table.setColumnCount(len(horizontal_headers))
+    table.setHorizontalHeaderLabels(horizontal_headers)
+    table.setVerticalHeader(vertical_headers)
+    table.setSelectionBehavior(selection_behaviour)
+    table.setSelectionMode(selection_mode)
+    table.horizontalHeader().setSectionResizeMode(resize_mode)
 
 # Helper function to populate tables
 def populate_table(table, items):

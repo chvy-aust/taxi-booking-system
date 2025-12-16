@@ -9,14 +9,14 @@ from src.scenes import (
     LoginScene,
     CustomerDashboardScene,
     AdminDashboardScene,
-    DriverDashboardScene, BaseScene)
+    DriverDashboardScene)
 from src.signals import signals
 from src.utils.constants import STYLE_FILE
 
 logger = logging.getLogger(__name__)
 
 class Scene(Enum):
-    Login = "login",
+    Login = "login"
     Register = "register"
     CustomerDash = "customer_dashboard"
     DriverDash = "driver_dashboard"
@@ -34,15 +34,15 @@ class MainWindow(QMainWindow):
         self.scene_manager = QStackedWidget()
 
         # Store application scenes.
-        self.current_scene = None
-        self.scenes: dict[Scene, BaseScene | None] = {
-            Scene.Login: None,
-            Scene.Register: None,
-            Scene.CustomerDash: None,
-            Scene.DriverDash: None,
-            Scene.AdminDash: None
+        self.scenes = {
+            Scene.Login: LoginScene(),
+            Scene.Register: RegisterScene(),
+            Scene.CustomerDash: CustomerDashboardScene(),
+            Scene.DriverDash: DriverDashboardScene(),
+            Scene.AdminDash: AdminDashboardScene()
         }
-
+        for scene in self.scenes.values():
+            self.scene_manager.addWidget(scene)
         self._set_style()
         self._center_window()
         self._switch_to_login()
@@ -60,49 +60,29 @@ class MainWindow(QMainWindow):
         signals.request_admin_dash.connect(self._switch_to_admin_dash)
 
     def _switch_to_login(self):
-        login = self.scenes[Scene.Login]
-        if login is None:
-            self.scenes[Scene.Login] = LoginScene()
-            self.scene_manager.addWidget(self.scenes[Scene.Login])
         self._switch_to(Scene.Login)
 
     def _switch_to_register(self):
-        register = self.scenes[Scene.Register]
-        if register is None:
-            self.scenes[Scene.Register] = RegisterScene()
-            self.scene_manager.addWidget(self.scenes[Scene.Register])
         self._switch_to(Scene.Register)
 
     def _switch_to_customer_dash(self, data):
-        customer_dash = self.scenes[Scene.CustomerDash]
-        if customer_dash is None:
-            self.scenes[Scene.CustomerDash] = CustomerDashboardScene()
-            self.scene_manager.addWidget(self.scenes[Scene.CustomerDash])
         self._switch_to(Scene.CustomerDash, data)
 
     def _switch_to_driver_dash(self, data):
-        driver_dash = self.scenes[Scene.DriverDash]
-        if driver_dash is None:
-            self.scenes[Scene.DriverDash] = DriverDashboardScene()
-            self.scene_manager.addWidget(self.scenes[Scene.DriverDash])
         self._switch_to(Scene.DriverDash, data)
 
     def _switch_to_admin_dash(self, data):
-        admin_dash = self.scenes[Scene.AdminDash]
-        if admin_dash is None:
-            self.scenes[Scene.AdminDash] = AdminDashboardScene()
-            self.scene_manager.addWidget(self.scenes[Scene.AdminDash])
         self._switch_to(Scene.AdminDash, data)
 
-    def _switch_to(self, scene: Scene, data: User | None = None):
+    def _switch_to(self, scene_name: Scene, data: User | None = None):
         """Navigate to requested scene and populate data if provided."""
         # Clean up current scene.
-        self.current_scene = self.scene_manager.currentWidget()
-        if self.current_scene:
-            self.current_scene.depopulate_data()
+        current_scene = self.scene_manager.currentWidget()
+        if current_scene:
+            current_scene.depopulate_data()
 
         # Switch scene.
-        scene = self.scenes[scene]
+        scene = self.scenes[scene_name]
         if data:
             scene.user = data
         self.scene_manager.setCurrentWidget(scene)

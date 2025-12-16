@@ -1,6 +1,6 @@
 from PyQt6.QtWidgets import QTableWidgetItem, QHeaderView, QDialog, QTableWidget
 
-from src.widgets import SystemFeedback, populate_table, BookingItem
+from src.widgets import SystemFeedback, populate_table, BookingItem, setup_table
 from src.core.database import DatabaseConnection
 from src.signals import signals
 from src.scenes import BaseScene
@@ -32,32 +32,17 @@ class AdminDashboardScene(BaseScene, UiAdminDashboard):
         self.view_users_btn.clicked.connect(lambda: self.switch_to(self.view_users_page))
         self.back_to_home_btn.clicked.connect(lambda: self.switch_to(self.admin_home_page))
 
-
-        # --- VIEW USERS TABLE SETUP
+    def _load_ui(self):
+        # setup user tables
         USER_TABLE_HEADERS = ["User ID", "Name", "Email", "Phone", "Role"]
-        self.customer_table_widget.setColumnCount(len(USER_TABLE_HEADERS))
-        self.customer_table_widget.setHorizontalHeaderLabels(USER_TABLE_HEADERS)
-        self.customer_table_widget.verticalHeader().hide()
+        DEFAULT = QHeaderView.ResizeMode.ResizeToContents
+        setup_table(self.customer_table_widget, USER_TABLE_HEADERS, resize_mode=DEFAULT)
+        setup_table(self.driver_table_widget, USER_TABLE_HEADERS, resize_mode=DEFAULT)
 
-        self.driver_table_widget.setColumnCount(len(USER_TABLE_HEADERS))
-        self.driver_table_widget.setHorizontalHeaderLabels(USER_TABLE_HEADERS)
-        self.driver_table_widget.verticalHeader().hide()
-
-        # --- ASSIGN DRIVERS SETUP
-        BOOKING_TABLE_HEADERS = ["Customer", "Phone", "Pickup", "Destination", "Status"]
-        self.pending_table_widget.setColumnCount(len(BOOKING_TABLE_HEADERS))
-        self.pending_table_widget.setHorizontalHeaderLabels(BOOKING_TABLE_HEADERS)
-        self.pending_table_widget.verticalHeader().hide()
-        self.pending_table_widget.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
-        self.pending_table_widget.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
-        self.pending_table_widget.setSelectionMode(QTableWidget.SelectionMode.SingleSelection)
-
-        self.assigned_table_widget.setColumnCount(len(BOOKING_TABLE_HEADERS))
-        self.assigned_table_widget.setHorizontalHeaderLabels(BOOKING_TABLE_HEADERS)
-        self.assigned_table_widget.verticalHeader().hide()
-        self.assigned_table_widget.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
-        self.assigned_table_widget.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
-        self.assigned_table_widget.setSelectionMode(QTableWidget.SelectionMode.SingleSelection)
+        # setup booking tables
+        BOOKING_TABLE_HEADERS = ["Customer", "Phone", "Pickup", "Destination","Status"]
+        setup_table(self.pending_table_widget, BOOKING_TABLE_HEADERS)
+        setup_table(self.assigned_table_widget, BOOKING_TABLE_HEADERS)
 
     def _load_users(self):
         try:
@@ -112,7 +97,7 @@ class AdminDashboardScene(BaseScene, UiAdminDashboard):
                 self.pending_table_widget.setItem(row, 1, QTableWidgetItem(booking.customer.phonenum))
                 self.pending_table_widget.setItem(row, 2, QTableWidgetItem(booking.pickup))
                 self.pending_table_widget.setItem(row, 3, QTableWidgetItem(booking.dropoff))
-                self.pending_table_widget.setItem(row, 4, QTableWidgetItem(booking.status))
+                self.pending_table_widget.setItem(row, 4, QTableWidgetItem(booking.formatted_status))
 
         if assigned_booking_items:
             self.assigned_table_widget.setRowCount(len(assigned_booking_items))
@@ -121,7 +106,7 @@ class AdminDashboardScene(BaseScene, UiAdminDashboard):
                 self.assigned_table_widget.setItem(row, 1, QTableWidgetItem(booking.customer.phonenum))
                 self.assigned_table_widget.setItem(row, 2, QTableWidgetItem(booking.pickup))
                 self.assigned_table_widget.setItem(row, 3, QTableWidgetItem(booking.dropoff))
-                self.assigned_table_widget.setItem(row, 4, QTableWidgetItem(booking.status))
+                self.assigned_table_widget.setItem(row, 4, QTableWidgetItem(booking.formatted_status))
 
         try:
             # Clean up connections/signals if present.
