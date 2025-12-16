@@ -6,6 +6,7 @@ import sqlite3
 from faker import Faker
 
 from src.core.database import DatabaseConnection
+from src.utils.constants import NON_ACTIVE_BOOKING_STATUS
 
 faker = Faker()
 logger = logging.getLogger(__name__)
@@ -83,7 +84,7 @@ def generate_bookings() -> list[dict]:
         "pickup": faker.address(),
         "date": str(faker.date_between(start_date="-300d", end_date="-2d")),
         "time": faker.date_time().strftime("%H:%M:%S"),
-        "status": random.choice(["cancelled", "completed"])
+        "status": random.choice(NON_ACTIVE_BOOKING_STATUS)
         # Generate 1-5 past bookings for each customer
          } for _ in range(random.randint(1,6))
         for customer in users["customers"]]

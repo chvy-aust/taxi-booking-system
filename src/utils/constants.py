@@ -14,4 +14,6 @@ LOG_CONF = LOG_DIR / 'config.json'
 LOG_FILE = LOG_DIR / 'app.log'
 # Database
 DB_FILE = ROOT_DIR / 'taxibooking.db'
-
+# Bookings
+ACTIVE_BOOKING_STATUS = ('waiting_for_assignment','waiting_for_pickup','in_process')
+NON_ACTIVE_BOOKING_STATUS = ('completed', 'cancelled')

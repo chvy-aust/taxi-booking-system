@@ -3,7 +3,7 @@ import sqlite3
 from typing import Any
 
 from src.core.models import User, Booking
-from src.utils.constants import DB_FILE
+from src.utils.constants import DB_FILE, ACTIVE_BOOKING_STATUS, NON_ACTIVE_BOOKING_STATUS
 
 logger = logging.getLogger(__name__)
 class DatabaseConnection:
@@ -209,7 +209,7 @@ class DatabaseConnection:
         Throw an error if booking is non-active.
         """
         booking = self.fetch_bookings(id=booking_id)[0]
-        if booking.status in ("cancelled", "completed"):
+        if booking.status in NON_ACTIVE_BOOKING_STATUS:
             raise sqlite3.Error("Cannot modify a non-active booking.")
 
         try:
@@ -228,8 +228,7 @@ class DatabaseConnection:
     def is_driver_available(self, driver_id) -> bool:
         """Return False if driver has any unfinished bookings, else True."""
         active_bookings = self.fetch_bookings(
-                driver_id=driver_id,
-                status=("waiting_for_pickup", "in_process"))
+                driver_id=driver_id, status=ACTIVE_BOOKING_STATUS)
         return False if active_bookings else True
 
     def assign_booking_driver(self, booking_id, driver_id):
@@ -243,9 +242,9 @@ class DatabaseConnection:
 
             self.execute("""
                 UPDATE bookings
-                SET driver_id = ?, status = ?
+                SET driver_id = ?
                 WHERE id = ?
-            """, (driver_id, "waiting_for_pickup", booking_id))
+            """, (driver_id, booking_id))
 
         except sqlite3.Error as e:
             logger.error(
