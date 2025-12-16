@@ -1,10 +1,10 @@
-import json
 import logging.config
+import json
 import sys
 
 from PyQt6.QtWidgets import QApplication
 
-from src import LOG_CONF, LOG_FILE, DB_FILE
+from src import LOG_CONF, LOG_FILE, DB_FILE, MainWindow
 
 if __name__ == '__main__':
     # Set global logger configurations.
@@ -16,7 +16,6 @@ if __name__ == '__main__':
     logger = logging.getLogger(__name__)
 
     try:
-        # Initialize database if missing
         if not DB_FILE.exists():
             from scripts.init_db import initialize_database
             from scripts.seed_db import seed_database
@@ -24,16 +23,14 @@ if __name__ == '__main__':
             logger.warning("Database missing!")
             initialize_database()
             seed_database()
-
-        # main window has to be imported after log config
-        from src import MainWindow
+        raise Exception
         app = QApplication(sys.argv)
         window = MainWindow()
         window.show()
-        # Start event loop
         sys.exit(app.exec())
+
     except Exception as e:
-        logger.exception(e)
+        logger.error("A Fatal Error has occurred. \nExiting application.")
         sys.exit(1)
 
 

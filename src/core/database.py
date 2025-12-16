@@ -58,10 +58,13 @@ class DatabaseConnection:
             cursor = self.execute(sql, params)
             return [User(row) for row in cursor.fetchall()]
         except sqlite3.Error as e:
-            logger.exception(f"Failed to lookup user table: {e}")
+            logger.error(
+                msg=f"Failed to lookup user table.",
+                exc_info=e
+            )
             raise
 
-    def fetch_bookings(self, **kwargs):
+    def fetch_bookings(self, **kwargs) -> list[Booking]:
         """
         Return a list of queried booking instances.
         Accepts optional keyword arguments for filtering.
@@ -87,10 +90,17 @@ class DatabaseConnection:
             cursor = self.execute(sql, params)
             return [Booking(row) for row in cursor.fetchall()]
         except sqlite3.Error as e:
-            logger.exception(f"Failed to fetch bookings: {e}")
+            logger.error(
+                msg=f"Failed to fetch bookings.",
+                exc_info=e
+            )
             raise
 
     def create_user(self, info: dict[str, Any]):
+        """
+        Insert a user record into the database.
+        Defaults user role to customer, if not provided.
+        """
         role = info.get("role", "customer")
         username = f"({info["firstname"]} {info["lastname"]})"
         try:
@@ -103,13 +113,17 @@ class DatabaseConnection:
                      """, (
                                 role, info["firstname"], info["lastname"],
                                 info["dob"], info["phonenum"],
-                                info["email"], info["password"],)
+                                info["email"], info["password"])
             )
         except sqlite3.Error as e:
-            logger.exception(f"Failed to add user {username} to database: {e}")
+            logger.error(
+                msg=f"Failed to add user {username} to database.",
+                exc_info=e
+            )
             raise
 
     def create_driver_application(self, info: dict[str, Any]):
+        """Insert driver application to the database."""
         try:
             self.execute("""
                     INSERT INTO driver_applications (
@@ -120,26 +134,38 @@ class DatabaseConnection:
                     """, (
                     info["user_id"], info["car_make"], info["car_model"],
                     info["car_colour"], info["man_year"], info["plate_num"],
-                    info["status"],info["submitted_at"],)
+                    info["status"], info["submitted_at"])
             )
         except sqlite3.Error as e:
-            logger.exception(f"Failed to submit driver application "
-                             f"for user {info['user_id']}: {e}")
+            logger.error(
+                msg=f"Failed to submit driver application for user {info['user_id']}.",
+                exc_info=e
+            )
             raise
 
     def update_user(self, user_id, new_attr: dict[str, Any]):
+        """
+        Update user record within the database.
+        Example of new_attr arg: {'firstname':'John', 'lastname':'Doe'}
+        """
         # Return concatenated str of placeholders. (ie, firstname = ?, dob = ?)
         fields = ', '.join(f"{field} = ?" for field in new_attr.keys())
         params = tuple(new_attr.values()) + (user_id,)
         try:
             self.execute(f"UPDATE users SET {fields} WHERE id = ?", params)
         except sqlite3.Error as e:
-            logger.exception(f"Failed to update user ({user_id}) within database: {e}")
+            logger.error(
+                msg=f"Failed to update user ({user_id}) within database.",
+                exc_info=e
+            )
             raise
 
     def create_booking(self, info: dict[str, Any]):
+        """
+        Insert new booking record to the database.
+        Defaults null driver and booking status to waiting_for_assignment.
+        """
 
-        # Append default data if booking is confirmed.
         driver_id = info.get("driver_id", None)
         status = info.get("status", "waiting_for_assignment")
 
@@ -151,13 +177,17 @@ class DatabaseConnection:
                     VALUES (?, ?, ?, ?, ?, ?, ?) 
                     """, (
                     info["customer_id"], driver_id, info["dropoff"],
-                    info["pickup"], info["date"], info["time"], status,)
+                    info["pickup"], info["date"], info["time"], status)
             )
         except sqlite3.Error as e:
-            logger.exception(f"Failed to make booking for user ({info['customer_id']}): {e}")
+            logger.error(
+                msg=f"Failed to make booking for user ({info['customer_id']}).",
+                exc_info=e
+            )
             raise
 
     def save_address(self, address: dict[str, Any]):
+        """Insert address record into database."""
         try:
             self.execute("""
             INSERT INTO addresses (
@@ -166,13 +196,20 @@ class DatabaseConnection:
                         """, (
                 address["customer_id"],
                 address["name"],
-                address["physical_address"],)
+                address["physical_address"])
             )
         except sqlite3.Error as e:
-            logger.exception(f"Failed to add address for user ({address['customer_id']}): {e}")
+            logger.error(
+                msg=f"Failed to add address for user ({address['customer_id']}).",
+                exc_info=e
+            )
             raise
 
     def update_booking_status(self, booking_id, status):
+        """
+        Modify the status of an active booking within the database.
+        Throw an error if booking is non-active.
+        """
         booking = self.fetch_bookings(id=booking_id)[0]
         if booking.status in ("cancelled", "completed"):
             raise sqlite3.Error("Cannot modify a non-active booking.")
@@ -184,7 +221,10 @@ class DatabaseConnection:
                 WHERE id = ?
                 """, (status, booking_id))
         except  sqlite3.Error as e:
-            logger.exception(f"Failed to change booking ({booking_id}) status to {status}: {e}")
+            logger.error(
+                msg=f"Failed to change booking ({booking_id}) status to {status}.",
+                exc_info=e
+            )
             raise
 
     def is_driver_available(self, driver_id) -> bool:
@@ -196,8 +236,12 @@ class DatabaseConnection:
         return False if active_bookings else True
 
     def assign_booking_driver(self, booking_id, driver_id):
+        """
+        Attach driver_id to booking waiting for assignment.
+        Throw an error if the driver is assigned to an active booking.
+        """
         try:
-            if self.is_driver_available(driver_id):
+            if not self.is_driver_available(driver_id):
                 raise sqlite3.Error(f"This driver ({driver_id}) is currently busy.")
 
             self.execute("""
@@ -207,4 +251,8 @@ class DatabaseConnection:
             """, (driver_id, "waiting_for_pickup", booking_id))
 
         except sqlite3.Error as e:
-            logger.exception(f"Failed to assign driver ({driver_id}) to booking ({booking_id}): {e}")
+            logger.error(
+                msg=f"Failed to assign driver ({driver_id}) to booking ({booking_id}).",
+                exc_info=e
+            )
+            raise

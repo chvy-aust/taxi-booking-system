@@ -2,12 +2,11 @@
   "version": 1,
   "formatters": {
     "default": {
-      "format": "%(asctime)s [ %(levelname)s ] - %(message)s",
-      "datefmt": "%Y-%m-%d %H:%M:%S",
+      "format": "[ %(levelname)s ] - %(message)s",
       "style": "%"
     },
     "detailed": {
-      "format": "%(asctime)s [ %(levelname)s ] - %(message)s",
+      "format": "%(asctime)s [ %(levelname)s ] - %(message)s ",
       "datefmt": "%Y-%m-%d %H:%M:%S",
       "style": "%"
     }
@@ -23,12 +22,9 @@
       "level": "ERROR",
       "formatter": "detailed",
       "filename": "logs/app.log",
-      "backupCount": 3,
-      "maxBytes": 10240
+      "backupCount": 2,
+      "maxBytes": 1048576
     }
-  },
-  "loggers": {
-
   },
   "root": {
     "level": "DEBUG",
