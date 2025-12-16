@@ -268,7 +268,7 @@ class BookingItem(QDialog):
                 info = f"<b>Assigned Driver</b>: N/A<br>"
             self.additional_info.setText(info)
         elif self.viewer == "driver":
-            info = f"<b>Rider Name</b>: {self.booking.customer.fullname}<br>"
+            info = f"<b>Customer Name</b>: {self.booking.customer.fullname}<br>"
             info += f"<b>Phone Number</b>: {self.booking.customer.phonenum}"
             self.additional_info.setText(info)
         else:

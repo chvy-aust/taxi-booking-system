@@ -84,7 +84,7 @@ class DriverDashboardScene(BaseScene, UiDriverDashboard):
                 0, 3, QTableWidgetItem(assigned_booking.dropoff))
             # Booking status column
             self.assign_table_widget.setItem(
-                0, 4, QTableWidgetItem(assigned_booking.get_formatted_status))
+                0, 4, QTableWidgetItem(assigned_booking.formatted_status))
 
         if past_booking_items:
             self.completed_table_widget.setRowCount(len(past_booking_items))
@@ -103,7 +103,7 @@ class DriverDashboardScene(BaseScene, UiDriverDashboard):
                     row, 3, QTableWidgetItem(booking.dropoff))
                 # Booking status column
                 self.completed_table_widget.setItem(
-                    row, 4, QTableWidgetItem(booking.get_formatted_status))
+                    row, 4, QTableWidgetItem(booking.formatted_status))
 
         try:
             # Clean up connections/signals if present.
