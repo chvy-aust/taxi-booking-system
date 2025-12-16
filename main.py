@@ -19,8 +19,10 @@ if __name__ == '__main__':
         if not DB_FILE.exists():
             # Initialize database if missing.
             from scripts.init_db import initialize_database
+            from scripts.seed_db import seed_database
             logger.warning("Database missing!")
             initialize_database()
+            seed_database()
 
         # Start application event loop.
         app = QApplication(sys.argv)
