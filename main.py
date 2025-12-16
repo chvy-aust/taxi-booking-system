@@ -23,14 +23,12 @@ if __name__ == '__main__':
             logger.warning("Database missing!")
             initialize_database()
             seed_database()
-        raise Exception
         app = QApplication(sys.argv)
         window = MainWindow()
         window.show()
         sys.exit(app.exec())
-
     except Exception as e:
-        logger.error("A Fatal Error has occurred. \nExiting application.")
+        logger.error("A Fatal Error has occurred.\nExiting application.")
         sys.exit(1)
 
 
