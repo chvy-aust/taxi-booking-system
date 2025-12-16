@@ -4,9 +4,9 @@ from PyQt6.QtCore import QDate
 
 from src.widgets import InputEdit
 
-# TODO: FIX PHONENUM PATTERN (Make more flexible for international numbers)
+# TODO: FIX PHONENUM
 PHONENUM_PATTERN = re.compile(r"^\d{3}[-\s]?\d{3}[-\s]?\d{4}$")
-EMAIL_PATTERN = re.compile(r"^[^@\s]+@[^@\s]+\.[@\s]+$")
+EMAIL_PATTERN = re.compile(r"^[\w\-.]+@([\w-]+\.)+[\w-]{2,4}$")
 PASSWORD_PATTERN = re.compile(r"^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}")
 AGE_REQUIREMENT = 18
 

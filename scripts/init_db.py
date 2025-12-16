@@ -59,7 +59,7 @@ BOOKINGS_SCHEMA = f"""
         time TEXT NOT NULL,
         status TEXT NOT NULL DEFAULT 'waiting_for_assignment' CHECK (
             status IN ('waiting_for_assignment','waiting_for_pickup',
-            'in_process', 'completed', 'canceled'))) """
+            'in_process', 'completed', 'cancelled'))) """
 
 SCHEMAS = [USERS_SCHEMA,
            ADDRESSES_SCHEMA,
