@@ -485,13 +485,13 @@ class UiDriverDashboard(object):
         self.back_to_home.setObjectName("back_to_home")
         self.horizontalLayout_5 = QtWidgets.QHBoxLayout(self.back_to_home)
         self.horizontalLayout_5.setObjectName("horizontalLayout_5")
-        self.cancel_drive_btn = QtWidgets.QPushButton(parent=self.back_to_home)
+        self.go_to_home_btn = QtWidgets.QPushButton(parent=self.back_to_home)
         font = QtGui.QFont()
         font.setFamily("Arial")
         font.setBold(False)
-        self.cancel_drive_btn.setFont(font)
-        self.cancel_drive_btn.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
-        self.cancel_drive_btn.setStyleSheet("QPushButton {\n"
+        self.go_to_home_btn.setFont(font)
+        self.go_to_home_btn.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+        self.go_to_home_btn.setStyleSheet("QPushButton {\n"
 "    background-color: #476061;\n"
 "    color: #FFFFFF;\n"
 "    font-size: 15px;\n"
@@ -509,34 +509,13 @@ class UiDriverDashboard(object):
 "    background-color: #4A5C66;\n"
 "    border: 2px solid #FFFFFF;\n"
 "}")
-        self.cancel_drive_btn.setObjectName("cancel_drive_btn")
-        self.horizontalLayout_5.addWidget(self.cancel_drive_btn)
-        self.completed_drive_btn = QtWidgets.QPushButton(parent=self.back_to_home)
+        self.go_to_home_btn.setObjectName("go_to_home_btn")
+        self.horizontalLayout_5.addWidget(self.go_to_home_btn)
         font = QtGui.QFont()
         font.setFamily("Arial")
         font.setBold(False)
-        self.completed_drive_btn.setFont(font)
-        self.completed_drive_btn.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
-        self.completed_drive_btn.setStyleSheet("QPushButton {\n"
-"    background-color: #476061;\n"
-"    color: #FFFFFF;\n"
-"    font-size: 15px;\n"
-"    padding: 10px 10px;\n"
-"\n"
-"    /* Border and Shape */\n"
-"    border: 2px solid #101717; \n"
-"    border-radius: 15px; \n"
-"    margin: 5px 10px 5px 10px;\n"
-"    text-align: center;\n"
-"}\n"
-"\n"
-"/* Style for hover over button */\n"
-"QPushButton:pressed {\n"
-"    background-color: #4A5C66;\n"
-"    border: 2px solid #FFFFFF;\n"
-"}")
-        self.completed_drive_btn.setObjectName("completed_drive_btn")
-        self.horizontalLayout_5.addWidget(self.completed_drive_btn)
+
+
         self.tab_verticalLayout.addWidget(self.back_to_home)
         self.tabWidget.addTab(self.assigned_drives_tab, "")
         self.completed_drives_tab = QtWidgets.QWidget()
@@ -611,8 +590,7 @@ class UiDriverDashboard(object):
         self.be_careful_label.setText(_translate("driver_dashboard", "Be Careful"))
         self.be_on_time_label.setText(_translate("driver_dashboard", "Be On Time"))
         self.view_trips_label.setText(_translate("driver_dashboard", "View Assigned Trips"))
-        self.cancel_drive_btn.setText(_translate("driver_dashboard", "Cancel"))
-        self.completed_drive_btn.setText(_translate("driver_dashboard", "Completed"))
+        self.go_to_home_btn.setText(_translate("driver_dashboard", "Back to Home"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.assigned_drives_tab), _translate("driver_dashboard", "Assigned Drive"))
         self.back_to_home_btn.setText(_translate("driver_dashboard", "Back to Home"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.completed_drives_tab), _translate("driver_dashboard", "Completed Drives"))

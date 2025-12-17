@@ -35,6 +35,7 @@ class DriverDashboardScene(BaseScene, UiDriverDashboard):
         # --- button events (switch to panel)
         self.assigned_trips_btn.clicked.connect(self._switch_to_view_trips)
         self.back_to_home_btn.clicked.connect(self.switch_to_home)
+        self.go_to_home_btn.clicked.connect(self.switch_to_home)
 
         # BOOKINGS TABLES -----
         # --- setup table views + columns
