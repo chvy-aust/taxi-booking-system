@@ -108,6 +108,14 @@ QListView {
     font: bold 15px 'Arial';
 }
 
+QTableWidget {
+        background-color: #7d918f;
+        color: qwhite;
+        font-size: 14px;
+        gridline-color:#293736;
+        border:1px solid #293736;
+}
+
 QListView::item {
     border-bottom: 3px solid #1B2626;
     padding: 10px;

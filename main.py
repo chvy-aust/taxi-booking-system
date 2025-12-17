@@ -30,7 +30,7 @@ if __name__ == '__main__':
         window.show()
         sys.exit(app.exec())
     except Exception as e:
-        logger.error("A Fatal Error has occurred.\nExiting application.")
+        logger.error(msg="A Fatal Error has occurred.\nExiting application.", exc_info=e)
         sys.exit(1)
 
 

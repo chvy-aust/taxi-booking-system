@@ -1,6 +1,9 @@
 import sqlite3
 
+
 from PyQt6.QtWidgets import QLineEdit
+from argon2 import PasswordHasher
+from argon2.exceptions import VerifyMismatchError
 
 from src.core.database import DatabaseConnection
 from src.scenes import BaseScene
@@ -19,6 +22,8 @@ class LoginScene(BaseScene, UiLogin):
         self.login_btn.clicked.connect(self._start_login)
         self.signup_link.clicked.connect(signals.request_register.emit)
 
+        self.ph = PasswordHasher()
+
 
     def _start_login(self):
         email = self.email.text().lower()
@@ -28,11 +33,15 @@ class LoginScene(BaseScene, UiLogin):
             with DatabaseConnection() as conn:
                 results = conn.fetch_users(email=email)
                 user = results[0] if results else None
-                if not user or user.password != password:
-                    self.info_popup("Invalid email or password.")
-                    return
+                # Raise verification error if email or password is invalid.
+                if user is None:
+                    raise VerifyMismatchError
+                self.ph.verify(user.password, password)
+                # Otherwise continue login.
                 self.info_popup("Login successful")
                 self._switch_to_dashboard(user)
+        except VerifyMismatchError:
+            self.info_popup("Invalid email or password.")
         except sqlite3.Error:
             self.info_popup(SystemFeedback.DATABASE_ERROR)
 

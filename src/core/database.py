@@ -2,6 +2,8 @@ import logging
 import sqlite3
 from typing import Any
 
+from argon2 import PasswordHasher
+
 from src.utils.constants import DB_FILE, NON_ACTIVE_BOOKING_STATUS, ACTIVE_BOOKING_STATUS
 
 logger = logging.getLogger(__name__)
@@ -103,6 +105,11 @@ class DatabaseConnection:
         """
         role = info.get("role", "customer")
         username = f"({info["firstname"]} {info["lastname"]})"
+
+        # Hash plain-text password
+        ph = PasswordHasher()
+        hashed_password = ph.hash(info["password"])
+
         try:
             logger.info(f"Adding new user {username} to database …")
             self.execute("""
@@ -113,7 +120,7 @@ class DatabaseConnection:
                      """, (
                                 role, info["firstname"], info["lastname"],
                                 info["dob"], info["phonenum"],
-                                info["email"], info["password"])
+                                info["email"], hashed_password)
             )
         except sqlite3.Error as e:
             logger.error(
@@ -151,6 +158,14 @@ class DatabaseConnection:
         # Return concatenated str of placeholders. (ie, firstname = ?, dob = ?)
         fields = ', '.join(f"{field} = ?" for field in new_attr.keys())
         params = tuple(new_attr.values()) + (user_id,)
+
+        # Re-hash updated password if provided.
+        password = new_attr.get("password", None)
+        if password:
+            ph = PasswordHasher()
+            hashed_password = ph.hash(new_attr["password"])
+            new_attr["password"] = hashed_password
+
         try:
             self.execute(f"UPDATE users SET {fields} WHERE id = ?", params)
         except sqlite3.Error as e:

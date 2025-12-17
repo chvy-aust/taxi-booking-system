@@ -26,6 +26,8 @@ class CustomerDashboardScene(BaseScene, UiCustomerDashboard):
         # HOME BTN + LOGOUT BTN  + MENU BTN-----
         # --- button events (switch to panel)
         self.home_btn.clicked.connect(lambda: self.switch_to(self.homePage))
+        self.menu_btn.clicked.connect(lambda: self.info_popup("This feature is coming soon!"))
+
         self.log_out_btn.clicked.connect(self._log_out)
 
         # USER PROFILE SETTINGS -----

@@ -287,6 +287,7 @@ class UiCustomerDashboard(object):
 "    background-color: transparent;;\n"
 "    border-radius: 20px;\n"
 "    border: 2px solid #293737;\n"
+"    padding: 5px;"   
 "}")
         self.searchFrame.setFrameShape(QtWidgets.QFrame.Shape.StyledPanel)
         self.searchFrame.setFrameShadow(QtWidgets.QFrame.Shadow.Raised)

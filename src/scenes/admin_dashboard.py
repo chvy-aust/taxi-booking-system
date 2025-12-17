@@ -16,6 +16,7 @@ class AdminDashboardScene(BaseScene, UiAdminDashboard):
     def __init__(self):
         super().__init__("admin-dashboard")
         self.setupUi(self)
+        self._load_ui()
 
         # HOME BTN + LOGOUT BTN  + MENU BTN-----
         # --- button events (switch to panel)
@@ -25,7 +26,7 @@ class AdminDashboardScene(BaseScene, UiAdminDashboard):
         # ASSIGN DRIVER PAGE -----
         # --- button events (switch to panel)
         self.assign_drivers_btn.clicked.connect(lambda: self.switch_to(self.assign_drivers_page))
-        self.cancel_assignment_btn.clicked.connect(lambda: self.switch_to(self.admin_home_page))
+        self.back_to_home_btn.clicked.connect(lambda: self.switch_to(self.admin_home_page))
 
         # VIEW USERS PAGE -----
         # --- button events (switch to panel)
@@ -35,14 +36,16 @@ class AdminDashboardScene(BaseScene, UiAdminDashboard):
     def _load_ui(self):
         # setup user tables
         USER_TABLE_HEADERS = ["User ID", "Name", "Email", "Phone", "Role"]
-        DEFAULT = QHeaderView.ResizeMode.ResizeToContents
-        setup_table(self.customer_table_widget, USER_TABLE_HEADERS, resize_mode=DEFAULT)
-        setup_table(self.driver_table_widget, USER_TABLE_HEADERS, resize_mode=DEFAULT)
+        setup_table(self.customer_table_widget, USER_TABLE_HEADERS)
+        setup_table(self.driver_table_widget, USER_TABLE_HEADERS)
 
         # setup booking tables
         BOOKING_TABLE_HEADERS = ["Customer", "Phone", "Pickup", "Destination","Status"]
         setup_table(self.pending_table_widget, BOOKING_TABLE_HEADERS)
         setup_table(self.assigned_table_widget, BOOKING_TABLE_HEADERS)
+
+        # setup button events
+
 
     def _load_users(self):
         try:
