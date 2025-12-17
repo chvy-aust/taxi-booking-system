@@ -1,7 +1,7 @@
 from PyQt6.QtWidgets import QWidget, QDialog
 
-from src.core.models import User
-from src.widgets import InfoDialog, ConfirmationDialog
+from ..core.models import User
+from ..widgets import InfoDialog, ConfirmationDialog
 
 
 class BaseScene(QWidget):
@@ -33,6 +33,12 @@ class BaseScene(QWidget):
         """
         pass
 
+    def switch_to_home(self):
+        """
+        Switch back to home page on scene switch.
+        Intended for scenes with nested layouts.
+        """
+
     def refresh_scene(self):
         """Refresh available data fields within scene."""
         self.depopulate_data()
@@ -43,18 +49,6 @@ class BaseScene(QWidget):
         popup = InfoDialog(info, self)
         popup.exec()
 
-    def error_popup(self, err_msg):
-        text = "ERROR!\n" + err_msg
-        popup = InfoDialog(text, self)
-        popup.exec()
-
-    def confirmation_popup(self, question = "") -> bool:
-        """
-        Display a confirmation question to user.
-        Returns boolean confirmation indicator (ie, True if 'Confirm' clicked.)
-        """
-        popup = ConfirmationDialog(question, self)
-        return popup.exec() == QDialog.DialogCode.Accepted
 
 
 

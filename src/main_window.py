@@ -87,6 +87,7 @@ class MainWindow(QMainWindow):
             scene.user = data
         self.scene_manager.setCurrentWidget(scene)
         scene.refresh_scene()
+        scene.switch_to_home()
 
     def _center_window(self):
             """Center main window on screen."""

@@ -3,13 +3,12 @@ import sqlite3
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QLineEdit
 
-from src.core.database import DatabaseConnection
-from src.scenes import BaseScene
-from src.signals import signals
-from src.ui import UiRegister
-from src.utils import validate_email, validate_password, validate_phonenum, \
-    validate_dob, is_email_unique, is_fields_valid
-from src.widgets import SystemFeedback
+from ..core import DatabaseConnection
+from ..scenes import BaseScene
+from ..signals import signals
+from ..ui import UiRegister
+from ..utils.validation import *
+from ..utils.constants import DB_ERROR
 
 
 class RegisterScene(BaseScene, UiRegister):
@@ -17,7 +16,8 @@ class RegisterScene(BaseScene, UiRegister):
     def __init__(self):
         super().__init__("register")
         self.setupUi(self)
-        self.page.setCurrentWidget(self.step_one)
+        self._load_ui()
+
         self.fields = [
             self.firstname, self.lastname,
             self.dob, self.phonenum,
@@ -28,17 +28,22 @@ class RegisterScene(BaseScene, UiRegister):
             self.work_address
         ]
         self.addresses = []
+
+    def _load_ui(self):
+        # Register -> Login
+        self.signin_link.clicked.connect(self._return_to_signin)
+
+        # Hide characters in password fields.
         self.create_pass.set_echo_mode(QLineEdit.EchoMode.Password)
         self.confirm_pass.set_echo_mode(QLineEdit.EchoMode.Password)
 
         # Setup validation hinting
         self.firstname.set_error("\u26A0 Please enter a firstname.")
         self.lastname.set_error("\u26A0 Please enter a lastname.")
-        self.dob.set_error(
-            "\u26A0 You must be 18 years or over to use this service.")
+        self.dob.set_error("\u26A0 You must be 18 years or over to use this service.")
         self.email.set_error("\u26A0 Please enter a valid email.")
         self.phonenum.set_error("\u26A0 Please enter a valid phone number. "
-                                "(Area code, Local Code, No Parenthesis/Hyphens.)")
+                                "(Digits and spaces only)")
         self.create_pass.set_error("\u26A0 This password is not strong enough.")
         self.confirm_pass.set_error("\u26A0 These passwords do not match.")
 
@@ -51,7 +56,7 @@ class RegisterScene(BaseScene, UiRegister):
         self.skip_btn.clicked.connect(self._start_registration)
         self.confirm_btn.clicked.connect(self._get_started)
 
-        self.signin_link.clicked.connect(self._return_to_signin)
+        self.page.setCurrentWidget(self.step_one)
 
     def _return_to_signin(self):
         self.page.setCurrentWidget(self.step_one)
@@ -68,7 +73,7 @@ class RegisterScene(BaseScene, UiRegister):
                         address["customer_id"] = user.id
                         conn.save_address(address,)
         except sqlite3.Error:
-            self.info_popup(SystemFeedback.DATABASE_ERROR)
+            self.info_popup(DB_ERROR)
         else:
             self.info_popup("Successfully registered! Redirecting back to landing screen…")
             self._return_to_signin()
@@ -92,12 +97,12 @@ class RegisterScene(BaseScene, UiRegister):
         }
 
         # Ensure all fields are valid + email unique.
-        flag = is_fields_valid(validation_checks)
+        valid = is_fields_valid(validation_checks)
         if not is_email_unique(self.info["email"]):
             self.info_popup("This email is already in use!")
-            flag = False
+            valid = False
 
-        if flag:
+        if valid:
             # Normalize password key.
             self.info["password"] = self.info.pop("create_pass")
             self.page.setCurrentWidget(self.step_two)
@@ -123,8 +128,8 @@ class RegisterScene(BaseScene, UiRegister):
         }
 
         # Ensure all fields are valid.
-        flag = is_fields_valid(validation_checks)
-        if flag:
+        valid = is_fields_valid(validation_checks)
+        if valid:
             # Convert QDate to str.
            self.info["dob"] = self.info["dob"].toString("yyyy-MM-dd")
            self.page.setCurrentWidget(self.step_three)
@@ -137,11 +142,9 @@ class RegisterScene(BaseScene, UiRegister):
             "work": self.work_address.text()
         }
 
-        for key, address in addressing.items():
+        for name, address in addressing.items():
             if address:
-                self.addresses.append(
-                    {"name": key, "physical_address": address}
-                )
+                self.addresses.append({"name": name, "physical_address": address})
 
         if not self.addresses:
             self.info_popup("At least one address must be provided. "

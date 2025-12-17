@@ -1,12 +1,16 @@
 import sqlite3
 
-from PyQt6.QtWidgets import QTableWidgetItem, QTableWidget, QDialog
+from PyQt6.QtWidgets import QDialog
 
-from src.core.database import DatabaseConnection
-from src.scenes import BaseScene
-from src.signals import signals
-from src.ui import UiDriverDashboard
-from src.widgets import SystemFeedback, BookingItem
+from ..core import DatabaseConnection
+from ..scenes import BaseScene
+from ..signals import signals
+from ..ui import UiDriverDashboard
+from ..utils.constants import (
+    NON_ACTIVE_BOOKING_STATUS,
+    BOOKING_DB_ERROR,
+    USER_ACCOUNT_DB_ERROR)
+from ..widgets import BookingItem, setup_table, populate_booking_table
 
 
 class DriverDashboardScene(BaseScene, UiDriverDashboard):
@@ -17,113 +21,85 @@ class DriverDashboardScene(BaseScene, UiDriverDashboard):
     def __init__(self):
         super().__init__("driver-dashboard")
         self.setupUi(self)
+        self._load_ui()
+        self.active_bookings, self.past_bookings = [], []
 
+    def _load_ui(self):
+        """Set up button events and table configurations."""
         # HOME BTN + LOGOUT BTN  + MENU BTN-----
         # --- button events (switch to panel)
-        self.driver_home_bn.clicked.connect(lambda: self.switch_to(self.driver_home_page))
-        self.driver_logout_btn.clicked.connect(self._log_out)
+        self.home_btn.clicked.connect(self.switch_to_home)
+        self.logout_btn.clicked.connect(self._log_out)
 
         # VIEW ASSIGNED RIDES PAGE -----
         # --- button events (switch to panel)
-        self.assigned_trips_btn.clicked.connect(lambda: self.switch_to(self.view_trip_page))
-        self.back_to_home_btn_3.clicked.connect( lambda: self.switch_to(self.driver_home_page))
+        self.assigned_trips_btn.clicked.connect(self._switch_to_view_trips)
+        self.back_to_home_btn.clicked.connect(self.switch_to_home)
 
-        ASSIGN_TABLE_HEADERS = ["Name", "Phone", "Pickup", "Destination", "Status"]
-        self.assign_table_widget.setColumnCount(len(ASSIGN_TABLE_HEADERS))
-        self.assign_table_widget.setHorizontalHeaderLabels(ASSIGN_TABLE_HEADERS)
-        self.assign_table_widget.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
-        self.assign_table_widget.setSelectionMode(QTableWidget.SelectionMode.SingleSelection)
-        self.assign_table_widget.verticalHeader().hide()
+        # BOOKINGS TABLES -----
+        # --- setup table views + columns
+        booking_table_headers = ["Name", "Phone", "Pickup", "Destination", "Status"]
+        setup_table(self.active_booking_table, booking_table_headers)
+        setup_table(self.completed_booking_table, booking_table_headers)
 
-        COMPLETED_TABLE_HEADERS = ASSIGN_TABLE_HEADERS
-        self.completed_table_widget.setColumnCount(len(COMPLETED_TABLE_HEADERS))
-        self.completed_table_widget.setHorizontalHeaderLabels(COMPLETED_TABLE_HEADERS)
-        self.completed_table_widget.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
-        self.completed_table_widget.setSelectionMode(QTableWidget.SelectionMode.SingleSelection)
-        self.completed_table_widget.verticalHeader().hide()
+    def switch_to_home(self):
+        self._switch_to(self.home_page)
 
-    def switch_to(self, page):
+    def _switch_to_view_trips(self):
+        self._switch_to(self.view_trip_page)
+
+    def _switch_to(self, page):
         self.refresh_scene()
         self.driver_stackedWidget.setCurrentWidget(page)
-
-    def refresh_scene(self):
-        self.depopulate_data()
-        self.populate_data()
 
     def _load_bookings(self):
         """
         Fetch and load driver bookings.
         Displays currently assigned booking + past bookings onto TableView.
         """
-        current_booking, assigned_booking, past_booking_items = None, [], []
         try:
             with DatabaseConnection() as conn:
                 bookings = conn.fetch_bookings(driver_id=self.user.id)
                 for booking in bookings:
-                    if booking.status in ("cancelled", "completed"):
-                        past_booking_items.append(booking)
+                    if booking.status in NON_ACTIVE_BOOKING_STATUS:
+                        self.past_bookings.append(booking)
                     else:
-                        assigned_booking = booking
+                        # Should ideally only have one active booking.
+                        self.active_bookings.append(booking)
         except sqlite3.Error:
-            self.info_popup(SystemFeedback.DATABASE_ERROR)
+            self.info_popup(BOOKING_DB_ERROR)
 
-        # Populate active bookings (Should only have one booking at a time.)
-        if assigned_booking:
-            self.assign_table_widget.setRowCount(1)
-            # Name column
-            self.assign_table_widget.setItem(
-                0, 0, QTableWidgetItem(assigned_booking.customer.fullname))
-            # Phonenum column
-            self.assign_table_widget.setItem(
-                0, 1, QTableWidgetItem(assigned_booking.customer.phonenum))
-            # Pickup location column
-            self.assign_table_widget.setItem(
-                0, 2, QTableWidgetItem(assigned_booking.pickup))
-            # Destination column
-            self.assign_table_widget.setItem(
-                0, 3, QTableWidgetItem(assigned_booking.dropoff))
-            # Booking status column
-            self.assign_table_widget.setItem(
-                0, 4, QTableWidgetItem(assigned_booking.formatted_status))
-
-        if past_booking_items:
-            self.completed_table_widget.setRowCount(len(past_booking_items))
-            for row, booking in enumerate(past_booking_items):
-                # Name column
-                self.completed_table_widget.setItem(
-                    row, 0, QTableWidgetItem(booking.customer.fullname))
-                # Phonenum column
-                self.completed_table_widget.setItem(
-                    row, 1, QTableWidgetItem(booking.customer.phonenum))
-                # Pickup location column
-                self.completed_table_widget.setItem(
-                    row, 2, QTableWidgetItem(booking.pickup))
-                # Destination column
-                self.completed_table_widget.setItem(
-                    row, 3, QTableWidgetItem(booking.dropoff))
-                # Booking status column
-                self.completed_table_widget.setItem(
-                    row, 4, QTableWidgetItem(booking.formatted_status))
+        # Add bookings to table rows.
+        if self.active_bookings:
+            populate_booking_table(self.active_booking_table, self.active_bookings)
+        if self.past_bookings:
+            populate_booking_table(self.completed_booking_table, self.past_bookings)
 
         try:
             # Clean up connections/signals if present.
-            self.assign_table_widget.itemClicked.disconnect()
-            self.completed_table_widget.itemClicked.disconnect()
+            self.active_booking_table.itemClicked.disconnect()
+            self.completed_booking_table.itemClicked.disconnect()
         except TypeError:
             pass
-        # Show dialog when item is clicked.
-        self.assign_table_widget.itemClicked.connect(
-            lambda: self._show_booking_dialog(assigned_booking))
-        self.completed_table_widget.itemClicked.connect(
-            lambda item: self._show_booking_dialog(
-                past_booking_items[item.row()])
-        )
+
+        # Trigger booking dialog on table row click.
+        self.active_booking_table.itemClicked.connect(self._show_active_booking)
+        self.completed_booking_table.itemClicked.connect(self._show_completed_booking)
+
+    def _show_active_booking(self, item):
+        booking = self.active_bookings[item.row()]
+        self._show_booking_dialog(booking)
+
+    def _show_completed_booking(self, item):
+        booking = self.past_bookings[item.row()]
+        self._show_booking_dialog(booking)
 
     def _show_booking_dialog(self, booking):
-        dialog = BookingItem(
-            booking=booking,
-            viewer="driver",
-            parent=self)
+        """Display driver-based booking item (ie, show customer info.)"""
+        if not booking:
+            self.info_popup(BOOKING_DB_ERROR)
+            return
+        dialog = BookingItem(booking=booking, viewer="driver", parent=self)
         if dialog.exec() == QDialog.DialogCode.Accepted:
             self.refresh_scene()
 
@@ -133,13 +109,15 @@ class DriverDashboardScene(BaseScene, UiDriverDashboard):
         self.user = None
 
     def depopulate_data(self):
-        # Clear bookings populated on tables
-        self.assign_table_widget.setRowCount(0)
-        self.completed_table_widget.setRowCount(0)
+        """Clear bookings populated."""
+        self.active_booking_table.setRowCount(0)
+        self.completed_booking_table.setRowCount(0)
+        self.active_bookings.clear()
+        self.past_bookings.clear()
 
     def populate_data(self):
+        """Load refreshed bookings."""
         if self.user is None:
-            self.info_popup(
-                "Could not access your account. Please Try Again or contact Support.")
+            self.info_popup(USER_ACCOUNT_DB_ERROR)
             signals.request_login.emit()
         self._load_bookings()

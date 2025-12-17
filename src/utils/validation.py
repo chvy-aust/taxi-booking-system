@@ -4,10 +4,11 @@ from PyQt6.QtCore import QDate
 
 from src.widgets import InputEdit
 
-# TODO: FIX PHONENUM
-PHONENUM_PATTERN = re.compile(r"^\d{3}[-\s]?\d{3}[-\s]?\d{4}$")
-EMAIL_PATTERN = re.compile(r"^[\w\-.]+@([\w-]+\.)+[\w-]{2,4}$")
+
+EMAIL_PATTERN = re.compile(r"^[\w\-.]+@([\w-]+\.)+[\w-]{2,}$")
 PASSWORD_PATTERN = re.compile(r"^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}")
+# PREVIOUSLY USED PHONENUM REGEX
+# PHONENUM_PATTERN = re.compile(r"^\d{3}[-\s]?\d{3}[-\s]?\d{4}$")
 AGE_REQUIREMENT = 18
 
 
@@ -29,12 +30,30 @@ def validate_dob(dob: QDate) -> bool:
         age -= 1
     return age >= AGE_REQUIREMENT
 
-
 def validate_phonenum(phonenum: str) -> bool:
-    """Check if phone number matches required format."""
+    """
+    Check if phone number matches required format.
+    Pattern: Optional '+', then only digits and spaces.
+    """
+    # Trim first occurrence of optional '+'.
+    if phonenum.startswith('+'):
+        phonenum = phonenum[1:]
+
     if phonenum == "":
         return False
-    return bool(re.match(PHONENUM_PATTERN, phonenum))
+
+    # Check against strings ending in non-digits.
+    if not phonenum[-1].isdigit():
+        return False
+
+    digit_count = 0
+    for char in phonenum:
+        if char.isdigit():
+            digit_count += 1
+        # Check against non-space, non-digit characters.
+        elif not char.isspace():
+            return False
+    return 7 <= digit_count <= 15
 
 
 def validate_email(email: str) -> bool:

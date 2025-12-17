@@ -88,18 +88,18 @@ class UiAdminDashboard(object):
         self.admin_vertical_layout_2.setContentsMargins(0, 0, 0, 0)
         self.admin_vertical_layout_2.setSpacing(10)
         self.admin_vertical_layout_2.setObjectName("admin_vertical_layout_2")
-        self.admin_home_bn = QtWidgets.QPushButton(parent=self.layoutWidget1)
+        self.home_btn = QtWidgets.QPushButton(parent=self.layoutWidget1)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.admin_home_bn.sizePolicy().hasHeightForWidth())
-        self.admin_home_bn.setSizePolicy(sizePolicy)
+        sizePolicy.setHeightForWidth(self.home_btn.sizePolicy().hasHeightForWidth())
+        self.home_btn.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
         font.setFamily("Arial")
         font.setBold(True)
-        self.admin_home_bn.setFont(font)
-        self.admin_home_bn.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
-        self.admin_home_bn.setStyleSheet("QPushButton {\n"
+        self.home_btn.setFont(font)
+        self.home_btn.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+        self.home_btn.setStyleSheet("QPushButton {\n"
 "    background-color: #476061;\n"
 "    color: #FFFFFF;      \n"
 "    font-size: 14px;\n"
@@ -119,10 +119,10 @@ class UiAdminDashboard(object):
 "}")
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(str(ICONS_DIR / "home.png")), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
-        self.admin_home_bn.setIcon(icon)
-        self.admin_home_bn.setIconSize(QtCore.QSize(32, 32))
-        self.admin_home_bn.setObjectName("admin_home_bn")
-        self.admin_vertical_layout_2.addWidget(self.admin_home_bn)
+        self.home_btn.setIcon(icon)
+        self.home_btn.setIconSize(QtCore.QSize(32, 32))
+        self.home_btn.setObjectName("home_btn")
+        self.admin_vertical_layout_2.addWidget(self.home_btn)
         self.assign_drivers_btn = QtWidgets.QPushButton(parent=self.layoutWidget1)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Expanding)
         sizePolicy.setHorizontalStretch(0)
@@ -234,13 +234,13 @@ class UiAdminDashboard(object):
         self.admin_stackedWidget.setGeometry(QtCore.QRect(0, 0, 561, 591))
         self.admin_stackedWidget.setStyleSheet("")
         self.admin_stackedWidget.setObjectName("admin_stackedWidget")
-        self.admin_home_page = QtWidgets.QWidget()
-        self.admin_home_page.setObjectName("admin_home_page")
-        self.verticalLayout_11 = QtWidgets.QVBoxLayout(self.admin_home_page)
+        self.home_page = QtWidgets.QWidget()
+        self.home_page.setObjectName("home_page")
+        self.verticalLayout_11 = QtWidgets.QVBoxLayout(self.home_page)
         self.verticalLayout_11.setObjectName("verticalLayout_11")
         self.home_vertical_Layout = QtWidgets.QVBoxLayout()
         self.home_vertical_Layout.setObjectName("home_vertical_Layout")
-        self.admin_home_frame = QtWidgets.QWidget(parent=self.admin_home_page)
+        self.admin_home_frame = QtWidgets.QWidget(parent=self.home_page)
         self.admin_home_frame.setObjectName("admin_home_frame")
         self.admin_header_frame = QtWidgets.QWidget(parent=self.admin_home_frame)
         self.admin_header_frame.setGeometry(QtCore.QRect(0, 0, 541, 79))
@@ -436,7 +436,7 @@ class UiAdminDashboard(object):
         self.admin_banner_photo.setObjectName("admin_banner_photo")
         self.home_vertical_Layout.addWidget(self.admin_home_frame)
         self.verticalLayout_11.addLayout(self.home_vertical_Layout)
-        self.admin_stackedWidget.addWidget(self.admin_home_page)
+        self.admin_stackedWidget.addWidget(self.home_page)
         self.view_users_page = QtWidgets.QWidget()
         self.view_users_page.setObjectName("view_users_page")
         self.view_users_form = QtWidgets.QFrame(parent=self.view_users_page)
@@ -518,13 +518,13 @@ class UiAdminDashboard(object):
         self.users_tab_widget.setObjectName("users_tab_widget")
         self.customers_tab = QtWidgets.QWidget()
         self.customers_tab.setObjectName("customers_tab")
-        self.customer_table_widget = QtWidgets.QTableWidget(parent=self.customers_tab)
-        self.customer_table_widget.setGeometry(QtCore.QRect(0, 0, 481, 431))
-        self.customer_table_widget.setObjectName("customer_table_widget")
-        self.customer_table_widget.setColumnCount(0)
-        self.customer_table_widget.setRowCount(0)
+        self.customer_table = QtWidgets.QTableWidget(parent=self.customers_tab)
+        self.customer_table.setGeometry(QtCore.QRect(0, 0, 481, 431))
+        self.customer_table.setObjectName("customer_table")
+        self.customer_table.setColumnCount(0)
+        self.customer_table.setRowCount(0)
         #STYLE SHEET FOR CUSTOMER TABLE
-        self.customer_table_widget.setStyleSheet(
+        self.customer_table.setStyleSheet(
             "QTableWidget {\n"
             "    background-color: #7d918f;\n"
             "    color:white;\n"
@@ -543,13 +543,13 @@ class UiAdminDashboard(object):
         self.users_tab_widget.addTab(self.customers_tab, "")
         self.drivers_tab = QtWidgets.QWidget()
         self.drivers_tab.setObjectName("drivers_tab")
-        self.driver_table_widget = QtWidgets.QTableWidget(parent=self.drivers_tab)
-        self.driver_table_widget.setGeometry(QtCore.QRect(0, 0, 481, 431))
-        self.driver_table_widget.setObjectName("driver_table_widget")
-        self.driver_table_widget.setColumnCount(0)
-        self.driver_table_widget.setRowCount(0)
+        self.driver_table = QtWidgets.QTableWidget(parent=self.drivers_tab)
+        self.driver_table.setGeometry(QtCore.QRect(0, 0, 481, 431))
+        self.driver_table.setObjectName("driver_table")
+        self.driver_table.setColumnCount(0)
+        self.driver_table.setRowCount(0)
         #STYLE SHEET FOR DRIVER TABLE
-        self.driver_table_widget.setStyleSheet(
+        self.driver_table.setStyleSheet(
         "QTableWidget {\n"
         "    background-color: #7d918f;\n"
         "    color:white;\n"
@@ -675,13 +675,13 @@ class UiAdminDashboard(object):
         self.driver_tab_widget.setObjectName("driver_tab_widget")
         self.pending_tab = QtWidgets.QWidget()
         self.pending_tab.setObjectName("pending_tab")
-        self.pending_table_widget = QtWidgets.QTableWidget(parent=self.pending_tab)
-        self.pending_table_widget.setGeometry(QtCore.QRect(-5, 1, 481, 431))
-        self.pending_table_widget.setObjectName("pending_table_widget")
-        self.pending_table_widget.setColumnCount(0)
-        self.pending_table_widget.setRowCount(0)
+        self.pending_table = QtWidgets.QTableWidget(parent=self.pending_tab)
+        self.pending_table.setGeometry(QtCore.QRect(-5, 1, 481, 431))
+        self.pending_table.setObjectName("pending_table")
+        self.pending_table.setColumnCount(0)
+        self.pending_table.setRowCount(0)
         #STYLE SHEET FOR PENDING RIDES TABLE
-        self.pending_table_widget.setStyleSheet(
+        self.pending_table.setStyleSheet(
             "QTableWidget {\n"
             "    background-color: #7d918f;\n"
             "    color:white;\n"
@@ -700,13 +700,13 @@ class UiAdminDashboard(object):
         self.driver_tab_widget.addTab(self.pending_tab, "")
         self.completed_tab = QtWidgets.QWidget()
         self.completed_tab.setObjectName("completed_tab")
-        self.assigned_table_widget = QtWidgets.QTableWidget(parent=self.completed_tab)
-        self.assigned_table_widget.setGeometry(QtCore.QRect(0, 0, 481, 431))
-        self.assigned_table_widget.setObjectName("assigned_table_widget")
-        self.assigned_table_widget.setColumnCount(0)
-        self.assigned_table_widget.setRowCount(0)
+        self.assigned_table = QtWidgets.QTableWidget(parent=self.completed_tab)
+        self.assigned_table.setGeometry(QtCore.QRect(0, 0, 481, 431))
+        self.assigned_table.setObjectName("assigned_table")
+        self.assigned_table.setColumnCount(0)
+        self.assigned_table.setRowCount(0)
         # STYLE SHEET FOR COMPLETED RIDES TABLE
-        self.assigned_table_widget.setStyleSheet(
+        self.assigned_table.setStyleSheet(
             "QTableWidget {\n"
             "    background-color: #7d918f;\n"
             "    color:white;\n"
@@ -740,7 +740,7 @@ class UiAdminDashboard(object):
         _translate = QtCore.QCoreApplication.translate
         admin_dashboard.setWindowTitle(_translate("admin_dashboard", "Form"))
         self.admin_lable.setText(_translate("admin_dashboard", "Admin Menu"))
-        self.admin_home_bn.setText(_translate("admin_dashboard", " Home"))
+        self.home_btn.setText(_translate("admin_dashboard", " Home"))
         self.assign_drivers_btn.setText(_translate("admin_dashboard", " Assign Drivers"))
         self.view_users_btn.setText(_translate("admin_dashboard", " View Users"))
         self.admin_logout_btn.setText(_translate("admin_dashboard", "Log Out"))

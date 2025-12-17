@@ -86,18 +86,18 @@ class UiDriverDashboard(object):
         self.driver_vertical_layout_2.setContentsMargins(0, 0, 0, 0)
         self.driver_vertical_layout_2.setSpacing(10)
         self.driver_vertical_layout_2.setObjectName("driver_vertical_layout_2")
-        self.driver_home_bn = QtWidgets.QPushButton(parent=self.layoutWidget1)
+        self.home_btn = QtWidgets.QPushButton(parent=self.layoutWidget1)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.driver_home_bn.sizePolicy().hasHeightForWidth())
-        self.driver_home_bn.setSizePolicy(sizePolicy)
+        sizePolicy.setHeightForWidth(self.home_btn.sizePolicy().hasHeightForWidth())
+        self.home_btn.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
         font.setFamily("Arial")
         font.setBold(True)
-        self.driver_home_bn.setFont(font)
-        self.driver_home_bn.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
-        self.driver_home_bn.setStyleSheet("QPushButton {\n"
+        self.home_btn.setFont(font)
+        self.home_btn.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+        self.home_btn.setStyleSheet("QPushButton {\n"
 "    background-color: #476061;\n"
 "    color: #FFFFFF;      \n"
 "    font-size: 14px;\n"
@@ -117,10 +117,10 @@ class UiDriverDashboard(object):
 "}")
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(str(ICONS_DIR / "home.png")), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
-        self.driver_home_bn.setIcon(icon)
-        self.driver_home_bn.setIconSize(QtCore.QSize(32, 32))
-        self.driver_home_bn.setObjectName("driver_home_bn")
-        self.driver_vertical_layout_2.addWidget(self.driver_home_bn)
+        self.home_btn.setIcon(icon)
+        self.home_btn.setIconSize(QtCore.QSize(32, 32))
+        self.home_btn.setObjectName("home_btn")
+        self.driver_vertical_layout_2.addWidget(self.home_btn)
         self.assigned_trips_btn = QtWidgets.QPushButton(parent=self.layoutWidget1)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Expanding)
         sizePolicy.setHorizontalStretch(0)
@@ -163,12 +163,12 @@ class UiDriverDashboard(object):
         self.driver_frame_5.setObjectName("driver_frame_5")
         self.verticalLayout_12 = QtWidgets.QVBoxLayout(self.driver_frame_5)
         self.verticalLayout_12.setObjectName("verticalLayout_12")
-        self.driver_logout_btn = QtWidgets.QPushButton(parent=self.driver_frame_5)
+        self.logout_btn = QtWidgets.QPushButton(parent=self.driver_frame_5)
         font = QtGui.QFont()
         font.setFamily("Arial")
-        self.driver_logout_btn.setFont(font)
-        self.driver_logout_btn.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
-        self.driver_logout_btn.setStyleSheet("QPushButton {\n"
+        self.logout_btn.setFont(font)
+        self.logout_btn.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+        self.logout_btn.setStyleSheet("QPushButton {\n"
 "    background-color: #476061;\n"
 "    color: #FFFFFF;\n"
 "    font-size: 14px;\n"
@@ -186,8 +186,8 @@ class UiDriverDashboard(object):
 "    background-color: #d17575;\n"
 "    border: 2px solid #FFFFFF;\n"
 "}")
-        self.driver_logout_btn.setObjectName("driver_logout_btn")
-        self.verticalLayout_12.addWidget(self.driver_logout_btn)
+        self.logout_btn.setObjectName("logout_btn")
+        self.verticalLayout_12.addWidget(self.logout_btn)
         self.driver_vertical_layout.addWidget(self.driver_frame_4)
         self.verticalLayout_2.addWidget(self.driver_side_menu)
         self.horizontalLayout.addWidget(self.driver_left_menu)
@@ -197,13 +197,13 @@ class UiDriverDashboard(object):
         self.driver_stackedWidget.setGeometry(QtCore.QRect(0, 0, 561, 591))
         self.driver_stackedWidget.setStyleSheet("")
         self.driver_stackedWidget.setObjectName("driver_stackedWidget")
-        self.driver_home_page = QtWidgets.QWidget()
-        self.driver_home_page.setObjectName("driver_home_page")
-        self.verticalLayout_11 = QtWidgets.QVBoxLayout(self.driver_home_page)
+        self.home_page = QtWidgets.QWidget()
+        self.home_page.setObjectName("home_page")
+        self.verticalLayout_11 = QtWidgets.QVBoxLayout(self.home_page)
         self.verticalLayout_11.setObjectName("verticalLayout_11")
         self.driver_home_vertical_Layout = QtWidgets.QVBoxLayout()
         self.driver_home_vertical_Layout.setObjectName("driver_home_vertical_Layout")
-        self.driver_home_frame = QtWidgets.QWidget(parent=self.driver_home_page)
+        self.driver_home_frame = QtWidgets.QWidget(parent=self.home_page)
         self.driver_home_frame.setObjectName("driver_home_frame")
         self.driver_header_frame = QtWidgets.QWidget(parent=self.driver_home_frame)
         self.driver_header_frame.setGeometry(QtCore.QRect(0, 0, 541, 71))
@@ -400,7 +400,7 @@ class UiDriverDashboard(object):
         self.driver_banner_photo.setObjectName("driver_banner_photo")
         self.driver_home_vertical_Layout.addWidget(self.driver_home_frame)
         self.verticalLayout_11.addLayout(self.driver_home_vertical_Layout)
-        self.driver_stackedWidget.addWidget(self.driver_home_page)
+        self.driver_stackedWidget.addWidget(self.home_page)
         self.view_trip_page = QtWidgets.QWidget()
         self.view_trip_page.setObjectName("view_trip_page")
         self.view_trips_form = QtWidgets.QFrame(parent=self.view_trip_page)
@@ -457,12 +457,12 @@ class UiDriverDashboard(object):
         self.tab_verticalLayout = QtWidgets.QVBoxLayout(self.layoutWidget2)
         self.tab_verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.tab_verticalLayout.setObjectName("tab_verticalLayout")
-        self.assign_table_widget = QtWidgets.QTableWidget(parent=self.layoutWidget2)
-        self.assign_table_widget.setObjectName("assign_table_widget")
-        self.assign_table_widget.setColumnCount(0)
-        self.assign_table_widget.setRowCount(0)
+        self.active_booking_table = QtWidgets.QTableWidget(parent=self.layoutWidget2)
+        self.active_booking_table.setObjectName("active_booking_table")
+        self.active_booking_table.setColumnCount(0)
+        self.active_booking_table.setRowCount(0)
         #STYLE SHEET FOR ASSIGNED DRIVE TABLE
-        self.assign_table_widget.setStyleSheet(
+        self.active_booking_table.setStyleSheet(
             "QTableWidget {\n"
             "    background-color: #7d918f;\n"
             "    color:white;\n"
@@ -478,7 +478,7 @@ class UiDriverDashboard(object):
             "    border:1px solid #293736;\n"
             "}")
 
-        self.tab_verticalLayout.addWidget(self.assign_table_widget)
+        self.tab_verticalLayout.addWidget(self.active_booking_table)
         self.back_to_home = QtWidgets.QFrame(parent=self.layoutWidget2)
         self.back_to_home.setFrameShape(QtWidgets.QFrame.Shape.StyledPanel)
         self.back_to_home.setFrameShadow(QtWidgets.QFrame.Shadow.Raised)
@@ -547,12 +547,12 @@ class UiDriverDashboard(object):
         self.completed_verticalLayout_9 = QtWidgets.QVBoxLayout(self.layoutWidget3)
         self.completed_verticalLayout_9.setContentsMargins(0, 0, 0, 0)
         self.completed_verticalLayout_9.setObjectName("completed_verticalLayout_9")
-        self.completed_table_widget = QtWidgets.QTableWidget(parent=self.layoutWidget3)
-        self.completed_table_widget.setObjectName("completed_table_widget")
-        self.completed_table_widget.setColumnCount(0)
-        self.completed_table_widget.setRowCount(0)
+        self.completed_booking_table = QtWidgets.QTableWidget(parent=self.layoutWidget3)
+        self.completed_booking_table.setObjectName("completed_booking_table")
+        self.completed_booking_table.setColumnCount(0)
+        self.completed_booking_table.setRowCount(0)
         #STYLE SHEET FOR COMPLETED DRIVES TABLE
-        self.completed_table_widget.setStyleSheet(
+        self.completed_booking_table.setStyleSheet(
             "QTableWidget {\n"
             "    background-color: #7d918f;\n"
             "    color:white;\n"
@@ -567,9 +567,9 @@ class UiDriverDashboard(object):
             "    font-size: 14px;\n"
             "    border:1px solid #293736;\n"
             "}")
-        self.completed_verticalLayout_9.addWidget(self.completed_table_widget)
-        self.back_to_home_btn_3 = QtWidgets.QPushButton(parent=self.layoutWidget3)
-        self.back_to_home_btn_3.setStyleSheet("QPushButton {\n"
+        self.completed_verticalLayout_9.addWidget(self.completed_booking_table)
+        self.back_to_home_btn = QtWidgets.QPushButton(parent=self.layoutWidget3)
+        self.back_to_home_btn.setStyleSheet("QPushButton {\n"
 "    background-color: #476061;\n"
 "    color: #FFFFFF;\n"
 "    font-size: 15px;\n"
@@ -587,8 +587,8 @@ class UiDriverDashboard(object):
 "    background-color: #4A5C66;\n"
 "    border: 2px solid #FFFFFF;\n"
 "}")
-        self.back_to_home_btn_3.setObjectName("back_to_home_btn_3")
-        self.completed_verticalLayout_9.addWidget(self.back_to_home_btn_3)
+        self.back_to_home_btn.setObjectName("back_to_home_btn")
+        self.completed_verticalLayout_9.addWidget(self.back_to_home_btn)
         self.tabWidget.addTab(self.completed_drives_tab, "")
         self.gridLayout_2.addWidget(self.tabWidget, 2, 0, 1, 1)
         self.driver_stackedWidget.addWidget(self.view_trip_page)
@@ -603,9 +603,9 @@ class UiDriverDashboard(object):
         _translate = QtCore.QCoreApplication.translate
         driver_dashboard.setWindowTitle(_translate("driver_dashboard", "Form"))
         self.driver_lable.setText(_translate("driver_dashboard", "Driver Menu"))
-        self.driver_home_bn.setText(_translate("driver_dashboard", " Home"))
+        self.home_btn.setText(_translate("driver_dashboard", " Home"))
         self.assigned_trips_btn.setText(_translate("driver_dashboard", "Assigned Trips"))
-        self.driver_logout_btn.setText(_translate("driver_dashboard", "Log Out"))
+        self.logout_btn.setText(_translate("driver_dashboard", "Log Out"))
         self.driver_welcome_app_header.setText(_translate("driver_dashboard", "Welcome Driver"))
         self.professional_label.setText(_translate("driver_dashboard", "Be Professional"))
         self.be_careful_label.setText(_translate("driver_dashboard", "Be Careful"))
@@ -614,5 +614,5 @@ class UiDriverDashboard(object):
         self.cancel_drive_btn.setText(_translate("driver_dashboard", "Cancel"))
         self.completed_drive_btn.setText(_translate("driver_dashboard", "Completed"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.assigned_drives_tab), _translate("driver_dashboard", "Assigned Drive"))
-        self.back_to_home_btn_3.setText(_translate("driver_dashboard", "Back to Home"))
+        self.back_to_home_btn.setText(_translate("driver_dashboard", "Back to Home"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.completed_drives_tab), _translate("driver_dashboard", "Completed Drives"))

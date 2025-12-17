@@ -1,7 +1,6 @@
 from PyQt6.QtCore import pyqtSignal, QObject
 
-from src.core.models import User
-
+from .core.models import User
 
 class SignalBus(QObject):
     """A bus of signals shared throughout the system."""

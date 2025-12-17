@@ -10,7 +10,7 @@ if __name__ == '__main__':
     # Set global logger configurations.
     with open(LOG_CONF_FILE, 'r') as f:
         config = json.load(f)
-        # Set relative config file location.
+        # Set relative config file location (prevent backslash complications).
         config["handlers"]["file"]["filename"] = str(LOG_FILE)
     logging.config.dictConfig(config)
     logger = logging.getLogger(__name__)

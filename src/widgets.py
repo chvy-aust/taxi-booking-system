@@ -2,21 +2,21 @@ import datetime
 import sqlite3
 from typing import Literal
 
-from PyQt6.QtCore import Qt, QDate, QAbstractListModel, pyqtSignal
-from PyQt6.QtWidgets import QPushButton, QDateEdit, QLineEdit, QTimeEdit, \
-    QLabel, QVBoxLayout, QWidget, QDialog, QSizePolicy, \
-    QTableWidgetItem, QListWidget, QListWidgetItem, QComboBox, QTableWidget, \
-    QHeaderView
+from PyQt6.QtCore import Qt, QDate, pyqtSignal
+from PyQt6.QtWidgets import (
+                QPushButton, QDateEdit, QLineEdit, QTimeEdit,
+                QLabel, QVBoxLayout, QWidget, QDialog, QSizePolicy,
+                QTableWidgetItem, QComboBox, QTableWidget, QHeaderView)
 
 from src.core.database import DatabaseConnection
 
-
 """
-Provides custom project widgets.
+Stores all the customer PyQt6 widgets made for the project.
 Includes:
-    - Buttons,
+    - Clickable: Button, Link
     - Input Fields: InputEdit, DateEdit
     - Dialogs: Information, Confirm
+    - Helper functions to configure tables.
 """
 
 
@@ -33,20 +33,26 @@ def setup_table(table: QTableWidget,
     table.setSelectionMode(selection_mode)
     table.horizontalHeader().setSectionResizeMode(resize_mode)
 
-# Helper function to populate tables
-def populate_table(table, items):
-    table.setRowCount(len(items))
-    for row, item in enumerate(items):
-        for column_index, value in enumerate(item):
-            table.setItem(row, column_index, QTableWidgetItem(str(value)))
+
+def populate_booking_table(table, bookings: list):
+    """
+    Helper function to set booking items to table.
+    Displays a admin/driver view of booking items (ie, showing customer info.)
+    """
+    table.setRowCount(len(bookings))
+    for row, booking in enumerate(bookings):
+        table.setItem(row, 0, QTableWidgetItem(booking.customer.fullname))
+        table.setItem(row, 1, QTableWidgetItem(booking.customer.phonenum))
+        table.setItem(row, 2, QTableWidgetItem(booking.pickup))
+        table.setItem(row, 3, QTableWidgetItem(booking.dropoff))
+        table.setItem(row, 4, QTableWidgetItem(booking.formatted_status))
 
 class Button(QPushButton):
     """Custom QPushButton class."""
 
-    def __init__(self, label, signal, object_name=None, ):
+    def __init__(self, label, signal):
         """Initialize and set default configurations."""
         super().__init__()
-        self.setObjectName(object_name)
         self.setText(label)
         self.setCursor(Qt.CursorShape.PointingHandCursor)
         self.signal = signal
@@ -99,9 +105,7 @@ class InputEdit(QWidget):
     def set_text(self, text):
         self.input_field.setText(text)
 
-
     def text(self):
-        """Return value from field."""
         return self.input_field.text().strip()
 
     def reset(self):
@@ -112,26 +116,12 @@ class InputEdit(QWidget):
         self.error_prompt = text
 
     def show_error(self):
-        """Hint at errors with red highlighting."""
-        self.setProperty("invalid", True)
         self.error_field.setText(self.error_prompt)
-        self._repolish()
 
     def clear_error(self):
-        """Remove error hint."""
-        self.setProperty("invalid", False)
         self.error_field.setText("")
-        self._repolish()
 
-    def _repolish(self):
-        self.style().unpolish(self.input_field)
-        self.style().unpolish(self.error_field)
-        self.style().polish(self.input_field)
-        self.style().polish(self.error_field)
 
-    @property
-    def text_changed(self):
-        return self.input_field.textChanged
 
 
 class DateEdit(InputEdit):
@@ -161,27 +151,6 @@ class DateEdit(InputEdit):
         self.clear_error()
         self.input_field.setDate(QDate.currentDate())
 
-    @property
-    def text_changed(self):
-        return self.input_field.dateChanged
-
-class BookingListModel(QAbstractListModel):
-    def __init__(self, bookings=None):
-        super().__init__()
-        self.bookings = bookings or []
-    def data(self, index, role: int = ...):
-        if role == Qt.ItemDataRole.DisplayRole:
-            return str(self.bookings[index.row()])
-
-    def rowCount(self, parent=...):
-        return len(self.bookings)
-
-class SystemFeedback:
-    DATABASE_ERROR = (
-        "A database exception occurred during this transaction. "
-        "Data was not stored and/or updated."
-    )
-    UNEXPECTED_ERROR = "An unknown exception was caught. Please Try Again or contact Support."
 
 class InfoDialog(QDialog):
     def __init__(self, text, parent=None):
@@ -235,7 +204,8 @@ class ConfirmationDialog(QDialog):
 
 class BookingItem(QDialog):
     def __init__(self, booking,
-                 viewer: Literal["customer","driver","admin"] = "customer",parent=None):
+                 viewer: Literal["customer","driver","admin"] = "customer",
+                 parent=None):
         super().__init__(parent)
         self.booking = booking
         self.setWindowFlag(Qt.WindowType.FramelessWindowHint)
@@ -313,7 +283,7 @@ class BookingItem(QDialog):
         """
         try:
             # Prevent signal mis-firing.
-            self.action_btn.disconnect()
+            self.action_btn.clicked.disconnect()
         except TypeError:
             pass
 
