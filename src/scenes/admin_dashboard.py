@@ -31,11 +31,14 @@ class AdminDashboardScene(BaseScene, UiAdminDashboard):
         # HOME BTN + LOGOUT BTN  + MENU BTN-----
         # --- button events (switch to panel)
         self.home_btn.clicked.connect(self.switch_to_home)
-        self.admin_logout_btn.clicked.connect(self._log_out)
+        self.menu_btn.clicked.connect(
+            lambda: self.info_popup("This feature is coming soon!"))
+        self.logout_btn.clicked.connect(self._log_out)
 
         # ASSIGN DRIVER PAGE -----
         # --- button events (switch to panel)
         self.assign_drivers_btn.clicked.connect(self._switch_to_assign_drivers)
+        self.admin_back_home_btn.clicked.connect(self.switch_to_home)
 
         # BOOKINGS TABLE ----
         # --- setup table views + columns
@@ -110,6 +113,7 @@ class AdminDashboardScene(BaseScene, UiAdminDashboard):
                         self.assigned_bookings.append(booking)
         except sqlite3.Error:
             self.info_popup(BOOKING_DB_ERROR)
+
 
         if self.pending_bookings:
             populate_booking_table(self.pending_table, self.pending_bookings)

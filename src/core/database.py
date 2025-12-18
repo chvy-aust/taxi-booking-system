@@ -2,7 +2,6 @@ import logging
 import sqlite3
 from typing import Any
 from src.utils.constants import DB_FILE, NON_ACTIVE_BOOKING_STATUS, ACTIVE_BOOKING_STATUS
-
 logger = logging.getLogger(__name__)
 class DatabaseConnection:
     """Database class to handle transactions."""
@@ -57,11 +56,10 @@ class DatabaseConnection:
             cursor = self.execute(sql, params)
             return [User(row) for row in cursor.fetchall()]
         except sqlite3.Error as e:
-            logger.error(
-                msg=f"Failed to lookup user table.",
-                exc_info=e
-            )
+            logger.error(msg=f"Failed to lookup user table.", exc_info=e)
             raise
+
+
 
     def fetch_bookings(self, **kwargs) -> list:
         """
@@ -89,10 +87,7 @@ class DatabaseConnection:
             cursor = self.execute(sql, params)
             return [Booking(row) for row in cursor.fetchall()]
         except sqlite3.Error as e:
-            logger.error(
-                msg=f"Failed to fetch bookings.",
-                exc_info=e
-            )
+            logger.error(msg=f"Failed to fetch bookings.", exc_info=e)
             raise
 
     def create_user(self, info: dict[str, Any]):
@@ -101,7 +96,7 @@ class DatabaseConnection:
         Defaults user role to customer, if not provided.
         """
         role = info.get("role", "customer")
-        username = f"({info["firstname"]} {info["lastname"]})"
+        username = f"({info['firstname']} {info['lastname']})"
 
         try:
             logger.info(f"Adding new user {username} to database …")
@@ -116,10 +111,7 @@ class DatabaseConnection:
                                 info["email"], info["password"])
             )
         except sqlite3.Error as e:
-            logger.error(
-                msg=f"Failed to add user {username} to database.",
-                exc_info=e
-            )
+            logger.error(msg=f"Failed to add user {username} to database.", exc_info=e)
             raise
 
     def create_driver_application(self, info: dict[str, Any]):
@@ -161,6 +153,25 @@ class DatabaseConnection:
             )
             raise
 
+    def save_address(self, address: dict[str, Any]):
+        """Insert address record into database."""
+        try:
+            self.execute("""
+            INSERT INTO addresses (
+                customer_id, name, physical_address) 
+            VALUES (?, ?, ?)
+                        """, (
+                address["customer_id"],
+                address["name"],
+                address["physical_address"])
+            )
+        except sqlite3.Error as e:
+            logger.error(
+                msg=f"Failed to add address for user ({address['customer_id']}).",
+                exc_info=e
+            )
+            raise
+
     def create_booking(self, info: dict[str, Any]):
         """
         Insert new booking record to the database.
@@ -180,29 +191,7 @@ class DatabaseConnection:
                     info["pickup"], info["date"], info["time"], status)
             )
         except sqlite3.Error as e:
-            logger.error(
-                msg=f"Failed to make booking for user ({info['customer_id']}).",
-                exc_info=e
-            )
-            raise
-
-    def save_address(self, address: dict[str, Any]):
-        """Insert address record into database."""
-        try:
-            self.execute("""
-            INSERT INTO addresses (
-                customer_id, name, physical_address) 
-            VALUES (?, ?, ?)
-                        """, (
-                address["customer_id"],
-                address["name"],
-                address["physical_address"])
-            )
-        except sqlite3.Error as e:
-            logger.error(
-                msg=f"Failed to add address for user ({address['customer_id']}).",
-                exc_info=e
-            )
+            logger.error(msg=f"Failed to make booking for user ({info['customer_id']}).", exc_info=e)
             raise
 
     def update_booking_status(self, booking_id, status):
@@ -254,3 +243,5 @@ class DatabaseConnection:
                 exc_info=e
             )
             raise
+
+

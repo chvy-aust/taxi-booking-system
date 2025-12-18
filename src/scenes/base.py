@@ -1,7 +1,7 @@
-from PyQt6.QtWidgets import QWidget, QDialog
+from PyQt6.QtWidgets import QWidget
 
 from ..core.models import User
-from ..widgets import InfoDialog, ConfirmationDialog
+from ..widgets import InfoDialog
 
 
 class BaseScene(QWidget):

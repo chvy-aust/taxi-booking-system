@@ -113,12 +113,12 @@ class RegisterScene(BaseScene, UiRegister):
         Complete the user's profile.
         Allow the user to move on once info is valid.
         """
-        self.info |= {
+        self.info.update({
             "firstname": self.firstname.text().title(),
             "lastname": self.lastname.text().title(),
             "dob": self.dob.date(),
             "phonenum": self.phonenum.text()
-        }
+        })
 
         validation_checks = {
             self.firstname: bool(self.info["firstname"]),

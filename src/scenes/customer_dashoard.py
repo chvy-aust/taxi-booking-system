@@ -127,11 +127,11 @@ class CustomerDashboardScene(BaseScene, UiCustomerDashboard):
         # Only check passwords if new values are provided.
         if info["password"] or info["confirm_pass"]:
             # Check password formatting and matching.
-            validation_checks |= {
+            validation_checks.update({
                 self.new_password: validate_password(info["password"]),
                 self.confirm_password:
                     info["confirm_pass"] == info["password"]
-            }
+            })
         else:
             info.pop("password", "confirm_pass")
 
@@ -142,9 +142,9 @@ class CustomerDashboardScene(BaseScene, UiCustomerDashboard):
                 self.info_popup("This email is already in use!")
                 return False
             # Check email formatting if unique.
-            validation_checks |= {
+            validation_checks.update({
                 self.email: validate_email(info["email"])
-            }
+            })
 
         if not is_fields_valid(validation_checks):
             return False
@@ -170,7 +170,6 @@ class CustomerDashboardScene(BaseScene, UiCustomerDashboard):
                 conn.create_driver_application(info)
         except sqlite3.Error as e:
             self.info_popup(DB_ERROR)
-            logger.exception(e)
         else:
             self.info_popup("Application submitted! "
                             "Please give administration "

@@ -29,12 +29,15 @@ class DriverDashboardScene(BaseScene, UiDriverDashboard):
         # HOME BTN + LOGOUT BTN  + MENU BTN-----
         # --- button events (switch to panel)
         self.home_btn.clicked.connect(self.switch_to_home)
+        self.menu_btn.clicked.connect(
+            lambda: self.info_popup("This feature is coming soon!"))
         self.logout_btn.clicked.connect(self._log_out)
 
         # VIEW ASSIGNED RIDES PAGE -----
         # --- button events (switch to panel)
         self.assigned_trips_btn.clicked.connect(self._switch_to_view_trips)
         self.back_to_home_btn.clicked.connect(self.switch_to_home)
+        self.go_to_home_btn.clicked.connect(self.switch_to_home)
 
         # BOOKINGS TABLES -----
         # --- setup table views + columns
@@ -68,6 +71,7 @@ class DriverDashboardScene(BaseScene, UiDriverDashboard):
                         self.active_bookings.append(booking)
         except sqlite3.Error:
             self.info_popup(BOOKING_DB_ERROR)
+
 
         # Add bookings to table rows.
         if self.active_bookings:

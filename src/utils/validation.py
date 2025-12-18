@@ -9,26 +9,6 @@ EMAIL_PATTERN = re.compile(r"^[\w\-.]+@([\w-]+\.)+[\w-]{2,}$")
 PASSWORD_PATTERN = re.compile(r"^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}")
 # PREVIOUSLY USED PHONENUM REGEX
 # PHONENUM_PATTERN = re.compile(r"^\d{3}[-\s]?\d{3}[-\s]?\d{4}$")
-AGE_REQUIREMENT = 18
-
-
-def validate_password(password: str) -> bool:
-    """Check if password matches required format."""
-    if password == "":
-        return False
-    return bool(re.match(PASSWORD_PATTERN, password))
-
-
-def validate_dob(dob: QDate) -> bool:
-    """Check whether date of birth meets the age requirement."""
-    # Get current date
-    today = QDate.currentDate()
-    # Calculate user age, not considering if their birthday passed.
-    age = today.year() - dob.year()
-    # If user's birthday has not passed, subtract a year.
-    if [today.month(), today.day()] < [dob.month(), dob.day()]:
-        age -= 1
-    return age >= AGE_REQUIREMENT
 
 def validate_phonenum(phonenum: str) -> bool:
     """
@@ -56,6 +36,32 @@ def validate_phonenum(phonenum: str) -> bool:
     return 7 <= digit_count <= 15
 
 
+
+
+
+AGE_REQUIREMENT = 18
+
+
+def validate_password(password: str) -> bool:
+    """Check if password matches required format."""
+    if password == "":
+        return False
+    return bool(re.match(PASSWORD_PATTERN, password))
+
+
+def validate_dob(dob: QDate) -> bool:
+    """Check whether date of birth meets the age requirement."""
+    # Get current date
+    today = QDate.currentDate()
+    # Calculate user age, not considering if their birthday passed.
+    age = today.year() - dob.year()
+    # If user's birthday has not passed, subtract a year.
+    if [today.month(), today.day()] < [dob.month(), dob.day()]:
+        age -= 1
+    return age >= AGE_REQUIREMENT
+
+
+
 def validate_email(email: str) -> bool:
     """Return True if email matches format and is not null, else False."""
     if email == "":
@@ -73,7 +79,7 @@ def is_email_unique(email: str) -> bool:
 
 def is_fields_valid(fields: dict[InputEdit, bool]) -> bool:
     """
-    Check the validity of a given InptuEdit fields + clear/show errors.
+    Check the validity of a given InputEdit fields + clear/show errors.
     Return a bool indicator of whether all fields are valid.
     """
     for field in fields.keys():
@@ -84,3 +90,4 @@ def is_fields_valid(fields: dict[InputEdit, bool]) -> bool:
             field.show_error()
             flag = False
     return flag
+

@@ -110,3 +110,6 @@ class MainWindow(QMainWindow):
                 msg="Failed to apply style sheet to application.",
                 exc_info=e
             )
+
+
+

@@ -200,12 +200,12 @@ class UiAdminDashboard(object):
         self.admin_frame_5.setObjectName("admin_frame_5")
         self.verticalLayout_12 = QtWidgets.QVBoxLayout(self.admin_frame_5)
         self.verticalLayout_12.setObjectName("verticalLayout_12")
-        self.admin_logout_btn = QtWidgets.QPushButton(parent=self.admin_frame_5)
+        self.logout_btn = QtWidgets.QPushButton(parent=self.admin_frame_5)
         font = QtGui.QFont()
         font.setFamily("Arial")
-        self.admin_logout_btn.setFont(font)
-        self.admin_logout_btn.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
-        self.admin_logout_btn.setStyleSheet("QPushButton {\n"
+        self.logout_btn.setFont(font)
+        self.logout_btn.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+        self.logout_btn.setStyleSheet("QPushButton {\n"
 "    background-color: #476061;\n"
 "    color: #FFFFFF;\n"
 "    font-size: 14px;\n"
@@ -223,8 +223,8 @@ class UiAdminDashboard(object):
 "    background-color: #d17575;\n"
 "    border: 2px solid #FFFFFF;\n"
 "}")
-        self.admin_logout_btn.setObjectName("admin_logout_btn")
-        self.verticalLayout_12.addWidget(self.admin_logout_btn)
+        self.logout_btn.setObjectName("logout_btn")
+        self.verticalLayout_12.addWidget(self.logout_btn)
         self.admin_vertical_layout.addWidget(self.admin_frame_4)
         self.verticalLayout_2.addWidget(self.admin_side_menu)
         self.horizontalLayout.addWidget(self.admin_left_menu)
@@ -261,15 +261,15 @@ class UiAdminDashboard(object):
         self.side_widget.setObjectName("side_widget")
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout(self.side_widget)
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
-        self.adm_menu_btn = QtWidgets.QPushButton(parent=self.side_widget)
-        self.adm_menu_btn.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
-        self.adm_menu_btn.setText("")
+        self.menu_btn = QtWidgets.QPushButton(parent=self.side_widget)
+        self.menu_btn.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+        self.menu_btn.setText("")
         icon3 = QtGui.QIcon()
         icon3.addPixmap(QtGui.QPixmap(str(ICONS_DIR / "sidemenu_icon.png")), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
-        self.adm_menu_btn.setIcon(icon3)
-        self.adm_menu_btn.setIconSize(QtCore.QSize(25, 25))
-        self.adm_menu_btn.setObjectName("adm_menu_btn")
-        self.horizontalLayout_3.addWidget(self.adm_menu_btn, 0, QtCore.Qt.AlignmentFlag.AlignLeft)
+        self.menu_btn.setIcon(icon3)
+        self.menu_btn.setIconSize(QtCore.QSize(25, 25))
+        self.menu_btn.setObjectName("menu_btn")
+        self.horizontalLayout_3.addWidget(self.menu_btn, 0, QtCore.Qt.AlignmentFlag.AlignLeft)
         self.horizontalLayout_2.addWidget(self.side_widget)
         self.admin_widget_2 = QtWidgets.QWidget(parent=self.admin_header_box)
         self.admin_widget_2.setObjectName("admin_widget_2")
@@ -579,60 +579,91 @@ class UiAdminDashboard(object):
         self.assign_btn_frame_6.setFrameShape(QtWidgets.QFrame.Shape.StyledPanel)
         self.assign_btn_frame_6.setFrameShadow(QtWidgets.QFrame.Shadow.Raised)
         self.assign_btn_frame_6.setObjectName("assign_btn_frame_6")
-        self.confirm_assignment_btn = QtWidgets.QPushButton(parent=self.assign_btn_frame_6)
-        self.confirm_assignment_btn.setGeometry(QtCore.QRect(270, 0, 231, 51))
+
+        self.admin_back_home_btn = QtWidgets.QPushButton(
+            parent=self.assign_btn_frame_6)
+        self.admin_back_home_btn.setGeometry(QtCore.QRect(140, 10, 221, 51))
         font = QtGui.QFont()
         font.setFamily("Arial")
         font.setBold(False)
-        self.confirm_assignment_btn.setFont(font)
-        self.confirm_assignment_btn.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
-        self.confirm_assignment_btn.setStyleSheet("QPushButton {\n"
-"    background-color: #476061;\n"
-"    color: #FFFFFF;\n"
-"    font-size: 15px;\n"
-"    padding: 10px 10px;\n"
-"\n"
-"    /* Border and Shape */\n"
-"    border: 2px solid #101717; \n"
-"    border-radius: 15px; \n"
-"    margin: 5px 10px 5px 10px;\n"
-"    text-align: center;\n"
-"}\n"
-"\n"
-"/* Style for hover over button */\n"
-"QPushButton:pressed {\n"
-"    background-color: #4A5C66;\n"
-"    border: 2px solid #FFFFFF;\n"
-"}")
-        self.confirm_assignment_btn.setObjectName("confirm_assignment_btn")
-        self.cancel_assignment_btn = QtWidgets.QPushButton(parent=self.assign_btn_frame_6)
-        self.cancel_assignment_btn.setGeometry(QtCore.QRect(10, 0, 231, 51))
-        font = QtGui.QFont()
-        font.setFamily("Arial")
-        font.setBold(False)
-        self.cancel_assignment_btn.setFont(font)
-        self.cancel_assignment_btn.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
-        self.cancel_assignment_btn.setStyleSheet("QPushButton {\n"
-"    background-color: #476061;\n"
-"    color: #FFFFFF;\n"
-"    font-size: 15px;\n"
-"    padding: 10px 10px;\n"
-"\n"
-"    /* Border and Shape */\n"
-"    border: 2px solid #101717; \n"
-"    border-radius: 15px; \n"
-"    margin: 5px 10px 5px 10px;\n"
-"    text-align: center;\n"
-"}\n"
-"\n"
-"/* Style for hover over button */\n"
-"QPushButton:pressed {\n"
-"    background-color: #4A5C66;\n"
-"    border: 2px solid #FFFFFF;\n"
-"}")
-        self.cancel_assignment_btn.setObjectName("cancel_assignment_btn")
+        self.admin_back_home_btn.setFont(font)
+        self.admin_back_home_btn.setCursor(
+            QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+        self.admin_back_home_btn.setStyleSheet("QPushButton {\n"
+                                               "    background-color: #476061;\n"
+                                               "    color: #FFFFFF;\n"
+                                               "    font-size: 15px;\n"
+                                               "    padding: 10px 10px;\n"
+                                               "\n"
+                                               "\n"
+                                               "    border: 2px solid #101717; \n"
+                                               "    border-radius: 15px; \n"
+                                               "    margin: 5px 10px 5px 10px;\n"
+                                               "    text-align: center;\n"
+                                               "}\n"
+                                               "\n"
+                                               "/* Style for hover over button */\n"
+                                               "QPushButton:pressed {\n"
+                                               "    background-color: #4A5C66;\n"
+                                               "    border: 2px solid #FFFFFF;\n"
+                                               "}")
+        self.admin_back_home_btn.setObjectName("admin_back_home_btn")
+#         self.confirm_assignment_btn = QtWidgets.QPushButton(parent=self.assign_btn_frame_6)
+#         self.confirm_assignment_btn.setGeometry(QtCore.QRect(270, 0, 231, 51))
+#         font = QtGui.QFont()
+#         font.setFamily("Arial")
+#         font.setBold(False)
+#         self.confirm_assignment_btn.setFont(font)
+#         self.confirm_assignment_btn.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+#         self.confirm_assignment_btn.setStyleSheet("QPushButton {\n"
+# "    background-color: #476061;\n"
+# "    color: #FFFFFF;\n"
+# "    font-size: 15px;\n"
+# "    padding: 10px 10px;\n"
+# "\n"
+# "    /* Border and Shape */\n"
+# "    border: 2px solid #101717; \n"
+# "    border-radius: 15px; \n"
+# "    margin: 5px 10px 5px 10px;\n"
+# "    text-align: center;\n"
+# "}\n"
+# "\n"
+# "/* Style for hover over button */\n"
+# "QPushButton:pressed {\n"
+# "    background-color: #4A5C66;\n"
+# "    border: 2px solid #FFFFFF;\n"
+# "}")
+#         self.confirm_assignment_btn.setObjectName("confirm_assignment_btn")
+#         self.confirm_assignment_btn.hide()
+#         self.cancel_assignment_btn = QtWidgets.QPushButton(parent=self.assign_btn_frame_6)
+#         self.cancel_assignment_btn.hide()
+#         self.cancel_assignment_btn.setGeometry(QtCore.QRect(10, 0, 231, 51))
+#         font = QtGui.QFont()
+#         font.setFamily("Arial")
+#         font.setBold(False)
+#         self.cancel_assignment_btn.setFont(font)
+#         self.cancel_assignment_btn.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+#         self.cancel_assignment_btn.setStyleSheet("QPushButton {\n"
+# "    background-color: #476061;\n"
+# "    color: #FFFFFF;\n"
+# "    font-size: 15px;\n"
+# "    padding: 10px 10px;\n"
+# "\n"
+# "    /* Border and Shape */\n"
+# "    border: 2px solid #101717; \n"
+# "    border-radius: 15px; \n"
+# "    margin: 5px 10px 5px 10px;\n"
+# "    text-align: center;\n"
+# "}\n"
+# "\n"
+# "/* Style for hover over button */\n"
+# "QPushButton:pressed {\n"
+# "    background-color: #4A5C66;\n"
+# "    border: 2px solid #FFFFFF;\n"
+# "}")
+#         self.cancel_assignment_btn.setObjectName("cancel_assignment_btn")
         self.assign_driver_layout = QtWidgets.QFrame(parent=self.admin_assign_driverForm)
-        self.assign_driver_layout.setGeometry(QtCore.QRect(30, 10, 511, 461))
+        self.assign_driver_layout.setGeometry(QtCore.QRect(30, 10, 511, 481))
         self.assign_driver_layout.setStyleSheet("")
         self.assign_driver_layout.setFrameShape(QtWidgets.QFrame.Shape.StyledPanel)
         self.assign_driver_layout.setFrameShadow(QtWidgets.QFrame.Shadow.Raised)
@@ -673,6 +704,7 @@ class UiAdminDashboard(object):
 "    border: 2px solid #FFFFFF;\n"
 "}")
         self.driver_tab_widget.setObjectName("driver_tab_widget")
+
         self.pending_tab = QtWidgets.QWidget()
         self.pending_tab.setObjectName("pending_tab")
         self.pending_table = QtWidgets.QTableWidget(parent=self.pending_tab)
@@ -743,7 +775,7 @@ class UiAdminDashboard(object):
         self.home_btn.setText(_translate("admin_dashboard", " Home"))
         self.assign_drivers_btn.setText(_translate("admin_dashboard", " Assign Drivers"))
         self.view_users_btn.setText(_translate("admin_dashboard", " View Users"))
-        self.admin_logout_btn.setText(_translate("admin_dashboard", "Log Out"))
+        self.logout_btn.setText(_translate("admin_dashboard", "Log Out"))
         self.welcome_app_header.setText(_translate("admin_dashboard", "Welcome Admin"))
         self.user_increase_label.setText(_translate("admin_dashboard", "User Increase"))
         self.active_user_label.setText(_translate("admin_dashboard", "5+ Active Users"))
@@ -752,9 +784,8 @@ class UiAdminDashboard(object):
         self.view_users_label.setText(_translate("admin_dashboard", "View All Users"))
         self.users_tab_widget.setTabText(self.users_tab_widget.indexOf(self.customers_tab), _translate("admin_dashboard", "Customers"))
         self.users_tab_widget.setTabText(self.users_tab_widget.indexOf(self.drivers_tab), _translate("admin_dashboard", "Drivers"))
-        self.confirm_assignment_btn.setText(_translate("admin_dashboard", "Confirm"))
-        self.cancel_assignment_btn.setText(_translate("admin_dashboard", "Cancel"))
         self.back_to_home_btn.setText(_translate("admin_dashboard", "Back to Home"))
+        self.admin_back_home_btn.setText( _translate("admin_dashboard", "Back to Home"))
         self.assign_driver_label.setText(_translate("admin_dashboard", "Assign Driver"))
         self.driver_tab_widget.setTabText(self.driver_tab_widget.indexOf(self.pending_tab), _translate("admin_dashboard", "Pending"))
         self.driver_tab_widget.setTabText(self.driver_tab_widget.indexOf(self.completed_tab), _translate("admin_dashboard", "Completed"))

@@ -5,6 +5,7 @@ from src.utils.constants import NON_ACTIVE_BOOKING_STATUS
 
 class User:
     def __init__(self, row):
+        # Intended to parse a database record.
         self.id = row['id']
         self.role = row['role']
         self.firstname = row['firstname']
@@ -33,9 +34,9 @@ class User:
     def compare_attr(self, attr: dict[str, Any]):
         """Return a dict containing new user values."""
         new_attr = {}
-        # Check if credential is != current user credential.
+        # Check if provided attribute != user attribute.
         for key, value in attr.items():
-            # Collect any updated credential
+            # Collect any new attribute values.
             if hasattr(self, key):
                 if value != getattr(self, key):
                     new_attr[key] = value
@@ -56,8 +57,8 @@ class Booking:
         "waiting_for_pickup": "in_process",
         "in_process": "completed"
     }
-
     def __init__(self, row):
+        # Intended to parse a database record.
         self.id = row["id"]
         self.customer_id = row["customer_id"]
         self.driver_id = row["driver_id"]
@@ -68,7 +69,6 @@ class Booking:
         self.status = row["status"]
         self.customer = None
         self.driver = None
-
         self._get_customer()
         self._get_driver()
 
@@ -95,7 +95,6 @@ class Booking:
         self.driver_id = driver_id
         self.update_status()
         self._get_driver()
-
 
     def cancel(self):
         """Cancel the booking instance and db record."""

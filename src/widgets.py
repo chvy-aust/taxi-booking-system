@@ -4,9 +4,8 @@ from typing import Literal
 
 from PyQt6.QtCore import Qt, QDate, pyqtSignal
 from PyQt6.QtWidgets import (
-                QPushButton, QDateEdit, QLineEdit, QTimeEdit,
-                QLabel, QVBoxLayout, QWidget, QDialog, QSizePolicy,
-                QTableWidgetItem, QComboBox, QTableWidget, QHeaderView)
+    QPushButton, QDateEdit, QLineEdit, QLabel, QVBoxLayout, QWidget, QDialog,
+    QTableWidgetItem, QComboBox, QTableWidget, QHeaderView)
 
 from src.core.database import DatabaseConnection
 
@@ -70,31 +69,22 @@ class Link(QLabel):
 
 
 class InputEdit(QWidget):
-    def __init__(self,
-                 parent=None,
-                 input_type: type[QLineEdit | QDateEdit | QTimeEdit] = QLineEdit,
-                 object_name: str = None):
+    def __init__(self, parent=None,
+                 input_type: type[QLineEdit | QDateEdit] = QLineEdit):
         super().__init__(parent)
-        self.setObjectName(object_name)
         self.input_field = input_type()
         self.input_field.setFixedHeight(40)
-        self.input_field.setSizePolicy(QSizePolicy.Policy.Expanding,
-                                       QSizePolicy.Policy.Preferred)
 
         self.error_field = QLabel("")
         self.error_field.setStyleSheet("color: #5B0D0D;")
         self.error_field.setFixedHeight(20)
-        self.error_field.setWordWrap(True)
         self.error_prompt = None
-
-        self.container = QVBoxLayout()
-        self.container.setContentsMargins(0,0,0,0)
-        self.container.setSpacing(0)
-        self.container.addWidget(self.input_field)
-        self.container.addWidget(self.error_field)
-
-
-        self.setLayout(self.container)
+        container = QVBoxLayout()
+        container.setContentsMargins(0,0,0,0)
+        container.setSpacing(0)
+        container.addWidget(self.input_field)
+        container.addWidget(self.error_field)
+        self.setLayout(container)
 
     def set_focus(self):
         self.input_field.setFocus()
@@ -125,12 +115,9 @@ class InputEdit(QWidget):
 
 
 class DateEdit(InputEdit):
-    def __init__(self, object_name: str = None, parent=None):
-        super().__init__(parent,
-                         input_type=QDateEdit,
-                         object_name=object_name)
+    def __init__(self, parent=None):
+        super().__init__(parent, input_type=QDateEdit)
         self.input_field.setDisplayFormat("yyyy-MM-dd")
-        self.input_field.setCalendarPopup(True)
         self.input_field.setDate(QDate.currentDate())
 
     def date(self) -> QDate:
@@ -344,7 +331,7 @@ class BookingItem(QDialog):
                 # Update db record + booking instance
                 self.booking.assign_driver(dialog.selected_driver.id)
                 # Refresh item with new status + hide action
-                self.booking.update_status()
+                self.update_item_status()
                 self.set_viewer_based_info()
                 self.set_viewer_based_action()
 
